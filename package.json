@@ -1,5 +1,24 @@
 {
   "dependencies": {
-    "cors": "^2.8.6"
-  }
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
+  },
+  "name": "resolvja-neondb",
+  "version": "1.0.0",
+  "description": "Trabalho de back-end simples pro projeto ResolvJá, rodando com Node e banco Neon (PostgreSQL). Desenvolvedores: Talita, Daiane, Paola, Layla, Kauã, Eduardo.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/talita451/ResolvJa.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/talita451/ResolvJa/issues"
+  },
+  "homepage": "https://github.com/talita451/ResolvJa#readme"
 }
