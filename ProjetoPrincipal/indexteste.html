@@ -1,0 +1,320 @@
+<<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResolvJá - Teste de Rotas API</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background: #f0f2f5; color: #333; }
+    h1 { color: #0056b3; text-align: center; }
+    .container { max-width: 950px; margin: 0 auto; }
+    .card { background: #fff; padding: 20px; margin-bottom: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.08); }
+    .card h2 { margin-top: 0; color: #004085; border-bottom: 2px solid #eef2f5; padding-bottom: 8px; font-size: 1.2rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+    input, select, textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
+    textarea { resize: vertical; min-height: 50px; grid-column: span 2; }
+    label { font-size: 11px; font-weight: bold; color: #555; display: block; margin-top: 4px; }
+    .checkbox-label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; margin-top: 15px; }
+    .checkbox-label input { width: auto; }
+    .actions { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+    button { background: #0056b3; color: white; border: none; padding: 8px 14px; cursor: pointer; border-radius: 4px; font-weight: bold; font-size: 13px; }
+    button:hover { background: #003d80; }
+    .btn-secondary { background: #6c757d; }
+    .btn-secondary:hover { background: #5a6268; }
+    .btn-warning { background: #ffc107; color: #000; }
+    .btn-warning:hover { background: #e0a800; }
+    pre { background: #1e1e1e; color: #4ec9b0; padding: 12px; border-radius: 6px; max-height: 200px; overflow-y: auto; font-size: 12px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>ResolvJá - Painel de Teste de Rotas</h1>
+
+    <!-- 1. SOLICITANTES -->
+    <div class="card">
+      <h2>1. Cadastro Solicitante (`/api/solicitantes`)</h2>
+      <div class="grid">
+        <div><label>Nome*</label><input type="text" id="sol-nome" value="Mariana Oliveira"></div>
+        <div><label>CPF*</label><input type="text" id="sol-cpf" value="123.456.789-00"></div>
+        <div><label>RG*</label><input type="text" id="sol-rg" value="12.345.678-9"></div>
+        <div><label>E-mail*</label><input type="email" id="sol-email" value="mariana@email.com"></div>
+        <div><label>Data Nascimento*</label><input type="date" id="sol-data_nascimento" value="1995-08-22"></div>
+        <div><label>Telefone*</label><input type="text" id="sol-telefone" value="(11) 97777-6666"></div>
+        <div><label>Senha*</label><input type="password" id="sol-senha" value="123456"></div>
+        <div><label>Estado Civil</label><input type="text" id="sol-estado_civil" value="Solteira"></div>
+        <div style="grid-column: span 2;"><label>Endereço*</label><textarea id="sol-endereco">Rua das Flores, 45 - São Paulo/SP</textarea></div>
+      </div>
+      <div class="actions">
+        <button onclick="cadastrarSolicitante()">POST /solicitantes</button>
+        <button class="btn-secondary" onclick="listar('/solicitantes', 'res-solicitante')">GET /solicitantes</button>
+      </div>
+      <pre id="res-solicitante">Aguardando ação...</pre>
+    </div>
+
+    <!-- 2. PRESTADORES -->
+    <div class="card">
+      <h2>2. Cadastro de Prestadores (`/api/prestadores`)</h2>
+      <div class="grid">
+        <div><label>Nome*</label><input type="text" id="pres-nome" value="Fernando Souza"></div>
+        <div><label>E-mail*</label><input type="email" id="pres-email" value="fernando@email.com"></div>
+        <div><label>CPF*</label><input type="text" id="pres-cpf" value="987.654.321-11"></div>
+        <div><label>RG*</label><input type="text" id="pres-rg" value="98.765.432-1"></div>
+        <div><label>CNH</label><input type="text" id="pres-cnh" value="12345678900"></div>
+        <div><label>Sexo</label><input type="text" id="pres-sexo" value="Masculino"></div>
+        <div><label>Data Nascimento*</label><input type="date" id="pres-data_nascimento" value="1992-03-14"></div>
+        <div><label>Telefone*</label><input type="text" id="pres-telefone" value="(11) 96666-5555"></div>
+        <div><label>Escolaridade</label><input type="text" id="pres-escolaridade" value="Ensino Técnico"></div>
+        <div><label>Profissão/Função*</label><input type="text" id="pres-profissao_funcao" value="Encanador"></div>
+        <div>
+          <label>Experiência*</label>
+          <select id="pres-experiencia">
+            <option value="básico">básico</option>
+            <option value="intermediário" selected>intermediário</option>
+            <option value="avançado">avançado</option>
+          </select>
+        </div>
+        <div><label>Valor Mínimo (R$)*</label><input type="number" step="0.01" id="pres-valor_minimo" value="80.00"></div>
+        <div><label>Valor Máximo (R$)*</label><input type="number" step="0.01" id="pres-valor_maximo" value="250.00"></div>
+        <div><label>Disponibilidade*</label><input type="text" id="pres-disponibilidade_horario" value="Seg a Sáb, 08h às 18h"></div>
+        <div><label>Antecedentes Criminais</label><input type="text" id="pres-antecedentes_criminais" value="Nada consta"></div>
+        <div style="grid-column: span 2;">
+          <label class="checkbox-label">
+            <input type="checkbox" id="pres-possui_equipamentos" checked> Possui Equipamentos
+          </label>
+        </div>
+        <div style="grid-column: span 2;"><label>Endereço Completo*</label><textarea id="pres-endereco_completo">Av. Paulista, 1000 - São Paulo/SP</textarea></div>
+        <div style="grid-column: span 2;"><label>Descrição das Funções</label><textarea id="pres-descricao_funcoes">Instalação e reparo de tubulações.</textarea></div>
+      </div>
+      <div class="actions">
+        <button onclick="cadastrarPrestador()">POST /prestadores</button>
+        <button class="btn-secondary" onclick="listar('/prestadores', 'res-prestador')">GET /prestadores</button>
+      </div>
+      <pre id="res-prestador">Aguardando ação...</pre>
+    </div>
+
+    <!-- 3. TIPOS DE SERVIÇO -->
+    <div class="card">
+      <h2>3. Tipos de Serviço (cadastro) (`/api/servicos`)</h2>
+      <div class="grid">
+        <div><label>Nome do Serviço*</label><input type="text" id="ts-nome" value="Marcenaria"></div>
+        <div><label>Descrição</label><input type="text" id="ts-descricao" value="Montagem e reparo de móveis"></div>
+      </div>
+      <div class="actions">
+        <button onclick="cadastrarTipoServico()">POST /servicos</button>
+        <button class="btn-secondary" onclick="listar('/servicos', 'res-tipo-servico')">GET /servicos</button>
+      </div>
+      <pre id="res-tipo-servico">Aguardando ação...</pre>
+    </div>
+
+    <!-- 4. VINCULAR / CONSULTAR SERVIÇOS DO PRESTADOR -->
+    <div class="card">
+      <h2>4. Gerenciar serviços de um prestador (`/api/prestadores/:id/servicos`)</h2>
+      <div class="grid">
+        <div><label>ID / Código do Prestador*</label><input type="number" id="ps-cod_prestador" value="1"></div>
+        <div><label>ID Tipo de Serviço*</label><input type="number" id="ps-id_tipo_servico" value="1"></div>
+      </div>
+      <div class="actions">
+        <button onclick="vincularPrestadorServico()">POST /prestadores/:id/servicos</button>
+        <button class="btn-secondary" onclick="listarServicosDoPrestador()">GET /prestadores/:id/servicos</button>
+      </div>
+      <pre id="res-prestador-servico">Aguardando ação...</pre>
+    </div>
+
+    <!-- 5. PRESTADORES POR SERVIÇO -->
+    <div class="card">
+      <h2>5. Prestadores de um Serviço (`/api/servicos/:id/prestadores`)</h2>
+      <div class="grid">
+        <div><label>ID Tipo de Serviço*</label><input type="number" id="sp-id_tipo_servico" value="1"></div>
+      </div>
+      <div class="actions">
+        <button class="btn-secondary" onclick="listarPrestadoresPorServico()">GET /servicos/:id/prestadores</button>
+      </div>
+      <pre id="res-servico-prestadores">Aguardando ação...</pre>
+    </div>
+
+    <!-- 6. SOLICITAÇÕES -->
+    <div class="card">
+      <h2>6. Status da solicitação (`/api/solicitacoes`)</h2>
+      <div class="grid">
+        <div><label>ID Solicitante*</label><input type="number" id="solic-id_solicitante" value="1"></div>
+        <div><label>ID Tipo Serviço*</label><input type="number" id="solic-id_tipo_servico" value="1"></div>
+        <div><label>Código Prestador*</label><input type="number" id="solic-cod_prestador" value="1"></div>
+        <div><label>Data Serviço*</label><input type="date" id="solic-data_servico" value="2026-10-01"></div>
+        <div><label>Horário*</label><input type="text" id="solic-horario" value="14:00"></div>
+        <div><label>Valor Combinado (R$)</label><input type="number" step="0.01" id="solic-valor_combinado" value="150.00"></div>
+        <div style="grid-column: span 2;"><label>Endereço*</label><textarea id="solic-endereco">Rua das Flores, 45 - São Paulo/SP</textarea></div>
+        <div style="grid-column: span 2;"><label>Descrição</label><textarea id="solic-descricao">Troca de torneira com vazamento.</textarea></div>
+      </div>
+      <div class="actions">
+        <button onclick="criarSolicitacao()">POST /solicitacoes</button>
+        <button class="btn-secondary" onclick="listar('/solicitacoes', 'res-solicitacao')">GET /solicitacoes</button>
+        <button class="btn-secondary" onclick="listarSolicitacoesSolicitante()">GET /solicitantes/:id/solicitacoes</button>
+        <button class="btn-secondary" onclick="listarSolicitacoesPrestador()">GET /prestadores/:id/solicitacoes</button>
+      </div>
+
+      <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
+
+      <div class="grid">
+        <div><label>ID Solicitação (p/ Status)*</label><input type="number" id="solic-id_status" value="1"></div>
+        <div>
+          <label>Novo Status*</label>
+          <select id="solic-novo_status">
+            <option value="Pendente">Pendente</option>
+            <option value="Aceita">Aceita</option>
+            <option value="Em Andamento">Em Andamento</option>
+            <option value="Concluída">Concluída</option>
+            <option value="Cancelada">Cancelada</option>
+          </select>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-warning" onclick="alterarStatusSolicitacao()">PUT /solicitacoes/:id/status</button>
+      </div>
+
+      <pre id="res-solicitacao">Aguardando ação...</pre>
+    </div>
+
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:3000/api';
+
+    async function enviarRequisicao(endpoint, method = 'GET', body = null) {
+      const config = {
+        method,
+        headers: { 'Content-Type': 'application/json' }
+      };
+      if (body) config.body = JSON.stringify(body);
+
+      try {
+        const res = await fetch(`${API_URL}${endpoint}`, config);
+        const data = await res.json();
+        return JSON.stringify(data, null, 2);
+      } catch (err) {
+        return `Erro ao conectar com a API: ${err.message}`;
+      }
+    }
+
+    async function listar(endpoint, elementId) {
+      document.getElementById(elementId).innerText = 'A carregar...';
+      const res = await enviarRequisicao(endpoint, 'GET');
+      document.getElementById(elementId).innerText = res;
+    }
+
+    // 1. Solicitante
+    async function cadastrarSolicitante() {
+      const payload = {
+        nome: document.getElementById('sol-nome').value,
+        cpf: document.getElementById('sol-cpf').value,
+        rg: document.getElementById('sol-rg').value,
+        email: document.getElementById('sol-email').value,
+        data_nascimento: document.getElementById('sol-data_nascimento').value,
+        telefone: document.getElementById('sol-telefone').value,
+        senha: document.getElementById('sol-senha').value,
+        endereco: document.getElementById('sol-endereco').value,
+        estado_civil: document.getElementById('sol-estado_civil').value
+      };
+      const res = await enviarRequisicao('/solicitantes', 'POST', payload);
+      document.getElementById('res-solicitante').innerText = res;
+    }
+
+    // 2. Prestador
+    async function cadastrarPrestador() {
+      const payload = {
+        nome: document.getElementById('pres-nome').value,
+        email: document.getElementById('pres-email').value,
+        cpf: document.getElementById('pres-cpf').value,
+        rg: document.getElementById('pres-rg').value,
+        cnh: document.getElementById('pres-cnh').value,
+        sexo: document.getElementById('pres-sexo').value,
+        data_nascimento: document.getElementById('pres-data_nascimento').value,
+        telefone: document.getElementById('pres-telefone').value,
+        escolaridade: document.getElementById('pres-escolaridade').value,
+        endereco_completo: document.getElementById('pres-endereco_completo').value,
+        profissao_funcao: document.getElementById('pres-profissao_funcao').value,
+        experiencia: document.getElementById('pres-experiencia').value,
+        descricao_funcoes: document.getElementById('pres-descricao_funcoes').value,
+        possui_equipamentos: document.getElementById('pres-possui_equipamentos').checked,
+        valor_minimo: Number(document.getElementById('pres-valor_minimo').value),
+        valor_maximo: Number(document.getElementById('pres-valor_maximo').value),
+        antecedentes_criminais: document.getElementById('pres-antecedentes_criminais').value,
+        disponibilidade_horario: document.getElementById('pres-disponibilidade_horario').value
+      };
+      const res = await enviarRequisicao('/prestadores', 'POST', payload);
+      document.getElementById('res-prestador').innerText = res;
+    }
+
+    // 3. Tipos de Serviço
+    async function cadastrarTipoServico() {
+      const payload = {
+        nome: document.getElementById('ts-nome').value,
+        descricao: document.getElementById('ts-descricao').value
+      };
+      const res = await enviarRequisicao('/servicos', 'POST', payload);
+      document.getElementById('res-tipo-servico').innerText = res;
+    }
+
+    // 4. Vincular e listar serviços do prestador
+    async function vincularPrestadorServico() {
+      const id = document.getElementById('ps-cod_prestador').value;
+      const payload = {
+        id_tipo_servico: Number(document.getElementById('ps-id_tipo_servico').value)
+      };
+      const res = await enviarRequisicao(`/prestadores/${id}/servicos`, 'POST', payload);
+      document.getElementById('res-prestador-servico').innerText = res;
+    }
+
+    async function listarServicosDoPrestador() {
+      const id = document.getElementById('ps-cod_prestador').value;
+      const res = await enviarRequisicao(`/prestadores/${id}/servicos`, 'GET');
+      document.getElementById('res-prestador-servico').innerText = res;
+    }
+
+    // 5. Prestadores por serviço
+    async function listarPrestadoresPorServico() {
+      const id = document.getElementById('sp-id_tipo_servico').value;
+      const res = await enviarRequisicao(`/servicos/${id}/prestadores`, 'GET');
+      document.getElementById('res-servico-prestadores').innerText = res;
+    }
+
+    // 6. Solicitações
+    async function criarSolicitacao() {
+      const payload = {
+        id_solicitante: Number(document.getElementById('solic-id_solicitante').value),
+        id_tipo_servico: Number(document.getElementById('solic-id_tipo_servico').value),
+        cod_prestador: Number(document.getElementById('solic-cod_prestador').value),
+        data_servico: document.getElementById('solic-data_servico').value,
+        horario: document.getElementById('solic-horario').value,
+        endereco: document.getElementById('solic-endereco').value,
+        descricao: document.getElementById('solic-descricao').value,
+        valor_combinado: Number(document.getElementById('solic-valor_combinado').value)
+      };
+      const res = await enviarRequisicao('/status', 'POST', payload);
+      document.getElementById('res-solicitacao').innerText = res;
+    }
+
+    async function listarSolicitacoesSolicitante() {
+      const id = document.getElementById('solic-id_solicitante').value;
+      const res = await enviarRequisicao(`/solicitantes/${id}/solicitacoes`, 'GET');
+      document.getElementById('res-solicitacao').innerText = res;
+    }
+
+    async function listarSolicitacoesPrestador() {
+      const id = document.getElementById('solic-cod_prestador').value;
+      const res = await enviarRequisicao(`/prestadores/${id}/solicitacoes`, 'GET');
+      document.getElementById('res-solicitacao').innerText = res;
+    }
+
+    async function alterarStatusSolicitacao() {
+      const id = document.getElementById('solic-id_status').value;
+      const payload = {
+        status: document.getElementById('solic-novo_status').value
+      };
+      const res = await enviarRequisicao(`/solicitacoes/${id}/status`, 'PUT', payload);
+      document.getElementById('res-solicitacao').innerText = res;
+    }
+  </script>
+</body>
+</html>
