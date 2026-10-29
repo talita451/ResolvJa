@@ -386,11 +386,17 @@
         usuario: document.getElementById("regUsuario").value.trim(),
         email: document.getElementById("regEmail").value.trim(),
         cpf: document.getElementById("regCpf").value.trim(),
+        rg: document.getElementById("regRg").value.trim(),
         data_nascimento: document.getElementById("regNascimento").value,
         telefone: document.getElementById("regTelefone").value.trim(),
         endereco: document.getElementById("regEndereco").value.trim(),
         senha: senha
       };
+
+      const estadoCivil = document.getElementById("regEstadoCivil").value;
+      if (tipo === "solicitante" && estadoCivil) {
+        dados.estado_civil = estadoCivil;
+      }
   
       try {
         await chamarApi(ROTA_CADASTRO[tipo], dados);
@@ -401,5 +407,3 @@
         mostrarErro("registerError", err.message);
       }
     }
-    
-  
