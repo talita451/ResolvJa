@@ -1,416 +1,435 @@
-// ======================================================
-// CONFIGURAÇÃO BASE DA API
-// ======================================================
 const API_BASE_URL = 'http://localhost:3000/api';
+window.historicoPaginas = ['home'];
 
-// ======================================================
-// NAVEGAÇÃO ENTRE PÁGINAS (SPA)
-// ======================================================
-function showPage(pageId) {
-    const pages = document.querySelectorAll('.page');
-    pages.forEach(page => page.classList.remove('active'));
-
-    const targetPage = document.getElementById(pageId);
-    if (targetPage) {
-        targetPage.classList.add('active');
-        window.scrollTo(0, 0);
+window.compromissosAgenda = [
+    {
+        id: 1,
+        titulo: 'Instalação de 3 Tomadas 220V',
+        cliente: 'Carlos Roberto',
+        endereco: 'Rua Principal, 102 - Centro',
+        dataHora: 'Hoje às 14:00',
+        tipoData: 'hoje',
+        valor: 'R$ 150,00',
+        status: 'CONFIRMADO'
     }
-}
+];
 
-// ======================================================
-// EXIBIR / OCULTAR CAMPOS DO PRESTADOR NO CADASTRO
-// ======================================================
-function toggleCamposPrestador() {
-    const tipo = document.getElementById('regTipo').value;
-    const camposPrestador = document.getElementById('campos-prestador');
+window.mostrarToast = function(mensagem) {
+    const toast = document.getElementById('toast-central');
+    if (!toast) return;
+    toast.textContent = mensagem;
+    toast.classList.add('active');
+    setTimeout(() => toast.classList.remove('active'), 2200);
+};
+
+window.mascaraCep = function(input) {
+    let valor = input.value.replace(/\D/g, '');
+    if (valor.length > 5) valor = valor.replace(/^(\d{5})(\d)/, '$1-$2');
+    input.value = valor;
+};
+
+// BUSCA DE CEP PARA SOLICITAÇÃO
+window.buscarEnderecoPorCep = async function() {
+    const cepInput = document.getElementById('reqCep');
+    if (!cepInput) return;
+    const cep = cepInput.value.replace(/\D/g, '');
+    if (cep.length !== 8) return;
+
+    try {
+        const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+        const data = await response.json();
+        if (data.erro) {
+            window.mostrarToast('CEP não encontrado.');
+            return;
+        }
+        document.getElementById('reqRua').value = data.logradouro || '';
+        document.getElementById('reqBairro').value = data.bairro || '';
+        document.getElementById('reqCidade').value = `${data.localidade} - ${data.uf}`;
+        document.getElementById('reqNumero').focus();
+        window.mostrarToast('Endereço carregado com sucesso!');
+    } catch (e) {
+        window.mostrarToast('Erro ao buscar o CEP');
+    }
+};
+
+// BUSCA DE CEP PARA CADASTRO
+window.buscarCepCadastro = async function() {
+    const cepInput = document.getElementById('regCep');
+    if (!cepInput) return;
+    const cep = cepInput.value.replace(/\D/g, '');
+    if (cep.length !== 8) return;
+
+    try {
+        const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+        const data = await response.json();
+        if (data.erro) {
+            window.mostrarToast('CEP não encontrado.');
+            return;
+        }
+        document.getElementById('regRua').value = data.logradouro || '';
+        document.getElementById('regBairro').value = data.bairro || '';
+        document.getElementById('regCidade').value = `${data.localidade} - ${data.uf}`;
+        document.getElementById('regNumero').focus();
+        window.mostrarToast('Endereço de cadastro preenchido!');
+    } catch (e) {
+        window.mostrarToast('Erro ao buscar CEP');
+    }
+};
+
+// VERIFICAR OUTRO SERVIÇO
+window.verificarOutroServico = function(select) {
+    const containerNovo = document.getElementById('container-novo-servico');
+    const inputCustom = document.getElementById('reqTipoServicoCustom');
     
-    if (camposPrestador) {
-        if (tipo === 'prestador') {
-            camposPrestador.style.display = 'grid';
-        } else {
-            camposPrestador.style.display = 'none';
-        }
+    if (select.value === 'Outros') {
+        if (containerNovo) containerNovo.style.display = 'flex';
+        if (inputCustom) inputCustom.setAttribute('required', 'true');
+    } else {
+        if (containerNovo) containerNovo.style.display = 'none';
+        if (inputCustom) inputCustom.removeAttribute('required');
     }
-}
+};
 
-// ======================================================
-// CADASTRO DE USUÁRIOS (SOLICITANTE OU PRESTADOR)
-// ======================================================
-async function register(event) {
+// CADASTRAR NOVO SERVIÇO (FUNÇÃO + SOLICITAÇÃO)
+window.submitRequest = async function(event) {
     event.preventDefault();
 
-    const errorElement = document.getElementById('registerError');
-    if (errorElement) errorElement.textContent = '';
+    const selectTipo = document.getElementById('selectTipoServico');
+    let tipoServico = selectTipo ? selectTipo.value : 'Outros';
 
+    if (tipoServico === 'Outros') {
+        const inputCustom = document.getElementById('reqTipoServicoCustom');
+        tipoServico = inputCustom ? inputCustom.value.trim() : 'Serviço Personalizado';
+    }
+
+    const titulo = document.getElementById('reqTitulo').value.trim();
+    const descricao = document.getElementById('reqDescricao').value.trim();
+    const dataServico = document.getElementById('reqData').value;
+    
+    const rua = document.getElementById('reqRua').value;
+    const numero = document.getElementById('reqNumero').value;
+    const bairro = document.getElementById('reqBairro').value;
+    const cidade = document.getElementById('reqCidade').value;
+    const endereco = `${rua}, ${numero} - ${bairro}, ${cidade}`;
+
+    const novaSolicitacao = {
+        id: Date.now(),
+        tipoServico: tipoServico,
+        titulo: titulo,
+        descricao: descricao,
+        data: dataServico,
+        endereco: endereco,
+        status: 'EM ANDAMENTO'
+    };
+
+    let solicitacoesSalvas = JSON.parse(localStorage.getItem('minhasSolicitacoes') || '[]');
+    solicitacoesSalvas.push(novaSolicitacao);
+    localStorage.setItem('minhasSolicitacoes', JSON.stringify(solicitacoesSalvas));
+
+    adicionarNovaFuncaoAoCatalogo(tipoServico);
+
+    window.mostrarToast('Nova função e solicitação criadas com sucesso!');
+    window.carregarMinhasSolicitacoes();
+};
+
+function adicionarNovaFuncaoAoCatalogo(nomeServico) {
+    const container = document.getElementById('container-catalogo-servicos');
+    if (!container) return;
+
+    const novoCard = document.createElement('div');
+    novoCard.className = 'catalog-card';
+    novoCard.setAttribute('data-nome', nomeServico.toLowerCase());
+    novoCard.innerHTML = `
+        <div class="catalog-body">
+            <h3>${nomeServico}</h3>
+            <p>Nova função cadastrada por solicitação personalizada.</p>
+            <div class="catalog-footer">
+                <span class="catalog-price">Valor <strong>A combinar</strong></span>
+                <button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('${nomeServico}')">Solicitar</button>
+            </div>
+        </div>
+    `;
+    container.prepend(novoCard);
+}
+
+window.carregarMinhasSolicitacoes = function() {
+    window.showPage('minhas-solicitacoes');
+    const container = document.getElementById('lista-minhas-solicitacoes');
+    if (!container) return;
+
+    const solicitacoes = JSON.parse(localStorage.getItem('minhasSolicitacoes') || '[]');
+
+    if (solicitacoes.length === 0) {
+        container.innerHTML = `
+            <div style="background: #1a0033; padding: 30px; border-radius: 10px; text-align: center; color: #b0a0c0;">
+                <p>Ainda não tens nenhuma solicitação criada.</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = solicitacoes.map(item => `
+        <div class="order-card" style="background: #1a0033; border: 1px solid rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <span class="status" style="background: rgba(255, 170, 0, 0.2); color: #ffaa00; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">${item.status}</span>
+                <h3 style="margin-top: 8px; color: #fff;">${item.tipoServico} - ${item.titulo}</h3>
+                <p style="color: #b0a0c0; font-size: 14px; margin-top: 4px;">📍 ${item.endereco}</p>
+                <p style="color: #d0c0e0; font-size: 13px; margin-top: 4px;">📅 Data: ${item.data}</p>
+            </div>
+            <button class="btn btn-outline" onclick="window.mostrarToast('Detalhes da solicitação #${item.id}')">Ver Detalhes</button>
+        </div>
+    `).join('');
+};
+
+window.solicitarServicoCatalogo = function(nome) {
+    window.showPage('request');
+    setTimeout(() => {
+        const select = document.getElementById('selectTipoServico');
+        if (select) {
+            let encontrado = false;
+            for (let opt of select.options) {
+                if (opt.value.toLowerCase() === nome.toLowerCase()) {
+                    select.value = opt.value;
+                    encontrado = true;
+                    break;
+                }
+            }
+            if (!encontrado) {
+                select.value = 'Outros';
+                verificarOutroServico(select);
+                const inputCustom = document.getElementById('reqTipoServicoCustom');
+                if (inputCustom) inputCustom.value = nome;
+            }
+        }
+    }, 100);
+};
+
+window.filtrarCatalogoServicos = function() {
+    const input = document.getElementById('inputBuscaCatalogo');
+    const filtro = input ? input.value.toLowerCase().trim() : '';
+    const cards = document.querySelectorAll('#container-catalogo-servicos .catalog-card');
+    const msgSemResultados = document.getElementById('semResultadosBusca');
+
+    let visiveis = 0;
+    cards.forEach(card => {
+        const dataNome = card.getAttribute('data-nome') || '';
+        const titulo = card.querySelector('h3') ? card.querySelector('h3').textContent.toLowerCase() : '';
+        if (dataNome.includes(filtro) || titulo.includes(filtro)) {
+            card.style.display = 'flex';
+            visiveis++;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+
+    if (msgSemResultados) {
+        msgSemResultados.style.display = (visiveis === 0) ? 'block' : 'none';
+    }
+};
+
+window.atualizarEstadoNavbar = function() {
+    const navAuthBtn = document.getElementById('nav-auth-btn');
+    if (!navAuthBtn) return;
+    const usuarioSalvo = localStorage.getItem('usuarioLogado');
+
+    if (usuarioSalvo) {
+        navAuthBtn.textContent = 'Sair';
+        navAuthBtn.style.backgroundColor = 'rgba(255, 77, 77, 0.2)';
+        navAuthBtn.style.color = '#ff4d4d';
+        navAuthBtn.style.border = '1px solid #ff4d4d';
+    } else {
+        navAuthBtn.textContent = 'Entrar';
+        navAuthBtn.style.backgroundColor = '#ffaa00';
+        navAuthBtn.style.color = '#1a0033';
+        navAuthBtn.style.border = 'none';
+    }
+};
+
+window.tratarCliqueAuthNav = function() {
+    if (localStorage.getItem('usuarioLogado')) {
+        window.logout();
+    } else {
+        window.showPage('login');
+    }
+};
+
+window.showPage = function(pageId, isBack = false) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const target = document.getElementById(pageId);
+    if (target) {
+        target.classList.add('active');
+        window.scrollTo(0, 0);
+        if (!isBack && window.historicoPaginas[window.historicoPaginas.length - 1] !== pageId) {
+            window.historicoPaginas.push(pageId);
+        }
+    }
+    window.atualizarEstadoNavbar();
+};
+
+window.voltarTelaAnterior = function() {
+    if (window.historicoPaginas.length > 1) {
+        window.historicoPaginas.pop();
+        window.showPage(window.historicoPaginas[window.historicoPaginas.length - 1], true);
+    } else {
+        window.showPage('home', true);
+    }
+};
+
+window.redirecionarDashboard = function() {
+    const usuarioSalvo = localStorage.getItem('usuarioLogado');
+    if (!usuarioSalvo) {
+        window.showPage('login');
+        return;
+    }
+    try {
+        const usuario = JSON.parse(usuarioSalvo);
+        if (usuario.tipo === 'prestador') {
+            window.showPage('dashboard-prestador');
+        } else {
+            window.showPage('dashboard-solicitante');
+        }
+    } catch (e) {
+        window.showPage('login');
+    }
+};
+
+window.alternarModoPerfil = function(novoModo) {
+    const usuarioSalvo = localStorage.getItem('usuarioLogado');
+    if (!usuarioSalvo) return;
+    let usuario = JSON.parse(usuarioSalvo);
+    usuario.tipo = novoModo;
+    localStorage.setItem('usuarioLogado', JSON.stringify(usuario));
+    window.redirecionarDashboard();
+};
+
+window.logout = function() {
+    localStorage.removeItem('usuarioLogado');
+    window.mostrarToast('Sessão encerrada');
+    window.showPage('home');
+};
+
+window.alternarAbaPrestador = function(aba) {
+    const abaServicos = document.getElementById('aba-prestador-servicos');
+    const abaAgenda = document.getElementById('aba-prestador-agenda');
+    const btnServicos = document.getElementById('btn-menu-servicos');
+    const btnAgenda = document.getElementById('btn-menu-agenda');
+
+    if (aba === 'agenda') {
+        if (abaServicos) abaServicos.style.display = 'none';
+        if (abaAgenda) abaAgenda.style.display = 'block';
+        if (btnServicos) btnServicos.classList.remove('active');
+        if (btnAgenda) btnAgenda.classList.add('active');
+        window.renderizarAgenda();
+    } else {
+        if (abaServicos) abaServicos.style.display = 'block';
+        if (abaAgenda) abaAgenda.style.display = 'none';
+        if (btnServicos) btnServicos.classList.add('active');
+        if (btnAgenda) btnAgenda.classList.remove('active');
+    }
+};
+
+window.renderizarAgenda = function(filtro = 'todos') {
+    const container = document.getElementById('container-agenda-itens');
+    if (!container) return;
+
+    let itens = window.compromissosAgenda;
+    if (filtro === 'hoje') {
+        itens = window.compromissosAgenda.filter(i => i.tipoData === 'hoje');
+    } else if (filtro === 'proximos') {
+        itens = window.compromissosAgenda.filter(i => i.tipoData === 'proximos');
+    }
+
+    if (itens.length === 0) {
+        container.innerHTML = `<div style="background: #1a0033; padding: 30px; border-radius: 10px; text-align: center; color: #b0a0c0;"><p>Nenhum compromisso agendado.</p></div>`;
+        return;
+    }
+
+    container.innerHTML = itens.map(item => `
+        <div class="order-card">
+            <div>
+                <span class="status">${item.status}</span>
+                <h3 style="margin-top: 8px;">${item.titulo}</h3>
+                <p style="color: #b0a0c0; font-size: 14px;"><strong>Cliente:</strong> ${item.cliente} • 📍 ${item.endereco}</p>
+                <p style="color: #ffaa00; font-size: 14px; font-weight: bold;">📅 ${item.dataHora} • 💰 ${item.valor}</p>
+            </div>
+            <button class="btn btn-primary" onclick="window.mostrarToast('Serviço concluído')">Concluir</button>
+        </div>
+    `).join('');
+};
+
+window.filtrarAgenda = function(filtro, el) {
+    el.parentElement.querySelectorAll('.filter').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    window.renderizarAgenda(filtro);
+};
+
+window.toggleCamposPrestador = function() {
+    const regTipo = document.getElementById('regTipo');
+    const camposPrestador = document.getElementById('campos-prestador');
+    if (regTipo && camposPrestador) {
+        camposPrestador.style.display = (regTipo.value === 'prestador') ? 'grid' : 'none';
+    }
+};
+
+window.carregarDadosPerfil = function() {
+    const usuarioSalvo = localStorage.getItem('usuarioLogado');
+    if (!usuarioSalvo) {
+        window.showPage('login');
+        return;
+    }
+    const usuario = JSON.parse(usuarioSalvo);
+    document.getElementById('perfilNome').value = usuario.nome || '';
+    document.getElementById('perfilEmail').value = usuario.email || '';
+    document.getElementById('perfilTelefone').value = usuario.telefone || '';
+    document.getElementById('perfilEndereco').value = usuario.endereco_completo || '';
+    window.showPage('meu-perfil');
+};
+
+window.atualizarPerfil = function(event) {
+    event.preventDefault();
+    const usuarioSalvo = localStorage.getItem('usuarioLogado');
+    if (!usuarioSalvo) return;
+    let usuario = JSON.parse(usuarioSalvo);
+    usuario.nome = document.getElementById('perfilNome').value;
+    usuario.email = document.getElementById('perfilEmail').value;
+    usuario.telefone = document.getElementById('perfilTelefone').value;
+    usuario.endereco_completo = document.getElementById('perfilEndereco').value;
+    localStorage.setItem('usuarioLogado', JSON.stringify(usuario));
+    window.mostrarToast('Perfil atualizado com sucesso!');
+    window.redirecionarDashboard();
+};
+
+window.login = function(event) {
+    event.preventDefault();
+    const usuarioInput = document.getElementById('loginUsuario').value.trim();
+    if (!usuarioInput) return;
+    const usuarioMock = {
+        nome: usuarioInput,
+        tipo: usuarioInput.toLowerCase().includes('prestador') ? 'prestador' : 'solicitante',
+        email: `${usuarioInput.toLowerCase()}@email.com`
+    };
+    localStorage.setItem('usuarioLogado', JSON.stringify(usuarioMock));
+    window.mostrarToast(`Bem-vindo(a), ${usuarioMock.nome}!`);
+    window.redirecionarDashboard();
+};
+
+window.register = function(event) {
+    event.preventDefault();
+    const nome = document.getElementById('regNome').value;
     const tipo = document.getElementById('regTipo').value;
-    const nome = document.getElementById('regNome').value.trim();
-    const email = document.getElementById('regEmail').value.trim();
-    const cpf = document.getElementById('regCpf').value.trim();
-    const rg = document.getElementById('regRg').value.trim();
-    const data_nascimento = document.getElementById('regNascimento').value;
-    const telefone = document.getElementById('regTelefone').value.trim();
-    const estado_civil = document.getElementById('regEstadoCivil') ? document.getElementById('regEstadoCivil').value : 'Não informado';
-    const endereco = document.getElementById('regEndereco').value.trim();
-    const senha = document.getElementById('regSenha').value;
-    const senha2 = document.getElementById('regSenha2').value;
-
-    if (!tipo) {
-        if (errorElement) errorElement.textContent = 'Por favor, selecione se deseja solicitar serviços ou ser prestador.';
-        return;
-    }
-
-    if (senha !== senha2) {
-        if (errorElement) errorElement.textContent = 'As senhas não coincidem!';
-        return;
-    }
-
-    try {
-        let endpoint = '';
-        let payload = {};
-
-        if (tipo === 'solicitante') {
-            endpoint = `${API_BASE_URL}/solicitantes`;
-            payload = {
-                nome,
-                cpf,
-                rg,
-                email,
-                data_nascimento,
-                telefone,
-                senha,
-                endereco,
-                estado_civil
-            };
-        } else if (tipo === 'prestador') {
-            endpoint = `${API_BASE_URL}/prestadores`;
-            
-            // Captação tratada de campos específicos do Prestador
-            const regProfissao = document.getElementById('regProfissao');
-            const regExperiencia = document.getElementById('regExperiencia');
-            const regEscolaridade = document.getElementById('regEscolaridade');
-            const regCnh = document.getElementById('regCnh');
-            const regSexo = document.getElementById('regSexo');
-            const regValorMin = document.getElementById('regValorMin');
-            const regValorMax = document.getElementById('regValorMax');
-            const regDisponibilidade = document.getElementById('regDisponibilidade');
-            const regDescricaoFuncoes = document.getElementById('regDescricaoFuncoes');
-            const regEquipamentos = document.getElementById('regEquipamentos');
-
-            payload = {
-                nome,
-                email,
-                cpf,
-                rg,
-                cnh: regCnh ? regCnh.value.trim() : '',
-                sexo: regSexo ? regSexo.value : 'Não informado',
-                data_nascimento,
-                telefone,
-                escolaridade: regEscolaridade ? regEscolaridade.value.trim() : 'Não informada',
-                endereco_completo: endereco, // Mapeado para a coluna do banco de dados
-                profissao_funcao: (regProfissao && regProfissao.value.trim()) ? regProfissao.value.trim() : 'Serviços Gerais',
-                experiencia: regExperiencia ? regExperiencia.value : 'intermediário',
-                descricao_funcoes: (regDescricaoFuncoes && regDescricaoFuncoes.value.trim()) ? regDescricaoFuncoes.value.trim() : 'Prestação de serviços gerais.',
-                possui_equipamentos: regEquipamentos ? regEquipamentos.checked : true,
-                valor_minimo: regValorMin ? parseFloat(regValorMin.value) || 50.00 : 50.00,
-                valor_maximo: regValorMax ? parseFloat(regValorMax.value) || 200.00 : 200.00,
-                antecedentes_criminais: 'Nada consta',
-                disponibilidade_horario: (regDisponibilidade && regDisponibilidade.value.trim()) ? regDisponibilidade.value.trim() : 'A combinar'
-            };
-        }
-
-        const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.erro || 'Erro ao realizar cadastro.');
-        }
-
-        alert('Conta criada com sucesso!');
-        showPage('login');
-
-    } catch (error) {
-        if (errorElement) {
-            errorElement.textContent = error.message;
-        } else {
-            alert('Erro: ' + error.message);
-        }
-    }
-}
-
-// ======================================================
-// LOGIN DE USUÁRIO
-// ======================================================
-async function login(event) {
-    event.preventDefault();
-
-    const errorElement = document.getElementById('loginError');
-    if (errorElement) errorElement.textContent = '';
-
-    const usuario = document.getElementById('loginUsuario').value.trim();
-    const senha = document.getElementById('loginSenha').value;
-
-    if (!usuario || !senha) {
-        if (errorElement) errorElement.textContent = 'Preencha usuário e senha.';
-        return;
-    }
-
-    try {
-        // Redirecionamento temporário para o painel principal até a criação do middleware JWT
-        alert(`Bem-vindo(a) de volta!`);
-        showPage('dashboard');
-    } catch (error) {
-        if (errorElement) errorElement.textContent = error.message;
-    }
-}
-
-// ======================================================
-// CRIAÇÃO E ENVIO DE SOLICITAÇÃO DE SERVIÇO
-// ======================================================
-async function submitRequest(event) {
-    event.preventDefault();
-
-    const form = event.target;
-    const tipoServicoSelect = form.querySelector('select');
-    const tituloInput = form.querySelector('input[type="text"]');
-    const descricaoTextarea = form.querySelector('textarea');
-    const dataInput = form.querySelector('input[type="date"]');
-    const enderecoInput = form.querySelectorAll('input[type="text"]')[1];
-
-    const payload = {
-        id_solicitante: 1, // ID temporário até integrar o ID do usuário logado
-        id_tipo_servico: 1, // ID fixo de exemplo para testes da rota
-        cod_prestador: 1,
-        data_servico: dataInput ? dataInput.value : new Date().toISOString().split('T')[0],
-        horario: '14:00',
-        endereco: enderecoInput ? enderecoInput.value : 'Endereço padrão',
-        descricao: descricaoTextarea ? descricaoTextarea.value : '',
-        valor_combinado: 100.00
+    const usuarioMock = {
+        nome: nome,
+        tipo: tipo,
+        email: document.getElementById('regEmail').value,
+        telefone: document.getElementById('regTelefone').value
     };
+    localStorage.setItem('usuarioLogado', JSON.stringify(usuarioMock));
+    window.mostrarToast('Conta criada com sucesso!');
+    window.redirecionarDashboard();
+};
 
-    try {
-        const response = await fetch(`${API_BASE_URL}/solicitacoes`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.erro || 'Erro ao criar solicitação.');
-        }
-
-        alert('Solicitação realizada com sucesso!');
-        showPage('dashboard');
-    } catch (error) {
-        alert('Erro ao solicitar serviço: ' + error.message);
-    }
-}
-
-// ======================================================
-// UPLOAD E SELEÇÃO DE FOTOS
-// ======================================================
-function mostrarFotos(input) {
-    const info = document.getElementById('fotosInfo');
-    if (info && input.files.length > 0) {
-        info.textContent = `${input.files.length} foto(s) selecionada(s)`;
-    }
-}
-
-function selectProvider(nomePrestador) {
-    alert(`Você selecionou o perfil de: ${nomePrestador}`);
-}
-
-function verDetalhes() {
-    alert('Detalhes do pedido em desenvolvimento.');
-}
-
-// ======================================================
-// FUNÇÕES AUXILIARES DE TESTE DA API (PAINEL INTERNO)
-// ======================================================
-async function listar(endpoint, resultElementId) {
-    const resContainer = document.getElementById(resultElementId);
-    try {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`);
-        const data = await response.json();
-        if (resContainer) resContainer.textContent = JSON.stringify(data, null, 2);
-    } catch (error) {
-        if (resContainer) resContainer.textContent = 'Erro ao consultar: ' + error.message;
-    }
-}
-
-async function cadastrarSolicitante() {
-    const payload = {
-        nome: document.getElementById('sol-nome').value,
-        cpf: document.getElementById('sol-cpf').value,
-        rg: document.getElementById('sol-rg').value,
-        email: document.getElementById('sol-email').value,
-        data_nascimento: document.getElementById('sol-data_nascimento').value,
-        telefone: document.getElementById('sol-telefone').value,
-        senha: document.getElementById('sol-senha').value,
-        estado_civil: document.getElementById('sol-estado_civil').value,
-        endereco: document.getElementById('sol-endereco').value
-    };
-
-    try {
-        const response = await fetch(`${API_BASE_URL}/solicitantes`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        const data = await response.json();
-        document.getElementById('res-solicitante').textContent = JSON.stringify(data, null, 2);
-    } catch (error) {
-        document.getElementById('res-solicitante').textContent = 'Erro: ' + error.message;
-    }
-}
-
-async function cadastrarPrestador() {
-    const payload = {
-        nome: document.getElementById('pres-nome').value,
-        email: document.getElementById('pres-email').value,
-        cpf: document.getElementById('pres-cpf').value,
-        rg: document.getElementById('pres-rg').value,
-        cnh: document.getElementById('pres-cnh').value,
-        sexo: document.getElementById('pres-sexo').value,
-        data_nascimento: document.getElementById('pres-data_nascimento').value,
-        telefone: document.getElementById('pres-telefone').value,
-        escolaridade: document.getElementById('pres-escolaridade').value,
-        profissao_funcao: document.getElementById('pres-profissao_funcao').value,
-        experiencia: document.getElementById('pres-experiencia').value,
-        valor_minimo: parseFloat(document.getElementById('pres-valor_minimo').value),
-        valor_maximo: parseFloat(document.getElementById('pres-valor_maximo').value),
-        disponibilidade_horario: document.getElementById('pres-disponibilidade_horario').value,
-        antecedentes_criminais: document.getElementById('pres-antecedentes_criminais').value,
-        possui_equipamentos: document.getElementById('pres-possui_equipamentos').checked,
-        endereco_completo: document.getElementById('pres-endereco_completo').value,
-        descricao_funcoes: document.getElementById('pres-descricao_funcoes').value
-    };
-
-    try {
-        const response = await fetch(`${API_BASE_URL}/prestadores`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        const data = await response.json();
-        document.getElementById('res-prestador').textContent = JSON.stringify(data, null, 2);
-    } catch (error) {
-        document.getElementById('res-prestador').textContent = 'Erro: ' + error.message;
-    }
-}
-
-async function cadastrarTipoServico() {
-    const payload = {
-        nome: document.getElementById('ts-nome').value,
-        descricao: document.getElementById('ts-descricao').value
-    };
-
-    try {
-        const response = await fetch(`${API_BASE_URL}/servicos`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        const data = await response.json();
-        document.getElementById('res-tipo-servico').textContent = JSON.stringify(data, null, 2);
-    } catch (error) {
-        document.getElementById('res-tipo-servico').textContent = 'Erro: ' + error.message;
-    }
-}
-
-async function vincularPrestadorServico() {
-    const codPrestador = document.getElementById('ps-cod_prestador').value;
-    const payload = {
-        id_tipo_servico: parseInt(document.getElementById('ps-id_tipo_servico').value)
-    };
-
-    try {
-        const response = await fetch(`${API_BASE_URL}/prestadores/${codPrestador}/servicos`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        const data = await response.json();
-        document.getElementById('res-prestador-servico').textContent = JSON.stringify(data, null, 2);
-    } catch (error) {
-        document.getElementById('res-prestador-servico').textContent = 'Erro: ' + error.message;
-    }
-}
-
-async function listarServicosDoPrestador() {
-    const codPrestador = document.getElementById('ps-cod_prestador').value;
-    listar(`/prestadores/${codPrestador}/servicos`, 'res-prestador-servico');
-}
-
-async function listarPrestadoresPorServico() {
-    const idServico = document.getElementById('sp-id_tipo_servico').value;
-    listar(`/servicos/${idServico}/prestadores`, 'res-servico-prestadores');
-}
-
-async function criarSolicitacao() {
-    const payload = {
-        id_solicitante: parseInt(document.getElementById('solic-id_solicitante').value),
-        id_tipo_servico: parseInt(document.getElementById('solic-id_tipo_servico').value),
-        cod_prestador: parseInt(document.getElementById('solic-cod_prestador').value),
-        data_servico: document.getElementById('solic-data_servico').value,
-        horario: document.getElementById('solic-horario').value,
-        valor_combinado: parseFloat(document.getElementById('solic-valor_combinado').value),
-        endereco: document.getElementById('solic-endereco').value,
-        descricao: document.getElementById('solic-descricao').value
-    };
-
-    try {
-        const response = await fetch(`${API_BASE_URL}/solicitacoes`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        const data = await response.json();
-        document.getElementById('res-solicitacao').textContent = JSON.stringify(data, null, 2);
-    } catch (error) {
-        document.getElementById('res-solicitacao').textContent = 'Erro: ' + error.message;
-    }
-}
-
-async function listarSolicitacoesSolicitante() {
-    const id = document.getElementById('solic-id_solicitante').value;
-    listar(`/solicitantes/${id}/solicitacoes`, 'res-solicitacao');
-}
-
-async function listarSolicitacoesPrestador() {
-    const id = document.getElementById('solic-cod_prestador').value;
-    listar(`/prestadores/${id}/solicitacoes`, 'res-solicitacao');
-}
-
-async function alterarStatusSolicitacao() {
-    const id = document.getElementById('solic-id_status').value;
-    const payload = {
-        status: document.getElementById('solic-novo_status').value
-    };
-
-    try {
-        const response = await fetch(`${API_BASE_URL}/solicitacoes/${id}/status`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        const data = await response.json();
-        document.getElementById('res-solicitacao').textContent = JSON.stringify(data, null, 2);
-    } catch (error) {
-        document.getElementById('res-solicitacao').textContent = 'Erro: ' + error.message;
-    }
-}
-
-// ======================================================
-// INICIALIZAÇÃO APÓS O CARREGAMENTO DO DOM
-// ======================================================
 document.addEventListener('DOMContentLoaded', () => {
-    // Garante que a página inicial ativa é 'home'
-    showPage('home');
+    // Garante a verificação correta do estado da sessão logo ao carregar a página
+    window.atualizarEstadoNavbar();
+    window.showPage('home');
 });
