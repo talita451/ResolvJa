@@ -12,7 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 // Importa as rotas
-const routes = require('./router');
+const routes = require('./src/routes');
 
 // Todas as rotas começam com /api
 app.use('/api', routes);
