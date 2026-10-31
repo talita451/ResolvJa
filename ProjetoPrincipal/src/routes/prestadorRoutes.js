@@ -5,7 +5,7 @@ const prestadorController = require('../controllers/prestadorController');
 // Rota para cadastrar prestador (POST /api/prestadores)
 router.post('/', prestadorController.cadastrar);
 
-// Rota para listar todos os prestadores (GET /api/prestadores)
+// Rota para listar todos os prestadores do banco (GET /api/prestadores)
 router.get('/', prestadorController.listar);
 
 // Rota para vincular serviço ao prestador (POST /api/prestadores/:id/servicos)

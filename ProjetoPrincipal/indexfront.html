@@ -414,7 +414,7 @@
           <h2>Catálogo de Serviços Domésticos</h2>
         </div>
 
-        <!-- GRID DE CATÁLOGO COMPLETO (TODOS OS 23 ITENS) -->
+        <!-- GRID DE CATÁLOGO COMPLETO -->
         <div class="catalog-grid" id="container-catalogo-servicos">
           
           <div class="catalog-card" data-nome="trocar lâmpada eletrica iluminação luminaria teto">
@@ -813,24 +813,7 @@
             </div>
           </div>
 
-          <div class="quick-grid">
-            <div class="quick-card">
-              <strong style="font-size: 24px; color: #ffaa00; display: block;">2</strong>
-              <span>Novas Solicitações</span>
-            </div>
-            <div class="quick-card">
-              <strong style="font-size: 24px; color: #00e676; display: block;">1</strong>
-              <span>Em Andamento</span>
-            </div>
-            <div class="quick-card">
-              <strong style="font-size: 24px; color: #ffffff; display: block;">15</strong>
-              <span>Concluídos este mês</span>
-            </div>
-            <div class="quick-card">
-              <strong style="font-size: 24px; color: #ffaa00; display: block;">⭐ 4.9</strong>
-              <span>Sua Avaliação</span>
-            </div>
-          </div>
+          <div id="container-solicitacoes-prestador" style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;"></div>
         </div>
 
         <div id="aba-prestador-agenda" style="display: none;">
@@ -1006,20 +989,8 @@
           <button class="filter" data-sort="price">💰 Menor preço</button>
         </div>
 
-        <div class="providers-list">
-          <div class="provider-card" data-order="0" data-rating="4.9" data-dist="3.2" data-price="80">
-            <div class="avatar">C</div>
-            <div class="provider-info">
-              <h3>Carlos Silva</h3>
-              <p>Hidráulica • Elétrica</p>
-              <div class="provider-details">
-                <span>⭐ 4,9</span>
-                <span>📍 3,2 km</span>
-              </div>
-              <div class="price">A partir de R$ 80</div>
-            </div>
-            <button class="btn btn-outline" onclick="mostrarToast('Perfil de Carlos Silva selecionado')">Ver perfil</button>
-          </div>
+        <div class="providers-list" id="container-lista-prestadores">
+          <!-- Carregado via script do Banco de Dados PostgreSQL -->
         </div>
       </div>
     </div>

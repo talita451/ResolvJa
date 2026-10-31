@@ -1,10 +1,14 @@
+/* ==========================================
+   CONFIGURAções GLOBAIS E ESTADO INICIAL
+   ========================================== */
 const API_BASE_URL = 'http://localhost:3000/api';
 window.historicoPaginas = ['home'];
 
+// Dados mockados iniciais para a Agenda do Prestador
 window.compromissosAgenda = [
     {
         id: 1,
-        titulo: 'Instalação de 3 Tomadas 220V',
+        titulo: 'Instalação de Tomada 220V',
         cliente: 'Carlos Roberto',
         endereco: 'Rua Principal, 102 - Centro',
         dataHora: 'Hoje às 14:00',
@@ -14,6 +18,9 @@ window.compromissosAgenda = [
     }
 ];
 
+/* ==========================================
+   SISTEMA DE NOTIFICAÇÕES (TOAST)
+   ========================================== */
 window.mostrarToast = function(mensagem) {
     const toast = document.getElementById('toast-central');
     if (!toast) return;
@@ -22,13 +29,15 @@ window.mostrarToast = function(mensagem) {
     setTimeout(() => toast.classList.remove('active'), 2200);
 };
 
+/* ==========================================
+   MÁSCARAS E INTEGRAÇÃO VIACEP
+   ========================================== */
 window.mascaraCep = function(input) {
     let valor = input.value.replace(/\D/g, '');
     if (valor.length > 5) valor = valor.replace(/^(\d{5})(\d)/, '$1-$2');
     input.value = valor;
 };
 
-// BUSCA DE CEP PARA SOLICITAÇÃO
 window.buscarEnderecoPorCep = async function() {
     const cepInput = document.getElementById('reqCep');
     if (!cepInput) return;
@@ -38,21 +47,17 @@ window.buscarEnderecoPorCep = async function() {
     try {
         const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
         const data = await response.json();
-        if (data.erro) {
-            window.mostrarToast('CEP não encontrado.');
-            return;
-        }
+        if (data.erro) { window.mostrarToast('CEP não encontrado.'); return; }
         document.getElementById('reqRua').value = data.logradouro || '';
         document.getElementById('reqBairro').value = data.bairro || '';
         document.getElementById('reqCidade').value = `${data.localidade} - ${data.uf}`;
         document.getElementById('reqNumero').focus();
         window.mostrarToast('Endereço carregado com sucesso!');
     } catch (e) {
-        window.mostrarToast('Erro ao buscar o CEP');
+        window.mostrarToast('Erro ao buscar o CEP.');
     }
 };
 
-// BUSCA DE CEP PARA CADASTRO
 window.buscarCepCadastro = async function() {
     const cepInput = document.getElementById('regCep');
     if (!cepInput) return;
@@ -62,25 +67,23 @@ window.buscarCepCadastro = async function() {
     try {
         const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
         const data = await response.json();
-        if (data.erro) {
-            window.mostrarToast('CEP não encontrado.');
-            return;
-        }
+        if (data.erro) { window.mostrarToast('CEP não encontrado.'); return; }
         document.getElementById('regRua').value = data.logradouro || '';
         document.getElementById('regBairro').value = data.bairro || '';
         document.getElementById('regCidade').value = `${data.localidade} - ${data.uf}`;
         document.getElementById('regNumero').focus();
-        window.mostrarToast('Endereço de cadastro preenchido!');
+        window.mostrarToast('Endereço preenchido!');
     } catch (e) {
-        window.mostrarToast('Erro ao buscar CEP');
+        window.mostrarToast('Erro ao buscar CEP.');
     }
 };
 
-// VERIFICAR OUTRO SERVIÇO
+/* ==========================================
+   CATÁLOGO DE SERVIÇOS E PESQUISA
+   ========================================== */
 window.verificarOutroServico = function(select) {
     const containerNovo = document.getElementById('container-novo-servico');
     const inputCustom = document.getElementById('reqTipoServicoCustom');
-    
     if (select.value === 'Outros') {
         if (containerNovo) containerNovo.style.display = 'flex';
         if (inputCustom) inputCustom.setAttribute('required', 'true');
@@ -90,10 +93,45 @@ window.verificarOutroServico = function(select) {
     }
 };
 
-// CADASTRAR NOVO SERVIÇO (FUNÇÃO + SOLICITAÇÃO)
+window.filtrarCatalogoServicos = function() {
+    const input = document.getElementById('inputBuscaCatalogo');
+    const filtro = input ? input.value.toLowerCase().trim() : '';
+    const cards = document.querySelectorAll('#container-catalogo-servicos .catalog-card');
+    const semResultados = document.getElementById('semResultadosBusca');
+    let encontrados = 0;
+
+    cards.forEach(card => {
+        const dataNome = card.getAttribute('data-nome') || '';
+        const titulo = card.querySelector('h3') ? card.querySelector('h3').textContent.toLowerCase() : '';
+        if (dataNome.includes(filtro) || titulo.includes(filtro)) {
+            card.style.display = 'flex';
+            encontrados++;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+
+    if (semResultados) {
+        semResultados.style.display = (encontrados === 0) ? 'block' : 'none';
+    }
+};
+
+window.solicitarServicoCatalogo = function(nome) {
+    window.showPage('request');
+    setTimeout(() => {
+        const select = document.getElementById('selectTipoServico');
+        if (select) {
+            select.value = nome;
+            window.verificarOutroServico(select);
+        }
+    }, 100);
+};
+
+/* ==========================================
+   SOLICITAÇÕES E GESTÃO DE PEDIDOS
+   ========================================== */
 window.submitRequest = async function(event) {
     event.preventDefault();
-
     const selectTipo = document.getElementById('selectTipoServico');
     let tipoServico = selectTipo ? selectTipo.value : 'Outros';
 
@@ -105,52 +143,29 @@ window.submitRequest = async function(event) {
     const titulo = document.getElementById('reqTitulo').value.trim();
     const descricao = document.getElementById('reqDescricao').value.trim();
     const dataServico = document.getElementById('reqData').value;
-    
-    const rua = document.getElementById('reqRua').value;
-    const numero = document.getElementById('reqNumero').value;
-    const bairro = document.getElementById('reqBairro').value;
-    const cidade = document.getElementById('reqCidade').value;
-    const endereco = `${rua}, ${numero} - ${bairro}, ${cidade}`;
+    const endereco = `${document.getElementById('reqRua').value}, ${document.getElementById('reqNumero').value} - ${document.getElementById('reqBairro').value}, ${document.getElementById('reqCidade').value}`;
 
     const novaSolicitacao = {
         id: Date.now(),
-        tipoServico: tipoServico,
-        titulo: titulo,
-        descricao: descricao,
+        tipoServico,
+        titulo,
+        descricao,
         data: dataServico,
-        endereco: endereco,
-        status: 'EM ANDAMENTO'
+        endereco,
+        status: 'DISPONÍVEL'
     };
 
-    let solicitacoesSalvas = JSON.parse(localStorage.getItem('minhasSolicitacoes') || '[]');
-    solicitacoesSalvas.push(novaSolicitacao);
-    localStorage.setItem('minhasSolicitacoes', JSON.stringify(solicitacoesSalvas));
+    let solicitacoesGerais = JSON.parse(localStorage.getItem('resolvja_solicitacoes_geral') || '[]');
+    solicitacoesGerais.push(novaSolicitacao);
+    localStorage.setItem('resolvja_solicitacoes_geral', JSON.stringify(solicitacoesGerais));
 
-    adicionarNovaFuncaoAoCatalogo(tipoServico);
+    let minhasSol = JSON.parse(localStorage.getItem('minhasSolicitacoes') || '[]');
+    minhasSol.push(novaSolicitacao);
+    localStorage.setItem('minhasSolicitacoes', JSON.stringify(minhasSol));
 
-    window.mostrarToast('Nova função e solicitação criadas com sucesso!');
+    window.mostrarToast('Nova solicitação criada com sucesso!');
     window.carregarMinhasSolicitacoes();
 };
-
-function adicionarNovaFuncaoAoCatalogo(nomeServico) {
-    const container = document.getElementById('container-catalogo-servicos');
-    if (!container) return;
-
-    const novoCard = document.createElement('div');
-    novoCard.className = 'catalog-card';
-    novoCard.setAttribute('data-nome', nomeServico.toLowerCase());
-    novoCard.innerHTML = `
-        <div class="catalog-body">
-            <h3>${nomeServico}</h3>
-            <p>Nova função cadastrada por solicitação personalizada.</p>
-            <div class="catalog-footer">
-                <span class="catalog-price">Valor <strong>A combinar</strong></span>
-                <button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('${nomeServico}')">Solicitar</button>
-            </div>
-        </div>
-    `;
-    container.prepend(novoCard);
-}
 
 window.carregarMinhasSolicitacoes = function() {
     window.showPage('minhas-solicitacoes');
@@ -158,75 +173,173 @@ window.carregarMinhasSolicitacoes = function() {
     if (!container) return;
 
     const solicitacoes = JSON.parse(localStorage.getItem('minhasSolicitacoes') || '[]');
-
     if (solicitacoes.length === 0) {
-        container.innerHTML = `
-            <div style="background: #1a0033; padding: 30px; border-radius: 10px; text-align: center; color: #b0a0c0;">
-                <p>Ainda não tens nenhuma solicitação criada.</p>
-            </div>
-        `;
+        container.innerHTML = `<div class="order-card"><p>Ainda não tens nenhuma solicitação criada.</p></div>`;
         return;
     }
 
     container.innerHTML = solicitacoes.map(item => `
-        <div class="order-card" style="background: #1a0033; border: 1px solid rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
+        <div class="order-card">
             <div>
-                <span class="status" style="background: rgba(255, 170, 0, 0.2); color: #ffaa00; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">${item.status}</span>
-                <h3 style="margin-top: 8px; color: #fff;">${item.tipoServico} - ${item.titulo}</h3>
-                <p style="color: #b0a0c0; font-size: 14px; margin-top: 4px;">📍 ${item.endereco}</p>
-                <p style="color: #d0c0e0; font-size: 13px; margin-top: 4px;">📅 Data: ${item.data}</p>
+                <span class="status">${item.status}</span>
+                <h3 style="margin-top: 8px;">${item.tipoServico} - ${item.titulo}</h3>
+                <p style="color: #b0a0c0; font-size: 14px;">📍 ${item.endereco}</p>
+                <p style="color: #d0c0e0; font-size: 13px;">📅 Data: ${item.data}</p>
             </div>
-            <button class="btn btn-outline" onclick="window.mostrarToast('Detalhes da solicitação #${item.id}')">Ver Detalhes</button>
         </div>
     `).join('');
 };
 
-window.solicitarServicoCatalogo = function(nome) {
-    window.showPage('request');
-    setTimeout(() => {
-        const select = document.getElementById('selectTipoServico');
-        if (select) {
-            let encontrado = false;
-            for (let opt of select.options) {
-                if (opt.value.toLowerCase() === nome.toLowerCase()) {
-                    select.value = opt.value;
-                    encontrado = true;
-                    break;
-                }
-            }
-            if (!encontrado) {
-                select.value = 'Outros';
-                verificarOutroServico(select);
-                const inputCustom = document.getElementById('reqTipoServicoCustom');
-                if (inputCustom) inputCustom.value = nome;
-            }
-        }
-    }, 100);
+window.carregarSolicitacoesParaPrestador = function() {
+    const container = document.getElementById('container-solicitacoes-prestador');
+    if (!container) return;
+
+    const solicitacoesGerais = JSON.parse(localStorage.getItem('resolvja_solicitacoes_geral') || '[]');
+    const disponiveis = solicitacoesGerais.filter(s => s.status === 'DISPONÍVEL');
+
+    if (disponiveis.length === 0) {
+        container.innerHTML = `<div class="order-card"><p>Nenhuma nova solicitação disponível no momento.</p></div>`;
+        return;
+    }
+
+    container.innerHTML = disponiveis.map(item => `
+        <div class="order-card">
+            <div>
+                <span class="status">NOVA SOLICITAÇÃO</span>
+                <h3 style="margin-top: 8px;">${item.tipoServico} - ${item.titulo}</h3>
+                <p style="color: #b0a0c0; font-size: 14px;">📝 ${item.descricao}</p>
+                <p style="color: #b0a0c0; font-size: 13px;">📍 ${item.endereco}</p>
+            </div>
+            <button class="btn btn-primary" onclick="prestadorAceitarServico(${item.id})">Aceitar</button>
+        </div>
+    `).join('');
 };
 
-window.filtrarCatalogoServicos = function() {
-    const input = document.getElementById('inputBuscaCatalogo');
-    const filtro = input ? input.value.toLowerCase().trim() : '';
-    const cards = document.querySelectorAll('#container-catalogo-servicos .catalog-card');
-    const msgSemResultados = document.getElementById('semResultadosBusca');
-
-    let visiveis = 0;
-    cards.forEach(card => {
-        const dataNome = card.getAttribute('data-nome') || '';
-        const titulo = card.querySelector('h3') ? card.querySelector('h3').textContent.toLowerCase() : '';
-        if (dataNome.includes(filtro) || titulo.includes(filtro)) {
-            card.style.display = 'flex';
-            visiveis++;
-        } else {
-            card.style.display = 'none';
+window.prestadorAceitarServico = function(idSolicitacao) {
+    let solicitacoesGerais = JSON.parse(localStorage.getItem('resolvja_solicitacoes_geral') || '[]');
+    solicitacoesGerais = solicitacoesGerais.map(item => {
+        if (item.id === idSolicitacao) {
+            item.status = 'EM ANDAMENTO';
+            window.compromissosAgenda.push({
+                id: item.id,
+                titulo: `${item.tipoServico} - ${item.titulo}`,
+                cliente: 'Cliente ResolvaJá',
+                endereco: item.endereco,
+                dataHora: item.data,
+                tipoData: 'proximos',
+                valor: 'A combinar',
+                status: 'CONFIRMADO'
+            });
         }
+        return item;
     });
+    localStorage.setItem('resolvja_solicitacoes_geral', JSON.stringify(solicitacoesGerais));
+    window.mostrarToast('Serviço aceito e adicionado à agenda!');
+    window.carregarSolicitacoesParaPrestador();
+};
 
-    if (msgSemResultados) {
-        msgSemResultados.style.display = (visiveis === 0) ? 'block' : 'none';
+/* ==========================================
+   AGENDA DO PRESTADOR
+   ========================================== */
+window.renderizarAgenda = function(filtro = 'todos') {
+    const container = document.getElementById('container-agenda-itens');
+    if (!container) return;
+
+    let itens = window.compromissosAgenda;
+    if (filtro === 'hoje') {
+        itens = window.compromissosAgenda.filter(i => i.tipoData === 'hoje');
+    } else if (filtro === 'proximos') {
+        itens = window.compromissosAgenda.filter(i => i.tipoData === 'proximos');
+    }
+
+    if (itens.length === 0) {
+        container.innerHTML = `<div class="order-card"><p>Nenhum compromisso agendado para este filtro.</p></div>`;
+        return;
+    }
+
+    container.innerHTML = itens.map(item => `
+        <div class="order-card">
+            <div>
+                <span class="status">${item.status}</span>
+                <h3 style="margin-top: 8px;">${item.titulo}</h3>
+                <p style="color: #b0a0c0; font-size: 14px;"><strong>Cliente:</strong> ${item.cliente} • 📍 ${item.endereco}</p>
+                <p style="color: #ffaa00; font-size: 14px; font-weight: bold;">📅 ${item.dataHora} • 💰 ${item.valor}</p>
+            </div>
+            <button class="btn btn-primary" onclick="window.mostrarToast('Serviço concluído com sucesso!')">Concluir</button>
+        </div>
+    `).join('');
+};
+
+window.filtrarAgenda = function(filtro, el) {
+    el.parentElement.querySelectorAll('.filter').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    window.renderizarAgenda(filtro);
+};
+
+window.alternarAbaPrestador = function(aba) {
+    const abaServicos = document.getElementById('aba-prestador-servicos');
+    const abaAgenda = document.getElementById('aba-prestador-agenda');
+    const btnServicos = document.getElementById('btn-menu-servicos');
+    const btnAgenda = document.getElementById('btn-menu-agenda');
+
+    if (aba === 'agenda') {
+        if (abaServicos) abaServicos.style.display = 'none';
+        if (abaAgenda) abaAgenda.style.display = 'block';
+        if (btnServicos) btnServicos.classList.remove('active');
+        if (btnAgenda) btnAgenda.classList.add('active');
+        window.renderizarAgenda();
+    } else {
+        if (abaServicos) abaServicos.style.display = 'block';
+        if (abaAgenda) abaAgenda.style.display = 'none';
+        if (btnServicos) btnServicos.classList.add('active');
+        if (btnAgenda) btnAgenda.classList.remove('active');
+        window.carregarSolicitacoesParaPrestador();
     }
 };
 
+/* ==========================================
+   BUSCAR PRESTADORES DO BANCO DE DADOS
+   ========================================== */
+window.carregarPrestadores = async function() {
+    const container = document.getElementById('container-lista-prestadores');
+    if (!container) return;
+
+    container.innerHTML = `<div class="order-card"><p>Carregando prestadores do banco de dados...</p></div>`;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/prestadores`);
+        if (!response.ok) throw new Error('Erro na resposta do servidor');
+
+        const prestadoresBanco = await response.json();
+
+        if (!prestadoresBanco || prestadoresBanco.length === 0) {
+            container.innerHTML = `<div class="order-card"><p>Nenhum prestador cadastrado no banco de dados.</p></div>`;
+            return;
+        }
+
+        container.innerHTML = prestadoresBanco.map(p => `
+            <div class="provider-card">
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div class="avatar">${p.nome ? p.nome.charAt(0).toUpperCase() : 'P'}</div>
+                    <div class="provider-info">
+                        <h3>${p.nome}</h3>
+                        <p style="color: #b0a0c0; font-size: 14px;">${p.profissao_funcao || 'Prestador de Serviços'}</p>
+                        <p style="color: #00e676; font-weight: bold; margin-top: 4px;">A partir de R$ ${p.valor_minimo ? Number(p.valor_minimo).toFixed(2) : '80,00'}</p>
+                    </div>
+                </div>
+                <button class="btn btn-outline" onclick="window.mostrarToast('Perfil de ${p.nome} selecionado')">Ver perfil</button>
+            </div>
+        `).join('');
+
+    } catch (erro) {
+        console.error('Erro ao buscar prestadores:', erro);
+        container.innerHTML = `<div class="order-card" style="border-color: #ff4d4d;"><p style="color: #ff4d4d;">Erro ao conectar com o servidor Node.js/PostgreSQL.</p></div>`;
+    }
+};
+
+/* ==========================================
+   AUTENTICAÇÃO, NAVEGAÇÃO E PERFIS
+   ========================================== */
 window.atualizarEstadoNavbar = function() {
     const navAuthBtn = document.getElementById('nav-auth-btn');
     if (!navAuthBtn) return;
@@ -264,6 +377,9 @@ window.showPage = function(pageId, isBack = false) {
         }
     }
     window.atualizarEstadoNavbar();
+    if (pageId === 'providers') {
+        window.carregarPrestadores();
+    }
 };
 
 window.voltarTelaAnterior = function() {
@@ -277,20 +393,24 @@ window.voltarTelaAnterior = function() {
 
 window.redirecionarDashboard = function() {
     const usuarioSalvo = localStorage.getItem('usuarioLogado');
-    if (!usuarioSalvo) {
-        window.showPage('login');
-        return;
-    }
+    if (!usuarioSalvo) { window.showPage('login'); return; }
     try {
         const usuario = JSON.parse(usuarioSalvo);
         if (usuario.tipo === 'prestador') {
             window.showPage('dashboard-prestador');
+            window.carregarSolicitacoesParaPrestador();
         } else {
             window.showPage('dashboard-solicitante');
         }
     } catch (e) {
         window.showPage('login');
     }
+};
+
+window.logout = function() {
+    localStorage.removeItem('usuarioLogado');
+    window.mostrarToast('Sessão encerrada');
+    window.showPage('home');
 };
 
 window.alternarModoPerfil = function(novoModo) {
@@ -302,101 +422,12 @@ window.alternarModoPerfil = function(novoModo) {
     window.redirecionarDashboard();
 };
 
-window.logout = function() {
-    localStorage.removeItem('usuarioLogado');
-    window.mostrarToast('Sessão encerrada');
-    window.showPage('home');
-};
-
-window.alternarAbaPrestador = function(aba) {
-    const abaServicos = document.getElementById('aba-prestador-servicos');
-    const abaAgenda = document.getElementById('aba-prestador-agenda');
-    const btnServicos = document.getElementById('btn-menu-servicos');
-    const btnAgenda = document.getElementById('btn-menu-agenda');
-
-    if (aba === 'agenda') {
-        if (abaServicos) abaServicos.style.display = 'none';
-        if (abaAgenda) abaAgenda.style.display = 'block';
-        if (btnServicos) btnServicos.classList.remove('active');
-        if (btnAgenda) btnAgenda.classList.add('active');
-        window.renderizarAgenda();
-    } else {
-        if (abaServicos) abaServicos.style.display = 'block';
-        if (abaAgenda) abaAgenda.style.display = 'none';
-        if (btnServicos) btnServicos.classList.add('active');
-        if (btnAgenda) btnAgenda.classList.remove('active');
-    }
-};
-
-window.renderizarAgenda = function(filtro = 'todos') {
-    const container = document.getElementById('container-agenda-itens');
-    if (!container) return;
-
-    let itens = window.compromissosAgenda;
-    if (filtro === 'hoje') {
-        itens = window.compromissosAgenda.filter(i => i.tipoData === 'hoje');
-    } else if (filtro === 'proximos') {
-        itens = window.compromissosAgenda.filter(i => i.tipoData === 'proximos');
-    }
-
-    if (itens.length === 0) {
-        container.innerHTML = `<div style="background: #1a0033; padding: 30px; border-radius: 10px; text-align: center; color: #b0a0c0;"><p>Nenhum compromisso agendado.</p></div>`;
-        return;
-    }
-
-    container.innerHTML = itens.map(item => `
-        <div class="order-card">
-            <div>
-                <span class="status">${item.status}</span>
-                <h3 style="margin-top: 8px;">${item.titulo}</h3>
-                <p style="color: #b0a0c0; font-size: 14px;"><strong>Cliente:</strong> ${item.cliente} • 📍 ${item.endereco}</p>
-                <p style="color: #ffaa00; font-size: 14px; font-weight: bold;">📅 ${item.dataHora} • 💰 ${item.valor}</p>
-            </div>
-            <button class="btn btn-primary" onclick="window.mostrarToast('Serviço concluído')">Concluir</button>
-        </div>
-    `).join('');
-};
-
-window.filtrarAgenda = function(filtro, el) {
-    el.parentElement.querySelectorAll('.filter').forEach(b => b.classList.remove('active'));
-    el.classList.add('active');
-    window.renderizarAgenda(filtro);
-};
-
 window.toggleCamposPrestador = function() {
     const regTipo = document.getElementById('regTipo');
     const camposPrestador = document.getElementById('campos-prestador');
     if (regTipo && camposPrestador) {
         camposPrestador.style.display = (regTipo.value === 'prestador') ? 'grid' : 'none';
     }
-};
-
-window.carregarDadosPerfil = function() {
-    const usuarioSalvo = localStorage.getItem('usuarioLogado');
-    if (!usuarioSalvo) {
-        window.showPage('login');
-        return;
-    }
-    const usuario = JSON.parse(usuarioSalvo);
-    document.getElementById('perfilNome').value = usuario.nome || '';
-    document.getElementById('perfilEmail').value = usuario.email || '';
-    document.getElementById('perfilTelefone').value = usuario.telefone || '';
-    document.getElementById('perfilEndereco').value = usuario.endereco_completo || '';
-    window.showPage('meu-perfil');
-};
-
-window.atualizarPerfil = function(event) {
-    event.preventDefault();
-    const usuarioSalvo = localStorage.getItem('usuarioLogado');
-    if (!usuarioSalvo) return;
-    let usuario = JSON.parse(usuarioSalvo);
-    usuario.nome = document.getElementById('perfilNome').value;
-    usuario.email = document.getElementById('perfilEmail').value;
-    usuario.telefone = document.getElementById('perfilTelefone').value;
-    usuario.endereco_completo = document.getElementById('perfilEndereco').value;
-    localStorage.setItem('usuarioLogado', JSON.stringify(usuario));
-    window.mostrarToast('Perfil atualizado com sucesso!');
-    window.redirecionarDashboard();
 };
 
 window.login = function(event) {
@@ -413,23 +444,80 @@ window.login = function(event) {
     window.redirecionarDashboard();
 };
 
-window.register = function(event) {
+window.register = async function(event) {
     event.preventDefault();
     const nome = document.getElementById('regNome').value;
     const tipo = document.getElementById('regTipo').value;
-    const usuarioMock = {
-        nome: nome,
-        tipo: tipo,
-        email: document.getElementById('regEmail').value,
-        telefone: document.getElementById('regTelefone').value
-    };
+    const email = document.getElementById('regEmail').value;
+    const telefone = document.getElementById('regTelefone').value;
+    const cpf = document.getElementById('regCpf').value;
+    const rg = document.getElementById('regRg').value;
+    const data_nascimento = document.getElementById('regNascimento').value;
+    const endereco_completo = `${document.getElementById('regRua').value}, ${document.getElementById('regNumero').value} - ${document.getElementById('regBairro').value}, ${document.getElementById('regCidade').value}`;
+
+    const usuarioMock = { nome, tipo, email, telefone };
     localStorage.setItem('usuarioLogado', JSON.stringify(usuarioMock));
+
+    if (tipo === 'prestador') {
+        const dadosPrestador = {
+            nome, email, cpf, rg, data_nascimento, telefone, endereco_completo,
+            profissao_funcao: document.getElementById('regProfissao').value || 'Geral',
+            experiencia: document.getElementById('regExperiencia').value || 'intermediário',
+            possui_equipamentos: true,
+            valor_minimo: parseFloat(document.getElementById('regValorMin').value) || 80.00,
+            valor_maximo: parseFloat(document.getElementById('regValorMax')?.value) || 250.00,
+            disponibilidade_horario: document.getElementById('regDisponibilidade').value || 'Seg a Sáb'
+        };
+
+        try {
+            await fetch(`${API_BASE_URL}/prestadores`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dadosPrestador)
+            });
+        } catch (e) {
+            console.error('Erro ao salvar prestador no banco:', e);
+        }
+    }
+
     window.mostrarToast('Conta criada com sucesso!');
     window.redirecionarDashboard();
 };
 
+window.carregarDadosPerfil = function() {
+    window.showPage('meu-perfil');
+    const usuarioSalvo = localStorage.getItem('usuarioLogado');
+    if (!usuarioSalvo) return;
+    try {
+        const usuario = JSON.parse(usuarioSalvo);
+        if (document.getElementById('perfilNome')) document.getElementById('perfilNome').value = usuario.nome || '';
+        if (document.getElementById('perfilEmail')) document.getElementById('perfilEmail').value = usuario.email || '';
+        if (document.getElementById('perfilTelefone')) document.getElementById('perfilTelefone').value = usuario.telefone || '';
+    } catch (e) {
+        console.error('Erro ao carregar perfil:', e);
+    }
+};
+
+window.atualizarPerfil = function(event) {
+    event.preventDefault();
+    const nome = document.getElementById('perfilNome').value;
+    const email = document.getElementById('perfilEmail').value;
+    const telefone = document.getElementById('perfilTelefone').value;
+
+    let usuario = JSON.parse(localStorage.getItem('usuarioLogado') || '{}');
+    usuario.nome = nome;
+    usuario.email = email;
+    usuario.telefone = telefone;
+
+    localStorage.setItem('usuarioLogado', JSON.stringify(usuario));
+    window.mostrarToast('Perfil atualizado com sucesso!');
+    window.redirecionarDashboard();
+};
+
+/* ==========================================
+   INICIALIZAÇÃO AO CARREGAR A PÁGINA
+   ========================================== */
 document.addEventListener('DOMContentLoaded', () => {
-    // Garante a verificação correta do estado da sessão logo ao carregar a página
     window.atualizarEstadoNavbar();
     window.showPage('home');
 });

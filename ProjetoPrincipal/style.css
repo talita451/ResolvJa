@@ -714,3 +714,88 @@ input:focus, select:focus, textarea:focus {
   font-weight: bold;
   color: #ffaa00;
 }
+
+/* ==========================================
+   NOVAS ALTERAÇÕES: RESPONSIVIDADE E MOBILE
+   ========================================== */
+@media (max-width: 992px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    text-align: center;
+  }
+
+  .hero-buttons {
+    justify-content: center;
+  }
+
+  .dashboard {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 20px;
+  }
+
+  .sidebar-menu {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 15px;
+  }
+
+  .sidebar-menu button {
+    flex: 1;
+    min-width: 140px;
+    text-align: center;
+  }
+
+  .dashboard-content {
+    padding: 20px;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .cta-content {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .auth-grid, .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-grid label.full, label.full {
+    grid-column: span 1;
+  }
+
+  .catalog-grid, .services-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .order-card, .provider-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .provider-card button, .order-card button, .order-card a {
+    width: 100%;
+    text-align: center;
+  }
+
+  .filter-bar {
+    flex-wrap: wrap;
+  }
+}
