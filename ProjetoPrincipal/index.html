@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResolvJá | A ajuda que você precisava</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Ícones FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+  <!-- Alerta Toast Centralizado -->
+  <div id="toast-central" class="toast-central"></div>
+
+  <!-- CABEÇALHO / NAVBAR -->
+  <header class="navbar">
+    <div class="container navbar-content">
+      <a href="#" class="logo" onclick="showPage('home')">
+        <i class="fas fa-tools"></i> Resolv<span>Já</span>
+      </a>
+      <nav id="main-nav">
+        <a href="#" onclick="showPage('home')">Início</a>
+        <a href="#" onclick="showPage('sobre')">Sobre Nós</a>
+        <a href="#" onclick="carregarPrestadoresDisponiveis()">Profissionais</a>
+        <a href="#" onclick="showPage('avaliacoes')">Avaliações</a>
+        <a href="#" onclick="showPage('sac')">Ajuda / SAC</a>
+        
+        <!-- Botão Entrar -->
+        <a href="#" id="nav-auth-btn" class="btn btn-primary btn-sm" onclick="tratarCliqueAuthNav()">Entrar</a>
+        
+        <!-- Menu Dropdown do Utilizador (Primeiro clique abre o menu com opções e miniatura) -->
+        <div class="user-menu-container" id="userMenuContainer" style="display: none;">
+          <button class="btn-user-avatar" onclick="toggleUserMenu()" title="Minha Conta" id="navAvatarBtn">
+            <i class="fas fa-user" id="navUserIcon"></i>
+          </button>
+          <div class="user-dropdown" id="userDropdown">
+            <div style="padding: 12px 16px; border-bottom: 1px solid var(--border); text-align: center; background: #fdfdfd;">
+              <img id="dropdownMiniFoto" src="" alt="Foto" onclick="ampliarFotoPerfil(); toggleUserMenu()" style="width: 55px; height: 55px; border-radius: 50%; object-fit: cover; cursor: pointer; border: 2px solid var(--primary); display: block; margin: 0 auto;" title="Clique para ampliar a foto">
+              <span style="font-size: 11px; color: var(--text-muted); display: block; margin-top: 4px;">Clique na foto para ampliar</span>
+            </div>
+            <a href="#" onclick="redirecionarDashboard(); toggleUserMenu()"><i class="fas fa-columns"></i> Meu Painel</a>
+            <a href="#" onclick="carregarDadosPerfil(); toggleUserMenu()"><i class="fas fa-user-edit"></i> Atualizar Cadastro</a>
+            <a href="#" onclick="showPage('atualizar-senha'); toggleUserMenu()"><i class="fas fa-key"></i> Atualizar Senha</a>
+            <a href="#" onclick="logout(); toggleUserMenu()"><i class="fas fa-sign-out-alt"></i> Sair</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- PÁGINA: HOME -->
+  <section id="home" class="page active">
+    <div class="hero">
+      <div class="container">
+        <span class="badge"><i class="fas fa-shield-alt"></i> Plataforma Verificada e Segura</span>
+        <h1>O seu problema resolvido com um <span>clique.</span></h1>
+        <p>Conectamos você aos melhores profissionais locais para serviços domésticos, reparos e assistências com total segurança e agilidade.</p>
+        <div class="hero-buttons">
+          <button class="btn btn-secondary" onclick="showPage('catalogo-completo')"><i class="fas fa-search"></i> Explorar Serviços</button>
+          <button class="btn btn-outline-light" onclick="showPage('register')">Quero ser Prestador</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEÇÃO DE VÍDEO -->
+    <section class="section">
+      <div class="container" style="text-align: center;">
+        <div class="section-header">
+          <span class="section-label">TECNOLOGIA E PRATICIDADE</span>
+          <h2>Veja como o ResolvJá funciona na prática</h2>
+          <p>Um sistema feito para simplificar o seu dia a dia.</p>
+        </div>
+        <div class="video-container" style="max-width: 800px; margin: 0 auto; border-radius: 16px; overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,0.15);">
+          <iframe width="100%" height="450" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=0&mute=1" title="ResolvJá Apresentação" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="display: block;"></iframe>
+        </div>
+      </div>
+    </section>
+
+    <!-- DIFERENCIAIS -->
+    <section class="section gray-bg">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">POR QUE ESCOLHER-NOS</span>
+          <h2>Segurança e agilidade para sua família</h2>
+        </div>
+        <div class="steps">
+          <div class="step-card">
+            <div class="step-icon"><i class="fas fa-user-check"></i></div>
+            <h3>Profissionais Verificados</h3>
+            <p>Rigorosa checagem de antecedentes e documentações.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-icon"><i class="fas fa-bolt"></i></div>
+            <h3>Agendamento Rápido</h3>
+            <p>Encontre o especialista ideal na sua rua em minutos.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-icon"><i class="fas fa-handshake"></i></div>
+            <h3>Garantia de Qualidade</h3>
+            <p>Avaliações reais feitas por clientes da sua região.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <!-- PÁGINA: CATÁLOGO COMPLETO -->
+  <section id="catalogo-completo" class="page">
+    <div class="container">
+      <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
+      
+      <div class="section-header">
+        <span class="section-label">O QUE PRECISA RESOLVER?</span>
+        <h2>Catálogo Completo de Serviços</h2>
+        <p>Selecione uma categoria ou pesquise o trabalho desejado.</p>
+      </div>
+
+      <div class="search-catalog-box" style="margin-bottom: 30px;">
+        <input type="text" id="inputBuscaCatalogo" placeholder="🔍 Pesquise por serviço (ex: eletricista, faxina, montador...)" onkeyup="filtrarCatalogoServicos()" style="width: 100%; padding: 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 15px;">
+      </div>
+
+      <div class="catalog-grid" id="container-catalogo-servicos">
+        <div class="catalog-card" data-nome="trocar lâmpada elétrica iluminação luminária">
+          <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=600&q=80');">
+            <span class="catalog-badge">Manutenção</span>
+          </div>
+          <div class="catalog-body">
+            <h3>Trocar Lâmpada</h3>
+            <p>Instalação de lustres, plafons e lâmpadas altas com segurança.</p>
+            <div class="catalog-footer">
+              <span class="catalog-price">A partir de <strong>R$ 35,00</strong></span>
+              <button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Trocar Lâmpada')">Solicitar</button>
+            </div>
+          </div>
+        </div>
+        <div class="catalog-card" data-nome="arrumar um chuveiro resistência elétrica hidráulica">
+          <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=600&q=80');">
+            <span class="catalog-badge">Hidráulica</span>
+          </div>
+          <div class="catalog-body">
+            <h3>Arrumar Chuveiro</h3>
+            <p>Troca de resistência e reparos rápidos no banheiro.</p>
+            <div class="catalog-footer">
+              <span class="catalog-price">A partir de <strong>R$ 60,00</strong></span>
+              <button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Arrumar Chuveiro')">Solicitar</button>
+            </div>
+          </div>
+        </div>
+        <div class="catalog-card" data-nome="montar móveis montador armário guarda roupa">
+          <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1538688525198-9b88f6f53126?auto=format&fit=crop&w=600&q=80');">
+            <span class="catalog-badge">Montagem</span>
+          </div>
+          <div class="catalog-body">
+            <h3>Montagem de Móveis</h3>
+            <p>Montagem profissional de guarda-roupas, mesas e camas.</p>
+            <div class="catalog-footer">
+              <span class="catalog-price">A partir de <strong>R$ 90,00</strong></span>
+              <button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Montagem de Móveis')">Solicitar</button>
+            </div>
+          </div>
+        </div>
+        <div class="catalog-card" data-nome="limpeza de casa faxina diarista doméstica">
+          <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80');">
+            <span class="catalog-badge">Doméstico</span>
+          </div>
+          <div class="catalog-body">
+            <h3>Limpeza de Casa</h3>
+            <p>Faxina residencial completa, higienização e organização.</p>
+            <div class="catalog-footer">
+              <span class="catalog-price">A partir de <strong>R$ 130,00</strong></span>
+              <button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Limpeza de Casa')">Solicitar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PÁGINA: SOBRE NÓS -->
+  <section id="sobre" class="page">
+    <div class="container section">
+      <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
+      <div class="section-header">
+        <span class="section-label">QUEM SOMOS</span>
+        <h2>Conectando necessidades e talentos</h2>
+      </div>
+      <div class="auth-card wide" style="margin: 0 auto; text-align: left;">
+        <p style="font-size: 16px; margin-bottom: 15px; color: var(--text-main);">O <strong>ResolvJá</strong> nasceu com a missão de descomplicar o dia a dia das famílias, unindo clientes que precisam de reparos rápidos a prestadores altamente qualificados na região.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PÁGINA: AVALIAÇÕES -->
+  <section id="avaliacoes" class="page">
+    <div class="container section">
+      <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
+      <div class="section-header">
+        <span class="section-label">DEPOIMENTOS</span>
+        <h2>O que dizem os nossos utilizadores</h2>
+      </div>
+      <div class="reviews-grid">
+        <div class="review-card">
+          <div class="stars">⭐⭐⭐⭐⭐</div>
+          <p>"Contratei um eletricista pelo site e foi super rápido. Atendimento nota 10!"</p>
+          <h4>- Dona Maria, 58 anos</h4>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PÁGINA: SAC / AJUDA -->
+  <section id="sac" class="page">
+    <div class="container section">
+      <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
+      <div class="section-header">
+        <span class="section-label">SUPORTE</span>
+        <h2>Central de Ajuda (SAC)</h2>
+        <p>Tire as suas dúvidas mais frequentes</p>
+      </div>
+      <div style="max-width: 800px; margin: 0 auto;">
+        <details class="faq-item">
+          <summary>Como faço para contratar um prestador?</summary>
+          <p>Basta navegar pelo catálogo de serviços, selecionar a opção desejada, preencher os detalhes do problema e enviar o pedido.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Como me torno um prestador de serviços?</summary>
+          <p>Clique em "Quero ser Prestador" na página inicial ou na tela de cadastro, preencha os seus dados profissionais e faça o upload da sua foto.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- PÁGINA: LOGIN -->
+  <section id="login" class="page">
+    <div class="container auth-page">
+      <div class="auth-card">
+        <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
+        <h2 style="text-align:center; color:var(--primary); margin-bottom: 20px;">Entrar na Conta</h2>
+        <form onsubmit="login(event)">
+          <label>Usuário ou E-mail <input type="text" id="loginUsuario" required></label>
+          <label>Senha <input type="password" id="loginSenha" required></label>
+          <button type="submit" class="btn btn-primary btn-full" style="margin-top: 15px;">Entrar</button>
+        </form>
+        <p style="text-align:center; margin-top:15px; font-size: 14px;">Não tem conta? <a href="#" onclick="showPage('register')" style="color:var(--primary); font-weight:600;">Cadastre-se</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PÁGINA: CADASTRO -->
+  <section id="register" class="page">
+    <div class="container auth-page">
+      <div class="auth-card wide">
+        <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
+        <h2 style="color:var(--primary); margin-bottom: 10px;">Crie a sua conta</h2>
+        <form id="form-cadastro" onsubmit="register(event)">
+          <div class="auth-grid">
+            <label>Tipo de Perfil *
+              <select id="regTipo" onchange="toggleCamposPrestador()" required>
+                <option value="">Selecione...</option>
+                <option value="solicitante">Quero contratar serviços (Cliente)</option>
+                <option value="prestador">Quero trabalhar (Prestador)</option>
+              </select>
+            </label>
+            <label>Nome Completo *<input type="text" id="regNome" required></label>
+            <label>E-mail *<input type="email" id="regEmail" required></label>
+            <label>CPF *<input type="text" id="regCpf" required></label>
+            <label>RG *<input type="text" id="regRg" required></label>
+            <label>Telefone / WhatsApp *<input type="tel" id="regTelefone" required></label>
+            <label>Data de Nascimento *<input type="date" id="regNascimento" required></label>
+            <label class="full">CEP e Endereço *
+              <div style="display:flex; gap:10px; margin-top:5px;">
+                <input type="text" id="regCep" placeholder="CEP" onblur="buscarCepCadastro()" oninput="mascaraCep(this)" required style="flex:1;">
+                <input type="text" id="regRua" placeholder="Rua" required style="flex:2;">
+                <input type="text" id="regNumero" placeholder="Nº" required style="flex:1;">
+                <input type="text" id="regBairro" placeholder="Bairro" required style="flex:2;">
+                <input type="text" id="regCidade" placeholder="Cidade - UF" required style="flex:2;">
+              </div>
+            </label>
+          </div>
+
+          <!-- CAMPOS EXCLUSIVOS DO PRESTADOR COM UPLOAD DO DISPOSITIVO -->
+          <div id="campos-prestador" class="auth-grid" style="display: none; background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 15px; border: 1px solid var(--border);">
+            <label class="full"><strong style="color:var(--primary);">Informações Profissionais & Foto de Perfil</strong></label>
+            <label>Profissão / Função *<input type="text" id="regProfissao" placeholder="Ex: Eletricista"></label>
+            <label>Nível de Experiência *
+              <select id="regExperiencia">
+                <option value="básico">Iniciante</option>
+                <option value="intermediário" selected>Experiente</option>
+                <option value="avançado">Especialista</option>
+              </select>
+            </label>
+            <label>Valor Mínimo (R$) *<input type="number" step="0.01" id="regValorMin" value="50.00" required></label>
+            <label>Valor Máximo (R$) *<input type="number" step="0.01" id="regValorMax" value="150.00" required></label>
+            <label class="full">Disponibilidade de Horário *<input type="text" id="regDisponibilidade" placeholder="Ex: Seg a Sáb, 8h às 18h" required></label>
+            
+            <label class="full">
+              Foto de Perfil (Carregar do Dispositivo)
+              <input type="file" id="regFotoFile" accept="image/*" onchange="converterImagemParaBase64(event, 'regFotoBase64')">
+              <input type="hidden" id="regFotoBase64">
+            </label>
+          </div>
+
+          <div class="auth-grid" style="margin-top: 15px; border-top: 1px solid var(--border); padding-top: 15px;">
+            <label>Senha *<input type="password" id="regSenha" required></label>
+            <label>Confirmar Senha *<input type="password" id="regSenha2" required></label>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full" style="margin-top: 20px;">Criar Conta</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- PÁGINA: DASHBOARD DO CLIENTE -->
+  <section id="dashboard-solicitante" class="page">
+    <div class="container dashboard">
+      <aside class="sidebar">
+        <h3>Painel do Cliente</h3>
+        <button class="active" onclick="showPage('dashboard-solicitante')"><i class="fas fa-home"></i> Início</button>
+        <button onclick="showPage('catalogo-completo')"><i class="fas fa-plus"></i> Novo Pedido</button>
+        <button onclick="carregarMinhasSolicitacoes()"><i class="fas fa-list"></i> Meus Pedidos</button>
+        <button onclick="carregarPrestadoresDisponiveis()"><i class="fas fa-search"></i> Buscar Profissionais</button>
+      </aside>
+      <main class="dashboard-content">
+        <div class="section-header" style="text-align: left; margin-bottom: 20px;">
+          <h2>Área do Solicitante</h2>
+          <p>Gerencie os seus pedidos e encontre profissionais cadastrados.</p>
+        </div>
+      </main>
+    </div>
+  </section>
+
+  <!-- PÁGINA: MINHAS SOLICITAÇÕES -->
+  <section id="minhas-solicitacoes" class="page">
+    <div class="container dashboard">
+      <aside class="sidebar">
+        <h3>Painel do Cliente</h3>
+        <button onclick="showPage('dashboard-solicitante')"><i class="fas fa-home"></i> Início</button>
+        <button class="active" onclick="carregarMinhasSolicitacoes()"><i class="fas fa-list"></i> Meus Pedidos</button>
+      </aside>
+      <main class="dashboard-content">
+        <h2>Meus Pedidos Registados 📋</h2>
+        <div id="lista-minhas-solicitacoes" class="orders-list" style="margin-top: 20px;"></div>
+      </main>
+    </div>
+  </section>
+
+  <!-- PÁGINA: FORMULÁRIO DE PEDIDO ESPECÍFICO -->
+  <section id="request" class="page">
+    <div class="container auth-page">
+      <div class="auth-card wide">
+        <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
+        <h2 style="color:var(--primary); margin: 15px 0;">Detalhes do Pedido</h2>
+        <form onsubmit="submitRequest(event)">
+          <label>Serviço Selecionado *
+            <input type="text" id="selectTipoServico" readonly style="background:#eee; font-weight:bold; color:var(--primary);">
+          </label>
+          <label id="container-novo-servico" style="display: none;">Descreva a Nova Função * <input type="text" id="reqTipoServicoCustom"></label>
+          <label>Título / Resumo do Problema * <input type="text" id="reqTitulo" required placeholder="Ex: Curto-circuito na tomada da sala"></label>
+          <label>Descrição Detalhada * <textarea id="reqDescricao" rows="3" required placeholder="Explique o que precisa ser feito..."></textarea></label>
+          <div class="auth-grid">
+            <label>Data Desejada * <input type="date" id="reqData" required></label>
+            <label>CEP * <input type="text" id="reqCep" onblur="buscarEnderecoPorCep()" oninput="mascaraCep(this)" required></label>
+          </div>
+          <div style="display:none;">
+            <input type="text" id="reqRua"><input type="text" id="reqNumero" value="S/N"><input type="text" id="reqBairro"><input type="text" id="reqCidade">
+          </div>
+          <button type="submit" class="btn btn-primary btn-full" style="margin-top:20px;">Confirmar e Enviar Pedido</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- PÁGINA: LISTA DE PRESTADORES -->
+  <section id="providers" class="page">
+    <div class="container section">
+      <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
+      <div class="section-header">
+        <h2>Profissionais Prontos para Ajudar</h2>
+        <p>Lista de especialistas registados na plataforma.</p>
+      </div>
+      <div class="providers-list" id="container-lista-prestadores"></div>
+    </div>
+  </section>
+
+  <!-- PÁGINA: ATUALIZAR CADASTRO (COM FOTO DO DISPOSITIVO) -->
+  <section id="meu-perfil" class="page">
+    <div class="container auth-page">
+      <div class="auth-card wide">
+        <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
+        <h2 style="color:var(--primary); margin-bottom: 15px;">Atualizar Dados Cadastrais</h2>
+        <form id="form-atualizar-perfil" onsubmit="atualizarPerfil(event)">
+          <div class="auth-grid">
+            <label>Nome Completo *<input type="text" id="perfilNome" required></label>
+            <label>E-mail *<input type="email" id="perfilEmail" required></label>
+            <label>Telemóvel / WhatsApp *<input type="tel" id="perfilTelefone" required></label>
+            
+            <!-- Dados sensíveis bloqueados -->
+            <label>CPF (Não alterável) <input type="text" id="perfilCpf" disabled style="background:#e9ecef; cursor:not-allowed;"></label>
+            <label>RG (Não alterável) <input type="text" id="perfilRg" disabled style="background:#e9ecef; cursor:not-allowed;"></label>
+            <label>Data de Nascimento (Não alterável) <input type="date" id="perfilNascimento" disabled style="background:#e9ecef; cursor:not-allowed;"></label>
+            
+            <label class="full">Endereço Completo *<input type="text" id="perfilEndereco" required></label>
+            
+            <label>Profissão / Função <input type="text" id="perfilProfissao"></label>
+            <label>Nível de Experiência 
+              <select id="perfilExperiencia">
+                <option value="básico">Iniciante</option>
+                <option value="intermediário">Experiente</option>
+                <option value="avançado">Especialista</option>
+              </select>
+            </label>
+            <label>Valor Mínimo (R$) <input type="number" step="0.01" id="perfilValorMin"></label>
+            <label>Valor Máximo (R$) <input type="number" step="0.01" id="perfilValorMax"></label>
+            <label class="full">Disponibilidade de Horário <input type="text" id="perfilDisponibilidade"></label>
+            
+            <!-- Campo de Upload da Foto do Dispositivo -->
+            <label class="full">
+              Alterar Foto de Perfil (Carregar do Dispositivo)
+              <input type="file" id="perfilFotoFile" accept="image/*" onchange="converterImagemParaBase64(event, 'perfilFotoBase64')">
+              <input type="hidden" id="perfilFotoBase64">
+            </label>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full" style="margin-top: 20px;">Salvar Alterações</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- PÁGINA: ATUALIZAR SENHA -->
+  <section id="atualizar-senha" class="page">
+    <div class="container auth-page">
+      <div class="auth-card">
+        <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
+        <h2 style="color:var(--primary);">Alterar Senha</h2>
+        <form onsubmit="atualizarSenha(event)" style="margin-top: 20px;">
+          <label>Nova Senha <input type="password" id="novaSenha" required></label>
+          <label>Confirmar Nova Senha <input type="password" id="confirmaNovaSenha" required></label>
+          <button type="submit" class="btn btn-primary btn-full" style="margin-top: 15px;">Atualizar Senha</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL PARA AMPLIAR A FOTO DE PERFIL (PROPORÇÃO 1:1) -->
+  <div id="modalFotoPerfil" onclick="fecharModalFoto()" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); justify-content: center; align-items: center; cursor: pointer;">
+    <div style="position: relative; text-align: center; max-width: 90vw; max-height: 90vh;" onclick="event.stopPropagation()">
+        <img id="imgModalExpandida" src="" alt="Foto Ampliada" style="width: 350px; height: 350px; max-width: 90vw; max-height: 90vh; object-fit: cover; object-position: center; border-radius: 12px; border: 4px solid #fff; box-shadow: 0 15px 40px rgba(0,0,0,0.6); display: block; margin: 0 auto;">
+        <span onclick="fecharModalFoto()" style="position: absolute; top: -15px; right: -15px; background: #EF4444; color: white; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">&times;</span>
+    </div>
+  </div>
+
+  <!-- RODAPÉ -->
+  <footer>
+    <div class="container footer-content">
+      <div class="footer-brand">
+        <h3><i class="fas fa-tools"></i> ResolvJá</h3>
+        <p>Facilitando o dia a dia e conectando clientes aos melhores profissionais locais.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Links Úteis</h4>
+        <a href="#" onclick="showPage('home')">Início</a>
+        <a href="#" onclick="showPage('sobre')">Sobre Nós</a>
+        <a href="#" onclick="showPage('sac')">Central de Ajuda</a>
+      </div>
+      <div class="footer-contact">
+        <h4>Contacto</h4>
+        <p><i class="fas fa-envelope"></i> suporte@resolvja.com</p>
+        <p><i class="fas fa-phone"></i> (17) 99999-9999</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 ResolvJá. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- Script Principal -->
+  <script src="src/script.js"></script>
+</body>
+</html>

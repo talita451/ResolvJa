@@ -1,523 +1,658 @@
-/* ==========================================
-   CONFIGURAções GLOBAIS E ESTADO INICIAL
-   ========================================== */
-const API_BASE_URL = 'http://localhost:3000/api';
-window.historicoPaginas = ['home'];
+const API_URL = 'http://localhost:3000/api';
 
-// Dados mockados iniciais para a Agenda do Prestador
-window.compromissosAgenda = [
-    {
-        id: 1,
-        titulo: 'Instalação de Tomada 220V',
-        cliente: 'Carlos Roberto',
-        endereco: 'Rua Principal, 102 - Centro',
-        dataHora: 'Hoje às 14:00',
-        tipoData: 'hoje',
-        valor: 'R$ 150,00',
-        status: 'CONFIRMADO'
+let historicoTelas = [];
+
+console.log("🛠️ Frontend ResolvJá carregado com sucesso!");
+
+// ==========================================
+// 1. NAVEGAÇÃO E INTERFACE (UI)
+// ==========================================
+function showPage(pageId) {
+    const telaAtual = document.querySelector('.page.active');
+    
+    if (telaAtual && telaAtual.id !== pageId) {
+        historicoTelas.push(telaAtual.id);
     }
-];
 
-/* ==========================================
-   SISTEMA DE NOTIFICAÇÕES (TOAST)
-   ========================================== */
-window.mostrarToast = function(mensagem) {
+    document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+    const target = document.getElementById(pageId);
+    if (target) {
+        target.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
+function voltarTelaAnterior() {
+    if (historicoTelas.length > 0) {
+        const telaAnterior = historicoTelas.pop();
+        document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+        document.getElementById(telaAnterior).classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+        showPage('home');
+    }
+}
+
+function toggleUserMenu() {
+    const dropdown = document.getElementById('userDropdown');
+    if(dropdown) dropdown.classList.toggle('show');
+}
+
+window.onclick = function(event) {
+    if (!event.target.closest('.user-menu-container')) {
+        const dropdowns = document.getElementsByClassName("user-dropdown");
+        for (let i = 0; i < dropdowns.length; i++) {
+            const openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
+}
+
+function atualizarInterfaceAuth() {
+    const logado = localStorage.getItem('idUsuarioLogado');
+    const btnEntrar = document.getElementById('nav-auth-btn');
+    const menuUsuario = document.getElementById('userMenuContainer');
+    const avatarBtn = document.getElementById('navAvatarBtn');
+    const miniFoto = document.getElementById('dropdownMiniFoto');
+    
+    if (btnEntrar && menuUsuario) {
+        if (logado) {
+            btnEntrar.style.display = 'none';
+            menuUsuario.style.display = 'inline-block';
+
+            const fotoSalva = localStorage.getItem('fotoUsuarioLogado');
+            if (fotoSalva && avatarBtn) {
+                avatarBtn.innerHTML = `<img src="${fotoSalva}" alt="Perfil" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block;">`;
+                if (miniFoto) miniFoto.src = fotoSalva;
+            } else if (avatarBtn) {
+                avatarBtn.innerHTML = `<i class="fas fa-user" id="navUserIcon"></i>`;
+            }
+        } else {
+            btnEntrar.style.display = 'inline-flex';
+            menuUsuario.style.display = 'none';
+        }
+    }
+}
+
+function tratarCliqueAuthNav() {
+    showPage('login');
+}
+
+function redirecionarDashboard() {
+    const logado = localStorage.getItem('idUsuarioLogado');
+    if (logado) {
+        showPage('dashboard-solicitante');
+    } else {
+        mostrarToast('Faça login primeiro!', 'erro');
+        showPage('login');
+    }
+}
+
+function logout() {
+    localStorage.removeItem('idUsuarioLogado');
+    localStorage.removeItem('tipoUsuarioLogado');
+    localStorage.removeItem('fotoUsuarioLogado');
+    atualizarInterfaceAuth();
+    mostrarToast('Sessão encerrada com segurança.');
+    showPage('home');
+}
+
+async function carregarFotoNavbarImediata() {
+    const idLogado = localStorage.getItem('idUsuarioLogado');
+    const tipo = localStorage.getItem('tipoUsuarioLogado') || 'prestador';
+    const avatarBtn = document.getElementById('navAvatarBtn');
+    const miniFoto = document.getElementById('dropdownMiniFoto');
+
+    if (!idLogado || !avatarBtn) return;
+
+    const fotoSalva = localStorage.getItem('fotoUsuarioLogado');
+    if (fotoSalva) {
+        avatarBtn.innerHTML = `<img src="${fotoSalva}" alt="Perfil" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block;">`;
+        if (miniFoto) miniFoto.src = fotoSalva;
+        return;
+    }
+
+    try {
+        const endpoint = tipo === 'solicitante' ? `/solicitantes` : `/prestadores`;
+        const resposta = await fetch(`${API_URL}${endpoint}`);
+        const dados = await resposta.json();
+        const usuario = dados.find(u => String(u.cod_prestador || u.id_solicitante) === String(idLogado));
+
+        if (usuario && usuario.foto_perfil) {
+            localStorage.setItem('fotoUsuarioLogado', usuario.foto_perfil);
+            avatarBtn.innerHTML = `<img src="${usuario.foto_perfil}" alt="Perfil" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block;">`;
+            if (miniFoto) miniFoto.src = usuario.foto_perfil;
+        }
+    } catch (erro) {
+        console.error("Erro ao carregar foto na navbar:", erro);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    atualizarInterfaceAuth();
+    carregarFotoNavbarImediata();
+});
+
+// ==========================================
+// 2. ALERTAS (TOAST) E COMPRESSÃO DE IMAGEM
+// ==========================================
+function mostrarToast(mensagem, tipo = 'sucesso') {
     const toast = document.getElementById('toast-central');
     if (!toast) return;
+
     toast.textContent = mensagem;
-    toast.classList.add('active');
-    setTimeout(() => toast.classList.remove('active'), 2200);
-};
+    toast.style.background = tipo === 'erro' ? '#EF4444' : '#10B981';
+    toast.style.display = 'block';
+    
+    setTimeout(() => { toast.style.display = 'none'; }, 4500);
+}
 
-/* ==========================================
-   MÁSCARAS E INTEGRAÇÃO VIACEP
-   ========================================== */
-window.mascaraCep = function(input) {
-    let valor = input.value.replace(/\D/g, '');
-    if (valor.length > 5) valor = valor.replace(/^(\d{5})(\d)/, '$1-$2');
-    input.value = valor;
-};
+function converterImagemParaBase64(event, idInputDestino) {
+    const arquivo = event.target.files[0];
+    if (!arquivo) return;
 
-window.buscarEnderecoPorCep = async function() {
-    const cepInput = document.getElementById('reqCep');
-    if (!cepInput) return;
-    const cep = cepInput.value.replace(/\D/g, '');
-    if (cep.length !== 8) return;
+    const leitor = new FileReader();
+    leitor.onload = function(uploadevento) {
+        const img = new Image();
+        img.src = uploadevento.target.result;
+        
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            const tamanhoMaximo = 200;
+            let largura = img.width;
+            let altura = img.height;
+            
+            if (largura > altura) {
+                if (largura > tamanhoMaximo) {
+                    altura *= tamanhoMaximo / largura;
+                    largura = tamanhoMaximo;
+                }
+            } else {
+                if (altura > tamanhoMaximo) {
+                    largura *= tamanhoMaximo / altura;
+                    altura = tamanhoMaximo;
+                }
+            }
+            
+            canvas.width = largura;
+            canvas.height = altura;
+            ctx.drawImage(img, 0, 0, largura, altura);
+            
+            const base64Comprimido = canvas.toDataURL('image/jpeg', 0.8);
+            
+            const inputDestino = document.getElementById(idInputDestino);
+            if (inputDestino) {
+                inputDestino.value = base64Comprimido;
+            }
+            mostrarToast('Imagem carregada e otimizada com sucesso!');
+        };
+    };
+    leitor.readAsDataURL(arquivo);
+}
 
-    try {
-        const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-        const data = await response.json();
-        if (data.erro) { window.mostrarToast('CEP não encontrado.'); return; }
-        document.getElementById('reqRua').value = data.logradouro || '';
-        document.getElementById('reqBairro').value = data.bairro || '';
-        document.getElementById('reqCidade').value = `${data.localidade} - ${data.uf}`;
-        document.getElementById('reqNumero').focus();
-        window.mostrarToast('Endereço carregado com sucesso!');
-    } catch (e) {
-        window.mostrarToast('Erro ao buscar o CEP.');
+// ==========================================
+// 3. FOTO AMPLIADA (MODAL 1:1)
+// ==========================================
+function ampliarFotoPerfil() {
+    const fotoSalva = localStorage.getItem('fotoUsuarioLogado');
+    const modal = document.getElementById('modalFotoPerfil');
+    const imgExpandida = document.getElementById('imgModalExpandida');
+
+    if (!fotoSalva) {
+        mostrarToast('Ainda não tem nenhuma foto de perfil guardada.', 'erro');
+        return;
     }
-};
 
-window.buscarCepCadastro = async function() {
-    const cepInput = document.getElementById('regCep');
-    if (!cepInput) return;
-    const cep = cepInput.value.replace(/\D/g, '');
-    if (cep.length !== 8) return;
-
-    try {
-        const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-        const data = await response.json();
-        if (data.erro) { window.mostrarToast('CEP não encontrado.'); return; }
-        document.getElementById('regRua').value = data.logradouro || '';
-        document.getElementById('regBairro').value = data.bairro || '';
-        document.getElementById('regCidade').value = `${data.localidade} - ${data.uf}`;
-        document.getElementById('regNumero').focus();
-        window.mostrarToast('Endereço preenchido!');
-    } catch (e) {
-        window.mostrarToast('Erro ao buscar CEP.');
+    if (modal && imgExpandida) {
+        imgExpandida.src = fotoSalva;
+        modal.style.display = 'flex';
     }
-};
+}
 
-/* ==========================================
-   CATÁLOGO DE SERVIÇOS E PESQUISA
-   ========================================== */
-window.verificarOutroServico = function(select) {
+function fecharModalFoto() {
+    const modal = document.getElementById('modalFotoPerfil');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// ==========================================
+// 4. AUXILIARES DE FORMULÁRIO E VIA CEP
+// ==========================================
+function toggleCamposPrestador() {
+    const tipo = document.getElementById('regTipo').value;
+    const campos = document.getElementById('campos-prestador');
+    if (campos) {
+        campos.style.display = tipo === 'prestador' ? 'grid' : 'none';
+    }
+}
+
+function verificarOutroServico(select) {
     const containerNovo = document.getElementById('container-novo-servico');
     const inputCustom = document.getElementById('reqTipoServicoCustom');
+    if (!containerNovo || !inputCustom) return;
     if (select.value === 'Outros') {
-        if (containerNovo) containerNovo.style.display = 'flex';
-        if (inputCustom) inputCustom.setAttribute('required', 'true');
+        containerNovo.style.display = 'flex';
+        inputCustom.required = true;
     } else {
-        if (containerNovo) containerNovo.style.display = 'none';
-        if (inputCustom) inputCustom.removeAttribute('required');
+        containerNovo.style.display = 'none';
+        inputCustom.required = false;
     }
-};
+}
 
-window.filtrarCatalogoServicos = function() {
+function mascaraCep(input) {
+    let v = input.value.replace(/\D/g, '');
+    if (v.length > 5) v = v.replace(/^(\d{5})(\d)/, '$1-$2');
+    input.value = v;
+}
+
+async function buscarCepGenerico(idCep, idRua, idBairro, idCidade, idNumero) {
+    const cepInput = document.getElementById(idCep);
+    if (!cepInput) return;
+    const cep = cepInput.value.replace(/\D/g, '');
+    if (cep.length === 8) {
+        try {
+            const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+            const dados = await res.json();
+            if (!dados.erro) {
+                document.getElementById(idRua).value = dados.logradouro || '';
+                document.getElementById(idBairro).value = dados.bairro || '';
+                document.getElementById(idCidade).value = `${dados.localidade || ''} - ${dados.uf || ''}`;
+                document.getElementById(idNumero).focus();
+            } else {
+                mostrarToast('CEP não encontrado.', 'erro');
+            }
+        } catch (erro) { console.error("Erro na busca de CEP:", erro); }
+    }
+}
+
+function buscarCepCadastro() { buscarCepGenerico('regCep', 'regRua', 'regBairro', 'regCidade', 'regNumero'); }
+function buscarEnderecoPorCep() { buscarCepGenerico('reqCep', 'reqRua', 'reqBairro', 'reqCidade', 'reqNumero'); }
+
+// ==========================================
+// 5. AUTENTICAÇÃO (LOGIN E CADASTRO)
+// ==========================================
+async function register(event) {
+    event.preventDefault();
+    try {
+        const senha = document.getElementById('regSenha').value;
+        const senha2 = document.getElementById('regSenha2').value;
+        if (senha !== senha2) return mostrarToast('As senhas não coincidem!', 'erro');
+        
+        const tipoUsuario = document.getElementById('regTipo').value;
+        if (!tipoUsuario) return mostrarToast('Selecione o seu tipo de perfil.', 'erro');
+
+        const endRua = document.getElementById('regRua').value;
+        const endNum = document.getElementById('regNumero').value;
+        const endBairro = document.getElementById('regBairro').value;
+        const endCidade = document.getElementById('regCidade').value;
+        const enderecoFormatado = `${endRua}, ${endNum} - ${endBairro}, ${endCidade}`;
+
+        let endpoint = tipoUsuario === 'solicitante' ? '/solicitantes' : '/prestadores';
+        let payload = {};
+
+        const fotoBase64 = document.getElementById('regFotoBase64') ? document.getElementById('regFotoBase64').value : '';
+
+        if (tipoUsuario === 'solicitante') {
+            payload = {
+                nome: document.getElementById('regNome').value,
+                cpf: document.getElementById('regCpf').value,
+                rg: document.getElementById('regRg').value,
+                email: document.getElementById('regEmail').value,
+                data_nascimento: document.getElementById('regNascimento').value,
+                telefone: document.getElementById('regTelefone').value,
+                senha: senha,
+                endereco: enderecoFormatado,
+                estado_civil: 'Não informado'
+            };
+        } else {
+            payload = {
+                nome: document.getElementById('regNome').value,
+                email: document.getElementById('regEmail').value,
+                cpf: document.getElementById('regCpf').value,
+                rg: document.getElementById('regRg').value,
+                cnh: 'Não possui',
+                sexo: 'Não informado',
+                data_nascimento: document.getElementById('regNascimento').value,
+                telefone: document.getElementById('regTelefone').value,
+                senha: senha,
+                escolaridade: 'Ensino Médio',
+                endereco_completo: enderecoFormatado,
+                profissao_funcao: document.getElementById('regProfissao').value,
+                experiencia: document.getElementById('regExperiencia').value,
+                descricao_funcoes: 'Serviços profissionais especializados.',
+                possui_equipamentos: true,
+                valor_minimo: Number(document.getElementById('regValorMin').value) || 50,
+                valor_maximo: Number(document.getElementById('regValorMax').value) || 150,
+                disponibilidade_horario: document.getElementById('regDisponibilidade').value,
+                antecedentes_criminais: "Nada consta",
+                foto_perfil: fotoBase64
+            };
+        }
+
+        const resposta = await fetch(`${API_URL}${endpoint}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const resultado = await resposta.json();
+        if (resposta.ok || resposta.status === 201) {
+            let novoId = 1; 
+            if (tipoUsuario === 'solicitante' && resultado.solicitante) novoId = resultado.solicitante.id_solicitante;
+            else if (tipoUsuario === 'prestador' && resultado.prestador) novoId = resultado.prestador.cod_prestador;
+            
+            localStorage.setItem('idUsuarioLogado', novoId);
+            localStorage.setItem('tipoUsuarioLogado', tipoUsuario);
+            if (fotoBase64) {
+                localStorage.setItem('fotoUsuarioLogado', fotoBase64);
+            } else {
+                localStorage.removeItem('fotoUsuarioLogado');
+            }
+
+            atualizarInterfaceAuth();
+            mostrarToast('Cadastro realizado com sucesso!');
+            document.getElementById('form-cadastro').reset();
+            redirecionarDashboard();
+        } else { mostrarToast(resultado.erro || 'Erro ao realizar cadastro.', 'erro'); }
+    } catch (erro) { mostrarToast('Erro de comunicação com o servidor.', 'erro'); }
+}
+
+async function login(event) {
+    event.preventDefault();
+    const usuarioInput = document.getElementById('loginUsuario').value;
+
+    try {
+        const resPrestador = await fetch(`${API_URL}/prestadores`);
+        const prestadores = await resPrestador.json();
+        const prestadorEncontrado = prestadores.find(p => p.email === usuarioInput || p.nome === usuarioInput);
+
+        if (prestadorEncontrado) {
+            localStorage.setItem('idUsuarioLogado', prestadorEncontrado.cod_prestador);
+            localStorage.setItem('tipoUsuarioLogado', 'prestador');
+            if (prestadorEncontrado.foto_perfil) {
+                localStorage.setItem('fotoUsuarioLogado', prestadorEncontrado.foto_perfil);
+            } else {
+                localStorage.removeItem('fotoUsuarioLogado');
+            }
+            atualizarInterfaceAuth();
+            mostrarToast('Login efetuado com sucesso!');
+            setTimeout(() => { redirecionarDashboard(); }, 1000);
+            return;
+        }
+
+        const resSolicitante = await fetch(`${API_URL}/solicitantes`);
+        const solicitantes = await resSolicitante.json();
+        const solicitanteEncontrado = solicitantes.find(s => s.email === usuarioInput || s.nome === usuarioInput);
+
+        if (solicitanteEncontrado) {
+            localStorage.setItem('idUsuarioLogado', solicitanteEncontrado.id_solicitante);
+            localStorage.setItem('tipoUsuarioLogado', 'solicitante');
+            localStorage.removeItem('fotoUsuarioLogado');
+            atualizarInterfaceAuth();
+            mostrarToast('Login efetuado com sucesso!');
+            setTimeout(() => { redirecionarDashboard(); }, 1000);
+            return;
+        }
+
+        mostrarToast('Utilizador ou senha incorretos.', 'erro');
+    } catch (erro) {
+        console.error("Erro no login:", erro);
+        mostrarToast('Erro ao comunicar com o servidor.', 'erro');
+    }
+}
+
+// ==========================================
+// 6. ATUALIZAR PERFIL E DADOS REAIS
+// ==========================================
+async function carregarDadosPerfil() {
+    showPage('meu-perfil');
+    const idLogado = localStorage.getItem('idUsuarioLogado');
+    const tipo = localStorage.getItem('tipoUsuarioLogado') || 'prestador';
+
+    if (!idLogado) {
+        mostrarToast('Faça login primeiro!', 'erro');
+        showPage('login');
+        return;
+    }
+
+    try {
+        const endpoint = tipo === 'solicitante' ? `/solicitantes` : `/prestadores`;
+        const resposta = await fetch(`${API_URL}${endpoint}`);
+        const dados = await resposta.json();
+        
+        if (!resposta.ok) throw new Error('Erro ao buscar dados.');
+
+        const usuario = dados.find(u => String(u.cod_prestador || u.id_solicitante) === String(idLogado));
+
+        if (usuario) {
+            document.getElementById('perfilNome').value = usuario.nome || '';
+            document.getElementById('perfilEmail').value = usuario.email || '';
+            document.getElementById('perfilTelefone').value = usuario.telefone || '';
+            document.getElementById('perfilCpf').value = usuario.cpf || 'Não informado';
+            document.getElementById('perfilRg').value = usuario.rg || 'Não informado';
+            document.getElementById('perfilNascimento').value = usuario.data_nascimento ? usuario.data_nascimento.split('T')[0] : '';
+            document.getElementById('perfilEndereco').value = usuario.endereco_completo || usuario.endereco || '';
+            
+            if (tipo === 'prestador') {
+                document.getElementById('perfilProfissao').value = usuario.profissao_funcao || '';
+                document.getElementById('perfilExperiencia').value = usuario.experiencia || 'intermediário';
+                document.getElementById('perfilValorMin').value = usuario.valor_minimo || '';
+                document.getElementById('perfilValorMax').value = usuario.valor_maximo || '';
+                document.getElementById('perfilDisponibilidade').value = usuario.disponibilidade_horario || '';
+                if (usuario.foto_perfil) {
+                    document.getElementById('perfilFotoBase64').value = usuario.foto_perfil;
+                    localStorage.setItem('fotoUsuarioLogado', usuario.foto_perfil);
+                }
+            }
+        } else {
+            mostrarToast('Dados do utilizador não encontrados.', 'erro');
+        }
+    } catch (erro) {
+        console.error("Erro ao carregar perfil:", erro);
+        mostrarToast('Erro ao carregar os seus dados.', 'erro');
+    }
+}
+
+async function atualizarPerfil(event) {
+    event.preventDefault();
+    const idLogado = localStorage.getItem('idUsuarioLogado');
+    const tipo = localStorage.getItem('tipoUsuarioLogado') || 'prestador';
+
+    const fotoNovaBase64 = document.getElementById('perfilFotoBase64') ? document.getElementById('perfilFotoBase64').value : '';
+
+    const payload = {
+        nome: document.getElementById('perfilNome').value,
+        email: document.getElementById('perfilEmail').value,
+        telefone: document.getElementById('perfilTelefone').value,
+        endereco_completo: document.getElementById('perfilEndereco').value,
+        profissao_funcao: document.getElementById('perfilProfissao') ? document.getElementById('perfilProfissao').value : null,
+        experiencia: document.getElementById('perfilExperiencia') ? document.getElementById('perfilExperiencia').value : null,
+        valor_minimo: document.getElementById('perfilValorMin') ? Number(document.getElementById('perfilValorMin').value) : null,
+        valor_maximo: document.getElementById('perfilValorMax') ? Number(document.getElementById('perfilValorMax').value) : null,
+        disponibilidade_horario: document.getElementById('perfilDisponibilidade') ? document.getElementById('perfilDisponibilidade').value : null,
+        foto_perfil: fotoNovaBase64 || undefined
+    };
+
+    if (fotoNovaBase64) {
+        localStorage.setItem('fotoUsuarioLogado', fotoNovaBase64);
+    }
+
+    try {
+        const resposta = await fetch(`${API_URL}/${tipo === 'solicitante' ? 'solicitantes' : 'prestadores'}/${idLogado}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (resposta.ok) {
+            mostrarToast('Dados atualizados com sucesso!', 'sucesso');
+            atualizarInterfaceAuth();
+            setTimeout(() => redirecionarDashboard(), 1500);
+        } else {
+            const resJson = await resposta.json();
+            mostrarToast(resJson.erro || 'Erro ao atualizar dados.', 'erro');
+        }
+    } catch (erro) {
+        mostrarToast('Erro de comunicação com o servidor.', 'erro');
+    }
+}
+
+function atualizarSenha(event) {
+    event.preventDefault();
+    const nova = document.getElementById('novaSenha').value;
+    const conf = document.getElementById('confirmaNovaSenha').value;
+    if (nova !== conf) return mostrarToast('As senhas não coincidem.', 'erro');
+    
+    mostrarToast('Senha alterada com sucesso!', 'sucesso');
+    event.target.reset();
+    setTimeout(() => redirecionarDashboard(), 1500);
+}
+
+// ==========================================
+// 7. PEDIDOS E LISTAGEM
+// ==========================================
+async function submitRequest(event) {
+    event.preventDefault();
+    let tipoServico = document.getElementById('selectTipoServico').value;
+    if (tipoServico === 'Outros') tipoServico = document.getElementById('reqTipoServicoCustom').value;
+
+    const endRua = document.getElementById('reqRua').value;
+    const endNum = document.getElementById('reqNumero').value;
+    const endBairro = document.getElementById('reqBairro').value;
+    const endCidade = document.getElementById('reqCidade').value;
+    const enderecoFormatado = `${endRua}, ${endNum} - ${endBairro}, ${endCidade}`;
+    
+    const idLogado = localStorage.getItem('idUsuarioLogado') || 1;
+
+    const payload = {
+        id_solicitante: Number(idLogado), 
+        id_tipo_servico: 1, 
+        cod_prestador: null, 
+        data_servico: document.getElementById('reqData').value,
+        horario: "A combinar",
+        endereco: enderecoFormatado,
+        descricao: `[${tipoServico}] ${document.getElementById('reqTitulo').value} - ${document.getElementById('reqDescricao').value}`,
+        valor_combinado: 0
+    };
+
+    try {
+        const resposta = await fetch(`${API_URL}/solicitacoes`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (resposta.ok || resposta.status === 201) {
+            mostrarToast('Serviço solicitado com sucesso!');
+            event.target.reset();
+            carregarMinhasSolicitacoes();
+        } else {
+            const resultado = await resposta.json();
+            mostrarToast(resultado.erro || 'Falha ao solicitar serviço.', 'erro');
+        }
+    } catch (erro) { mostrarToast('Erro de ligação com o servidor.', 'erro'); }
+}
+
+async function carregarMinhasSolicitacoes() {
+    showPage('minhas-solicitacoes');
+    const lista = document.getElementById('lista-minhas-solicitacoes');
+    if(!lista) return;
+
+    lista.innerHTML = '<p style="color: var(--text-muted);">A carregar os seus pedidos...</p>';
+    const idLogado = localStorage.getItem('idUsuarioLogado') || 1;
+
+    try {
+        const resposta = await fetch(`${API_URL}/solicitantes/${idLogado}/solicitacoes`);
+        const dados = await resposta.json();
+        
+        if (resposta.ok && dados.length > 0) {
+            lista.innerHTML = dados.map(sol => `
+                <div style="background: var(--surface); border: 1px solid var(--border); border-left: 5px solid var(--primary); padding: 25px; border-radius: 8px; margin-bottom: 15px;">
+                    <h3 style="color: var(--primary); margin-bottom: 10px; font-size: 18px;">Pedido #${sol.id_solicitacao}</h3>
+                    <p style="margin-bottom: 5px;"><strong>Data Pretendida:</strong> ${sol.data_servico.split('T')[0]}</p>
+                    <p style="margin-bottom: 5px;"><strong>Endereço:</strong> ${sol.endereco}</p>
+                    <p style="margin-bottom: 10px;"><strong>Descrição:</strong> ${sol.descricao}</p>
+                    <p>Status: <span style="color: var(--success); font-weight: bold; background: rgba(16, 185, 129, 0.1); padding: 4px 10px; border-radius: 20px;">${sol.status}</span></p>
+                </div>
+            `).join('');
+        } else { lista.innerHTML = '<p style="color: var(--text-muted);">Ainda não tem pedidos registados.</p>'; }
+    } catch (erro) { lista.innerHTML = '<p style="color: var(--error);">Ocorreu um erro ao buscar os seus pedidos.</p>'; }
+}
+
+async function carregarPrestadoresDisponiveis() {
+    showPage('providers');
+    const container = document.getElementById('container-lista-prestadores');
+    if (!container) return;
+
+    container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 20px;">A procurar profissionais na sua área...</p>';
+
+    try {
+        const resposta = await fetch(`${API_URL}/prestadores`);
+        const prestadores = await resposta.json();
+
+        if (resposta.ok && prestadores.length > 0) {
+            container.innerHTML = prestadores.map(p => {
+                const inicial = p.nome ? p.nome.charAt(0).toUpperCase() : 'P';
+                const profissao = p.profissao_funcao || 'Profissional Qualificado';
+                const valorMin = p.valor_minimo ? Number(p.valor_minimo).toFixed(2) : 'A combinar';
+
+                const avatarHtml = p.foto_perfil 
+                    ? `<img src="${p.foto_perfil}" alt="${p.nome}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--secondary);">`
+                    : `<div style="width: 60px; height: 60px; background: var(--secondary); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold;">${inicial}</div>`;
+
+                return `
+                    <div class="provider-card">
+                        <div style="display: flex; gap: 20px; align-items: center;">
+                            ${avatarHtml}
+                            <div class="provider-info">
+                                <h3 style="color: var(--primary); margin-bottom: 4px; font-size: 18px;">${p.nome}</h3>
+                                <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 6px;">${profissao}</p>
+                                <div style="display: flex; gap: 15px; font-size: 14px; color: var(--text-main);">
+                                    <span style="color: #F59E0B;"><i class="fas fa-star"></i> 5.0</span>
+                                    <span><i class="fas fa-map-marker-alt"></i> ${p.endereco_completo ? p.endereco_completo.split('-')[0] : 'Endereço Indisponível'}</span>
+                                </div>
+                                <div style="color: var(--success); font-weight: bold; margin-top: 8px;">Diária a partir de R$ ${valorMin}</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-outline-light" style="border: 2px solid var(--primary); color: var(--primary); font-weight: 600;" onclick="mostrarToast('A iniciar contacto com ${p.nome}...')">Ver Perfil</button>
+                    </div>
+                `;
+            }).join('');
+        } else { container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 20px;">Nenhum profissional encontrado no momento.</p>'; }
+    } catch (erro) { container.innerHTML = '<p style="color: var(--error); text-align: center; padding: 20px;">Falha ao carregar a lista de profissionais.</p>'; }
+}
+
+function filtrarCatalogoServicos() {
     const input = document.getElementById('inputBuscaCatalogo');
-    const filtro = input ? input.value.toLowerCase().trim() : '';
-    const cards = document.querySelectorAll('#container-catalogo-servicos .catalog-card');
-    const semResultados = document.getElementById('semResultadosBusca');
-    let encontrados = 0;
+    if(!input) return;
+    const termo = input.value.toLowerCase();
+    const cards = document.querySelectorAll('.catalog-card');
+    let encontrou = false;
 
     cards.forEach(card => {
-        const dataNome = card.getAttribute('data-nome') || '';
-        const titulo = card.querySelector('h3') ? card.querySelector('h3').textContent.toLowerCase() : '';
-        if (dataNome.includes(filtro) || titulo.includes(filtro)) {
+        const nome = card.getAttribute('data-nome') || '';
+        if (nome.includes(termo)) {
             card.style.display = 'flex';
-            encontrados++;
+            encontrou = true;
         } else {
             card.style.display = 'none';
         }
     });
 
-    if (semResultados) {
-        semResultados.style.display = (encontrados === 0) ? 'block' : 'none';
-    }
-};
+    const semResultados = document.getElementById('semResultadosBusca');
+    if(semResultados) semResultados.style.display = encontrou ? 'none' : 'block';
+}
 
-window.solicitarServicoCatalogo = function(nome) {
-    window.showPage('request');
-    setTimeout(() => {
-        const select = document.getElementById('selectTipoServico');
-        if (select) {
-            select.value = nome;
-            window.verificarOutroServico(select);
-        }
-    }, 100);
-};
+function solicitarServicoCatalogo(nomeServico) {
+    showPage('request');
+    const select = document.getElementById('selectTipoServico');
+    if (!select) return;
 
-/* ==========================================
-   SOLICITAÇÕES E GESTÃO DE PEDIDOS
-   ========================================== */
-window.submitRequest = async function(event) {
-    event.preventDefault();
-    const selectTipo = document.getElementById('selectTipoServico');
-    let tipoServico = selectTipo ? selectTipo.value : 'Outros';
-
-    if (tipoServico === 'Outros') {
-        const inputCustom = document.getElementById('reqTipoServicoCustom');
-        tipoServico = inputCustom ? inputCustom.value.trim() : 'Serviço Personalizado';
-    }
-
-    const titulo = document.getElementById('reqTitulo').value.trim();
-    const descricao = document.getElementById('reqDescricao').value.trim();
-    const dataServico = document.getElementById('reqData').value;
-    const endereco = `${document.getElementById('reqRua').value}, ${document.getElementById('reqNumero').value} - ${document.getElementById('reqBairro').value}, ${document.getElementById('reqCidade').value}`;
-
-    const novaSolicitacao = {
-        id: Date.now(),
-        tipoServico,
-        titulo,
-        descricao,
-        data: dataServico,
-        endereco,
-        status: 'DISPONÍVEL'
-    };
-
-    let solicitacoesGerais = JSON.parse(localStorage.getItem('resolvja_solicitacoes_geral') || '[]');
-    solicitacoesGerais.push(novaSolicitacao);
-    localStorage.setItem('resolvja_solicitacoes_geral', JSON.stringify(solicitacoesGerais));
-
-    let minhasSol = JSON.parse(localStorage.getItem('minhasSolicitacoes') || '[]');
-    minhasSol.push(novaSolicitacao);
-    localStorage.setItem('minhasSolicitacoes', JSON.stringify(minhasSol));
-
-    window.mostrarToast('Nova solicitação criada com sucesso!');
-    window.carregarMinhasSolicitacoes();
-};
-
-window.carregarMinhasSolicitacoes = function() {
-    window.showPage('minhas-solicitacoes');
-    const container = document.getElementById('lista-minhas-solicitacoes');
-    if (!container) return;
-
-    const solicitacoes = JSON.parse(localStorage.getItem('minhasSolicitacoes') || '[]');
-    if (solicitacoes.length === 0) {
-        container.innerHTML = `<div class="order-card"><p>Ainda não tens nenhuma solicitação criada.</p></div>`;
-        return;
-    }
-
-    container.innerHTML = solicitacoes.map(item => `
-        <div class="order-card">
-            <div>
-                <span class="status">${item.status}</span>
-                <h3 style="margin-top: 8px;">${item.tipoServico} - ${item.titulo}</h3>
-                <p style="color: #b0a0c0; font-size: 14px;">📍 ${item.endereco}</p>
-                <p style="color: #d0c0e0; font-size: 13px;">📅 Data: ${item.data}</p>
-            </div>
-        </div>
-    `).join('');
-};
-
-window.carregarSolicitacoesParaPrestador = function() {
-    const container = document.getElementById('container-solicitacoes-prestador');
-    if (!container) return;
-
-    const solicitacoesGerais = JSON.parse(localStorage.getItem('resolvja_solicitacoes_geral') || '[]');
-    const disponiveis = solicitacoesGerais.filter(s => s.status === 'DISPONÍVEL');
-
-    if (disponiveis.length === 0) {
-        container.innerHTML = `<div class="order-card"><p>Nenhuma nova solicitação disponível no momento.</p></div>`;
-        return;
-    }
-
-    container.innerHTML = disponiveis.map(item => `
-        <div class="order-card">
-            <div>
-                <span class="status">NOVA SOLICITAÇÃO</span>
-                <h3 style="margin-top: 8px;">${item.tipoServico} - ${item.titulo}</h3>
-                <p style="color: #b0a0c0; font-size: 14px;">📝 ${item.descricao}</p>
-                <p style="color: #b0a0c0; font-size: 13px;">📍 ${item.endereco}</p>
-            </div>
-            <button class="btn btn-primary" onclick="prestadorAceitarServico(${item.id})">Aceitar</button>
-        </div>
-    `).join('');
-};
-
-window.prestadorAceitarServico = function(idSolicitacao) {
-    let solicitacoesGerais = JSON.parse(localStorage.getItem('resolvja_solicitacoes_geral') || '[]');
-    solicitacoesGerais = solicitacoesGerais.map(item => {
-        if (item.id === idSolicitacao) {
-            item.status = 'EM ANDAMENTO';
-            window.compromissosAgenda.push({
-                id: item.id,
-                titulo: `${item.tipoServico} - ${item.titulo}`,
-                cliente: 'Cliente ResolvaJá',
-                endereco: item.endereco,
-                dataHora: item.data,
-                tipoData: 'proximos',
-                valor: 'A combinar',
-                status: 'CONFIRMADO'
-            });
-        }
-        return item;
-    });
-    localStorage.setItem('resolvja_solicitacoes_geral', JSON.stringify(solicitacoesGerais));
-    window.mostrarToast('Serviço aceito e adicionado à agenda!');
-    window.carregarSolicitacoesParaPrestador();
-};
-
-/* ==========================================
-   AGENDA DO PRESTADOR
-   ========================================== */
-window.renderizarAgenda = function(filtro = 'todos') {
-    const container = document.getElementById('container-agenda-itens');
-    if (!container) return;
-
-    let itens = window.compromissosAgenda;
-    if (filtro === 'hoje') {
-        itens = window.compromissosAgenda.filter(i => i.tipoData === 'hoje');
-    } else if (filtro === 'proximos') {
-        itens = window.compromissosAgenda.filter(i => i.tipoData === 'proximos');
-    }
-
-    if (itens.length === 0) {
-        container.innerHTML = `<div class="order-card"><p>Nenhum compromisso agendado para este filtro.</p></div>`;
-        return;
-    }
-
-    container.innerHTML = itens.map(item => `
-        <div class="order-card">
-            <div>
-                <span class="status">${item.status}</span>
-                <h3 style="margin-top: 8px;">${item.titulo}</h3>
-                <p style="color: #b0a0c0; font-size: 14px;"><strong>Cliente:</strong> ${item.cliente} • 📍 ${item.endereco}</p>
-                <p style="color: #ffaa00; font-size: 14px; font-weight: bold;">📅 ${item.dataHora} • 💰 ${item.valor}</p>
-            </div>
-            <button class="btn btn-primary" onclick="window.mostrarToast('Serviço concluído com sucesso!')">Concluir</button>
-        </div>
-    `).join('');
-};
-
-window.filtrarAgenda = function(filtro, el) {
-    el.parentElement.querySelectorAll('.filter').forEach(b => b.classList.remove('active'));
-    el.classList.add('active');
-    window.renderizarAgenda(filtro);
-};
-
-window.alternarAbaPrestador = function(aba) {
-    const abaServicos = document.getElementById('aba-prestador-servicos');
-    const abaAgenda = document.getElementById('aba-prestador-agenda');
-    const btnServicos = document.getElementById('btn-menu-servicos');
-    const btnAgenda = document.getElementById('btn-menu-agenda');
-
-    if (aba === 'agenda') {
-        if (abaServicos) abaServicos.style.display = 'none';
-        if (abaAgenda) abaAgenda.style.display = 'block';
-        if (btnServicos) btnServicos.classList.remove('active');
-        if (btnAgenda) btnAgenda.classList.add('active');
-        window.renderizarAgenda();
-    } else {
-        if (abaServicos) abaServicos.style.display = 'block';
-        if (abaAgenda) abaAgenda.style.display = 'none';
-        if (btnServicos) btnServicos.classList.add('active');
-        if (btnAgenda) btnAgenda.classList.remove('active');
-        window.carregarSolicitacoesParaPrestador();
-    }
-};
-
-/* ==========================================
-   BUSCAR PRESTADORES DO BANCO DE DADOS
-   ========================================== */
-window.carregarPrestadores = async function() {
-    const container = document.getElementById('container-lista-prestadores');
-    if (!container) return;
-
-    container.innerHTML = `<div class="order-card"><p>Carregando prestadores do banco de dados...</p></div>`;
-
-    try {
-        const response = await fetch(`${API_BASE_URL}/prestadores`);
-        if (!response.ok) throw new Error('Erro na resposta do servidor');
-
-        const prestadoresBanco = await response.json();
-
-        if (!prestadoresBanco || prestadoresBanco.length === 0) {
-            container.innerHTML = `<div class="order-card"><p>Nenhum prestador cadastrado no banco de dados.</p></div>`;
-            return;
-        }
-
-        container.innerHTML = prestadoresBanco.map(p => `
-            <div class="provider-card">
-                <div style="display: flex; align-items: center; gap: 20px;">
-                    <div class="avatar">${p.nome ? p.nome.charAt(0).toUpperCase() : 'P'}</div>
-                    <div class="provider-info">
-                        <h3>${p.nome}</h3>
-                        <p style="color: #b0a0c0; font-size: 14px;">${p.profissao_funcao || 'Prestador de Serviços'}</p>
-                        <p style="color: #00e676; font-weight: bold; margin-top: 4px;">A partir de R$ ${p.valor_minimo ? Number(p.valor_minimo).toFixed(2) : '80,00'}</p>
-                    </div>
-                </div>
-                <button class="btn btn-outline" onclick="window.mostrarToast('Perfil de ${p.nome} selecionado')">Ver perfil</button>
-            </div>
-        `).join('');
-
-    } catch (erro) {
-        console.error('Erro ao buscar prestadores:', erro);
-        container.innerHTML = `<div class="order-card" style="border-color: #ff4d4d;"><p style="color: #ff4d4d;">Erro ao conectar com o servidor Node.js/PostgreSQL.</p></div>`;
-    }
-};
-
-/* ==========================================
-   AUTENTICAÇÃO, NAVEGAÇÃO E PERFIS
-   ========================================== */
-window.atualizarEstadoNavbar = function() {
-    const navAuthBtn = document.getElementById('nav-auth-btn');
-    if (!navAuthBtn) return;
-    const usuarioSalvo = localStorage.getItem('usuarioLogado');
-
-    if (usuarioSalvo) {
-        navAuthBtn.textContent = 'Sair';
-        navAuthBtn.style.backgroundColor = 'rgba(255, 77, 77, 0.2)';
-        navAuthBtn.style.color = '#ff4d4d';
-        navAuthBtn.style.border = '1px solid #ff4d4d';
-    } else {
-        navAuthBtn.textContent = 'Entrar';
-        navAuthBtn.style.backgroundColor = '#ffaa00';
-        navAuthBtn.style.color = '#1a0033';
-        navAuthBtn.style.border = 'none';
-    }
-};
-
-window.tratarCliqueAuthNav = function() {
-    if (localStorage.getItem('usuarioLogado')) {
-        window.logout();
-    } else {
-        window.showPage('login');
-    }
-};
-
-window.showPage = function(pageId, isBack = false) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    const target = document.getElementById(pageId);
-    if (target) {
-        target.classList.add('active');
-        window.scrollTo(0, 0);
-        if (!isBack && window.historicoPaginas[window.historicoPaginas.length - 1] !== pageId) {
-            window.historicoPaginas.push(pageId);
-        }
-    }
-    window.atualizarEstadoNavbar();
-    if (pageId === 'providers') {
-        window.carregarPrestadores();
-    }
-};
-
-window.voltarTelaAnterior = function() {
-    if (window.historicoPaginas.length > 1) {
-        window.historicoPaginas.pop();
-        window.showPage(window.historicoPaginas[window.historicoPaginas.length - 1], true);
-    } else {
-        window.showPage('home', true);
-    }
-};
-
-window.redirecionarDashboard = function() {
-    const usuarioSalvo = localStorage.getItem('usuarioLogado');
-    if (!usuarioSalvo) { window.showPage('login'); return; }
-    try {
-        const usuario = JSON.parse(usuarioSalvo);
-        if (usuario.tipo === 'prestador') {
-            window.showPage('dashboard-prestador');
-            window.carregarSolicitacoesParaPrestador();
-        } else {
-            window.showPage('dashboard-solicitante');
-        }
-    } catch (e) {
-        window.showPage('login');
-    }
-};
-
-window.logout = function() {
-    localStorage.removeItem('usuarioLogado');
-    window.mostrarToast('Sessão encerrada');
-    window.showPage('home');
-};
-
-window.alternarModoPerfil = function(novoModo) {
-    const usuarioSalvo = localStorage.getItem('usuarioLogado');
-    if (!usuarioSalvo) return;
-    let usuario = JSON.parse(usuarioSalvo);
-    usuario.tipo = novoModo;
-    localStorage.setItem('usuarioLogado', JSON.stringify(usuario));
-    window.redirecionarDashboard();
-};
-
-window.toggleCamposPrestador = function() {
-    const regTipo = document.getElementById('regTipo');
-    const camposPrestador = document.getElementById('campos-prestador');
-    if (regTipo && camposPrestador) {
-        camposPrestador.style.display = (regTipo.value === 'prestador') ? 'grid' : 'none';
-    }
-};
-
-window.login = function(event) {
-    event.preventDefault();
-    const usuarioInput = document.getElementById('loginUsuario').value.trim();
-    if (!usuarioInput) return;
-    const usuarioMock = {
-        nome: usuarioInput,
-        tipo: usuarioInput.toLowerCase().includes('prestador') ? 'prestador' : 'solicitante',
-        email: `${usuarioInput.toLowerCase()}@email.com`
-    };
-    localStorage.setItem('usuarioLogado', JSON.stringify(usuarioMock));
-    window.mostrarToast(`Bem-vindo(a), ${usuarioMock.nome}!`);
-    window.redirecionarDashboard();
-};
-
-window.register = async function(event) {
-    event.preventDefault();
-    const nome = document.getElementById('regNome').value;
-    const tipo = document.getElementById('regTipo').value;
-    const email = document.getElementById('regEmail').value;
-    const telefone = document.getElementById('regTelefone').value;
-    const cpf = document.getElementById('regCpf').value;
-    const rg = document.getElementById('regRg').value;
-    const data_nascimento = document.getElementById('regNascimento').value;
-    const endereco_completo = `${document.getElementById('regRua').value}, ${document.getElementById('regNumero').value} - ${document.getElementById('regBairro').value}, ${document.getElementById('regCidade').value}`;
-
-    const usuarioMock = { nome, tipo, email, telefone };
-    localStorage.setItem('usuarioLogado', JSON.stringify(usuarioMock));
-
-    if (tipo === 'prestador') {
-        const dadosPrestador = {
-            nome, email, cpf, rg, data_nascimento, telefone, endereco_completo,
-            profissao_funcao: document.getElementById('regProfissao').value || 'Geral',
-            experiencia: document.getElementById('regExperiencia').value || 'intermediário',
-            possui_equipamentos: true,
-            valor_minimo: parseFloat(document.getElementById('regValorMin').value) || 80.00,
-            valor_maximo: parseFloat(document.getElementById('regValorMax')?.value) || 250.00,
-            disponibilidade_horario: document.getElementById('regDisponibilidade').value || 'Seg a Sáb'
-        };
-
-        try {
-            await fetch(`${API_BASE_URL}/prestadores`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(dadosPrestador)
-            });
-        } catch (e) {
-            console.error('Erro ao salvar prestador no banco:', e);
-        }
-    }
-
-    window.mostrarToast('Conta criada com sucesso!');
-    window.redirecionarDashboard();
-};
-
-window.carregarDadosPerfil = function() {
-    window.showPage('meu-perfil');
-    const usuarioSalvo = localStorage.getItem('usuarioLogado');
-    if (!usuarioSalvo) return;
-    try {
-        const usuario = JSON.parse(usuarioSalvo);
-        if (document.getElementById('perfilNome')) document.getElementById('perfilNome').value = usuario.nome || '';
-        if (document.getElementById('perfilEmail')) document.getElementById('perfilEmail').value = usuario.email || '';
-        if (document.getElementById('perfilTelefone')) document.getElementById('perfilTelefone').value = usuario.telefone || '';
-    } catch (e) {
-        console.error('Erro ao carregar perfil:', e);
-    }
-};
-
-window.atualizarPerfil = function(event) {
-    event.preventDefault();
-    const nome = document.getElementById('perfilNome').value;
-    const email = document.getElementById('perfilEmail').value;
-    const telefone = document.getElementById('perfilTelefone').value;
-
-    let usuario = JSON.parse(localStorage.getItem('usuarioLogado') || '{}');
-    usuario.nome = nome;
-    usuario.email = email;
-    usuario.telefone = telefone;
-
-    localStorage.setItem('usuarioLogado', JSON.stringify(usuario));
-    window.mostrarToast('Perfil atualizado com sucesso!');
-    window.redirecionarDashboard();
-};
-
-/* ==========================================
-   INICIALIZAÇÃO AO CARREGAR A PÁGINA
-   ========================================== */
-document.addEventListener('DOMContentLoaded', () => {
-    window.atualizarEstadoNavbar();
-    window.showPage('home');
-});
+    select.value = nomeServico;
+    verificarOutroServico(select);
+}
