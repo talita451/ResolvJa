@@ -1,709 +1,646 @@
-/* =========================================================
-   1. CONFIGURAÇÕES GLOBAIS E VARIÁVEIS (CSS CUSTOM PROPERTIES)
-   ========================================================= */
+/* ==========================================
+   VARIÁVEIS E CONFIGURAÇÕES GLOBAIS (CORES OFICIAIS + LARANJA)
+   ========================================== */
    :root {
-    --primary: #0047AB;      /* Azul Cobalto: transmite confiança, segurança e profissionalismo */
-    --secondary: #FF7A00;    /* Laranja Vibrante: usado para botões de destaque e chamadas de ação */
-    --bg-color: #F8F9FA;     /* Cor de fundo geral da página (cinzento muito suave e limpo) */
-    --surface: #FFFFFF;      /* Cor de fundo dos cartões, menus e painéis (Branco puro) */
-    --text-main: #2D3748;    /* Cor do texto principal (cinzento escuro, ideal para leitura sem cansar a vista) */
-    --text-muted: #718096;   /* Cor de texto secundário/atenuado para legendas e descrições */
-    --border: #E2E8F0;       /* Cor padrão para linhas divisórias e bordas */
-    --success: #10B981;      /* Verde para estados de sucesso e preços */
-    --error: #EF4444;        /* Vermelho para avisos e erros */
-    --font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --primary: #1E3A8A;
+    --secondary: #3B82F6;
+    --accent: #F97316; /* Laranja oficial dos destaques */
+    --success: #10B981;
+    --error: #EF4444;
+    --background: #F8F9FA;
+    --surface: #FFFFFF;
+    --text-main: #333333;
+    --text-muted: #666666;
+    --border: #DDDDDD;
   }
   
-  /* Reset universal: remove margens e paddings nativos e padroniza o box-sizing */
-  * { 
-    box-sizing: border-box; 
-    margin: 0; 
-    padding: 0; 
-    font-family: var(--font-family); 
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
   
-  /* Corpo da página: garante altura total e comportamento flexbox para o rodapé fixo embaixo */
   body {
-    background-color: var(--bg-color);
+    background-color: var(--background);
     color: var(--text-main);
-    line-height: 1.6;
-    font-size: 16px; /* Tamanho de fonte ideal para acessibilidade (público de 18 a 60 anos) */
     display: flex;
     flex-direction: column;
     min-height: 100vh;
   }
   
-  /* Container centralizador de conteúdo */
-  .container { 
-    max-width: 1200px; 
-    margin: 0 auto; 
-    padding: 0 20px; 
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    width: 100%;
+  }
+  
+  /* ==========================================
+     ALERTA TOAST CENTRALIZADO
+     ========================================== */
+  .toast-central {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--success);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 10000;
+    display: none;
+    font-weight: 600;
+    text-align: center;
+  }
+  
+  /* ==========================================
+     BARRA DE NAVEGAÇÃO (NAVBAR)
+     ========================================== */
+  .navbar {
+    background-color: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  
+  .navbar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+  }
+  
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--primary);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .logo span {
+    color: var(--accent); /* Ponto laranja no logo */
+  }
+  
+  #main-nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  #main-nav a:not(.btn) {
+    color: var(--text-main);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  
+  #main-nav a:not(.btn):hover {
+    color: var(--accent);
+  }
+  
+  /* Menu Dropdown do Utilizador e Avatar Redondo */
+  .user-menu-container {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .btn-user-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    background: var(--surface);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 0;
+  }
+  
+  .btn-user-avatar img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    border-radius: 50% !important;
+    display: block !important;
   }
   
-  /* Estrutura das "Páginas" em Single Page Application (SPA) */
-  .page { 
-    display: none; /* Por padrão, todas as telas ficam ocultas */
-    padding: 40px 0; 
-    flex: 1; 
-    position: relative; 
-  }
-  .page.active { 
-    display: block; /* Apenas a página com a classe active é exibida */
-    animation: fadeIn 0.3s ease; 
+  .btn-user-avatar i {
+    font-size: 18px;
+    color: var(--primary);
   }
   
-  /* Animação suave de transição entre ecrãs */
-  @keyframes fadeIn { 
-    from { opacity: 0; transform: translateY(8px); } 
-    to { opacity: 1; transform: translateY(0); } 
-  }
-  
-  
-  /* =========================================================
-     2. CABEÇALHO (NAVBAR) E MENU OCULTO DO UTILIZADOR
-     ========================================================= */
-  .navbar { 
-    background: var(--surface); 
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
-    position: sticky; 
-    top: 0; 
-    z-index: 100; 
-    padding: 15px 0; 
+  .user-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 55px;
+    background-color: var(--surface);
+    min-width: 220px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    z-index: 1001;
+    overflow: hidden;
   }
   
-  .navbar-content { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
+  .user-dropdown.show {
+    display: block;
   }
   
-  .logo { 
-    font-size: 26px; 
-    font-weight: 800; 
-    color: var(--primary); 
-    text-decoration: none; 
-    display: flex; 
-    align-items: center; 
-    gap: 8px; 
+  .user-dropdown a {
+    color: var(--text-main);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    transition: background 0.2s;
   }
   
-  .logo span { 
-    color: var(--secondary); /* Destaca a parte "Já" do logotipo */
+  .user-dropdown a:hover {
+    background-color: var(--background);
+    color: var(--primary);
   }
   
-  nav { 
-    display: flex; 
-    gap: 20px; 
-    align-items: center; 
+  /* ==========================================
+     BOTÕES E ELEMENTOS GERAIS
+     ========================================== */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    border: none;
+    transition: opacity 0.2s;
   }
   
-  nav a { 
-    text-decoration: none; 
-    color: var(--text-main); 
-    font-weight: 500; 
-    transition: color 0.3s; 
-    font-size: 15px; 
+  .btn-primary {
+    background-color: var(--primary);
+    color: #fff;
   }
   
-  nav a:hover { 
-    color: var(--primary); 
+  .btn-primary:hover {
+    opacity: 0.9;
   }
   
-  /* Contenedor do menu dropdown do utilizador logado */
-  .user-menu-container { 
-    position: relative; 
-    display: inline-block; 
+  .btn-secondary {
+    background-color: var(--accent); /* Botão de destaque em laranja */
+    color: #fff;
   }
   
-  .btn-user-avatar { 
-    background: var(--primary); 
-    color: #fff; 
-    border: none; 
-    width: 40px; 
-    height: 40px; 
-    border-radius: 50%; 
-    font-size: 18px; 
-    cursor: pointer; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    transition: transform 0.2s; 
+  .btn-outline-light {
+    background: transparent;
+    border: 2px solid #fff;
+    color: #fff;
   }
   
-  .btn-user-avatar:hover { 
-    transform: scale(1.05); 
+  .btn-sm {
+    padding: 6px 14px;
+    font-size: 14px;
   }
   
-  /* Caixa flutuante do menu oculto */
-  .user-dropdown { 
-    display: none; /* Oculto por padrão */
-    position: absolute; 
-    right: 0; 
-    top: 50px; 
-    background: var(--surface); 
-    width: 210px; 
-    border-radius: 8px; 
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15); 
-    border: 1px solid var(--border); 
-    overflow: hidden; 
-    z-index: 200; 
+  .btn-full {
+    width: 100%;
   }
   
-  .user-dropdown a { 
-    display: block; 
-    padding: 12px 20px; 
-    color: var(--text-main); 
-    text-decoration: none; 
-    border-bottom: 1px solid var(--border); 
-    transition: background 0.3s; 
-    font-size: 14px; 
+  .btn-back {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 15px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 20px;
   }
   
-  .user-dropdown a:hover { 
-    background: var(--bg-color); 
-    color: var(--primary); 
+  .btn-back:hover {
+    color: var(--primary);
   }
   
-  .user-dropdown a:last-child { 
-    border-bottom: none; 
-    color: var(--error); /* Destaca o botão de sair em vermelho */
+  /* ==========================================
+     SISTEMA DE PÁGINAS (SPA)
+     ========================================== */
+  .page {
+    display: none;
   }
   
-  .user-dropdown a:last-child:hover { 
-    background: #FEF2F2; 
+  .page.active {
+    display: block;
   }
   
-  /* Classe ativada via JavaScript para mostrar o menu */
-  .user-dropdown.show { 
-    display: block; 
+  /* ==========================================
+     HERO SECTION
+     ========================================== */
+  .hero {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: #fff;
+    padding: 80px 0;
+    text-align: center;
   }
   
-  
-  /* =========================================================
-     3. BOTÕES E ELEMENTOS DE INTERAÇÃO
-     ========================================================= */
-  .btn { 
-    padding: 12px 24px; 
-    border-radius: 8px; 
-    border: none; 
-    font-weight: 600; 
-    font-size: 16px; 
-    cursor: pointer; 
-    transition: all 0.3s ease; 
-    display: inline-flex; 
-    align-items: center; 
-    justify-content: center; 
-    gap: 8px; 
-    text-decoration: none; 
-  }
-  
-  .btn-primary { 
-    background: var(--primary); 
-    color: #fff; 
-  }
-  
-  .btn-primary:hover { 
-    background: #003380; 
-    transform: translateY(-2px); 
-    box-shadow: 0 4px 12px rgba(0,71,171,0.2); 
-  }
-  
-  .btn-secondary { 
-    background: var(--secondary); 
-    color: #fff; 
-  }
-  
-  .btn-secondary:hover { 
-    background: #E66A00; 
-  }
-  
-  .btn-outline-light { 
-    background: transparent; 
-    border: 2px solid #fff; 
-    color: #fff; 
-  }
-  
-  .btn-outline-light:hover { 
-    background: #fff; 
-    color: var(--primary); 
-  }
-  
-  .btn-full { 
-    width: 100%; 
-    padding: 14px; 
-    font-size: 18px; 
-  }
-  
-  .btn-sm { 
-    padding: 8px 16px; 
-    font-size: 14px; 
-  }
-  
-  /* Estilo do botão de voltar inteligente */
-  .btn-back { 
-    display: inline-flex; 
-    align-items: center; 
-    gap: 8px; 
-    background: transparent; 
-    border: 1px solid var(--border); 
-    color: var(--text-main); 
-    padding: 8px 15px; 
-    border-radius: 20px; 
-    font-size: 14px; 
-    font-weight: 600; 
-    cursor: pointer; 
-    transition: all 0.3s; 
-    margin-bottom: 25px; 
-  }
-  
-  .btn-back:hover { 
-    background: var(--bg-color); 
-    color: var(--primary); 
-    border-color: var(--primary); 
-  }
-  
-  
-  /* =========================================================
-     4. SECÇÃO DE DESTAQUE (HERO) E CONTEÚDOS
-     ========================================================= */
-  .hero { 
-    background: linear-gradient(135deg, #0047AB, #002D72); 
-    color: #fff; 
-    padding: 70px 0; 
-    text-align: center; 
-    border-bottom-left-radius: 40px; 
-    border-bottom-right-radius: 40px; 
-  }
-  
-  .badge { 
-    background: rgba(255,255,255,0.2); 
-    padding: 6px 14px; 
-    border-radius: 20px; 
-    font-size: 14px; 
-    font-weight: bold; 
-  }
-  
-  .hero h1 { 
-    font-size: 44px; 
-    margin: 20px 0; 
-    line-height: 1.2; 
-  }
-  
-  .hero h1 span { 
-    color: var(--secondary); 
-  }
-  
-  .hero p { 
-    font-size: 18px; 
-    max-width: 600px; 
-    margin: 0 auto 30px; 
-    opacity: 0.9; 
+  .hero .badge {
+    background: rgba(249, 115, 22, 0.25); /* Fundo laranja suave no badge */
+    color: #FFEDD5;
+    border: 1px solid rgba(249, 115, 22, 0.4);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+    display: inline-block;
+    margin-bottom: 20px;
   }
   
-  .hero-buttons { 
-    display: flex; 
-    gap: 15px; 
-    justify-content: center; 
+  .hero h1 {
+    font-size: 42px;
+    margin-bottom: 15px;
+    line-height: 1.2;
   }
   
-  .section { 
-    padding: 50px 0; 
+  .hero h1 span {
+    color: var(--accent); /* Destaque laranja no título */
   }
   
-  .gray-bg { 
-    background-color: #EDF2F7; 
+  .hero p {
+    font-size: 18px;
+    max-width: 700px;
+    margin: 0 auto 30px;
+    opacity: 0.9;
   }
   
-  .section-header { 
-    text-align: center; 
-    margin-bottom: 40px; 
+  .hero-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
   }
   
-  .section-label { 
-    color: var(--secondary); 
-    font-weight: bold; 
-    font-size: 14px; 
-    letter-spacing: 1px; 
-    text-transform: uppercase; 
+  /* ==========================================
+     SEÇÕES E CARDS DE DESTAQUE
+     ========================================== */
+  .section {
+    padding: 60px 0;
   }
   
-  .section-header h2 { 
-    font-size: 34px; 
-    color: var(--primary); 
-    margin-top: 10px; 
+  .gray-bg {
+    background-color: #F8F9FA;
   }
   
-  .section-header p { 
-    color: var(--text-muted); 
-    font-size: 17px; 
-    margin-top: 8px; 
+  .section-header {
+    text-align: center;
+    margin-bottom: 40px;
   }
   
-  
-  /* =========================================================
-     5. GRIDS, CARDS E CATÁLOGO DE SERVIÇOS COM FOTOS
-     ========================================================= */
-  .steps, .reviews-grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
-    gap: 30px; 
-  }
-  
-  .step-card, .review-card, .service-card { 
-    background: var(--surface); 
-    padding: 30px; 
-    border-radius: 12px; 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.04); 
-    text-align: center; 
-    border: 1px solid var(--border); 
+  .section-label {
+    color: var(--accent); /* Rótulo de seção em laranja */
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 8px;
   }
   
-  .step-icon { 
-    font-size: 40px; 
-    color: var(--secondary); 
-    margin-bottom: 15px; 
+  .section-header h2 {
+    font-size: 32px;
+    color: var(--primary);
   }
   
-  .review-card { 
-    text-align: left; 
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
   }
   
-  .stars { 
-    color: #F59E0B; 
-    margin-bottom: 10px; 
-    font-size: 18px; 
+  .step-card {
+    background: var(--surface);
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    text-align: center;
   }
   
-  /* Estilização dos cartões visuais do catálogo */
-  .catalog-grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); 
-    gap: 25px; 
+  .step-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(249, 115, 22, 0.1); /* Ícone com fundo laranja suave */
+    color: var(--accent);
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin: 0 auto 20px;
   }
   
-  .catalog-card { 
-    background: var(--surface); 
-    border: 1px solid var(--border); 
-    border-radius: 12px; 
-    overflow: hidden; 
-    transition: transform 0.3s, box-shadow 0.3s; 
-    cursor: pointer; 
-    display: flex; 
-    flex-direction: column; 
+  .step-card h3 {
+    margin-bottom: 10px;
+    color: var(--primary);
   }
   
-  .catalog-card:hover { 
-    transform: translateY(-5px); 
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1); 
-    border-color: var(--primary); 
+  .step-card p {
+    color: var(--text-muted);
+    font-size: 14px;
   }
   
-  .catalog-img { 
-    height: 160px; 
-    background-size: cover; 
-    background-position: center; 
-    position: relative; 
+  /* ==========================================
+     CATÁLOGO DE SERVIÇOS
+     ========================================== */
+  .catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
   }
   
-  .catalog-badge { 
-    position: absolute; 
-    top: 12px; 
-    left: 12px; 
-    background: rgba(0, 71, 171, 0.95); 
-    color: #fff; 
-    padding: 4px 10px; 
-    border-radius: 20px; 
-    font-size: 11px; 
-    font-weight: bold; 
+  .catalog-card {
+    background: var(--surface);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
   
-  .catalog-body { 
-    padding: 18px; 
-    text-align: left; 
-    flex: 1; 
-    display: flex; 
-    flex-direction: column; 
+  .catalog-img {
+    height: 160px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
   }
   
-  .catalog-body h3 { 
-    color: var(--primary); 
-    font-size: 17px; 
-    margin-bottom: 6px; 
+  .catalog-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: var(--accent); /* Crachá laranja nos serviços */
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
   }
   
-  .catalog-body p { 
-    color: var(--text-muted); 
-    font-size: 13px; 
-    margin-bottom: 15px; 
-    flex: 1; 
+  .catalog-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
   }
   
-  .catalog-footer { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    border-top: 1px solid var(--border); 
-    padding-top: 12px; 
+  .catalog-body h3 {
+    margin-bottom: 8px;
+    font-size: 18px;
+    color: var(--primary);
   }
   
-  .catalog-price { 
-    font-size: 13px; 
-    color: var(--success); 
+  .catalog-body p {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 20px;
+    flex: 1;
   }
   
-  .catalog-price strong { 
-    font-size: 15px; 
+  .catalog-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border);
+    padding-top: 15px;
   }
   
-  
-  /* =========================================================
-     6. FORMULÁRIOS E PAINÉIS (DASHBOARD)
-     ========================================================= */
-  .auth-page { 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    padding-top: 10px; 
+  .catalog-price {
+    font-size: 13px;
+    color: var(--text-muted);
   }
   
-  .auth-card { 
-    background: var(--surface); 
-    padding: 35px; 
-    border-radius: 16px; 
-    box-shadow: 0 8px 30px rgba(0,0,0,0.08); 
-    width: 100%; 
-    max-width: 450px; 
-    border: 1px solid var(--border); 
+  .catalog-price strong {
+    color: var(--accent); /* Preço em destaque laranja */
+    font-size: 15px;
   }
   
-  .auth-card.wide { 
-    max-width: 800px; 
+  /* ==========================================
+     AUTENTICAÇÃO E FORMULÁRIOS
+     ========================================== */
+  .auth-page {
+    padding: 50px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   
-  .auth-grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); 
-    gap: 15px; 
+  .auth-card {
+    background: var(--surface);
+    padding: 40px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
   }
   
-  .full { 
-    grid-column: 1 / -1; 
+  .auth-card.wide {
+    max-width: 800px;
   }
   
-  form label { 
-    display: flex; 
-    flex-direction: column; 
-    font-weight: 600; 
-    font-size: 14px; 
-    color: var(--text-main); 
-    margin-bottom: 12px; 
+  .auth-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
   }
   
-  form input, form select, form textarea { 
-    padding: 12px; 
-    border: 1px solid var(--border); 
-    border-radius: 8px; 
-    font-size: 15px; 
-    margin-top: 5px; 
-    background: #FAFAFA; 
-    transition: border 0.3s; 
+  .auth-grid .full {
+    grid-column: span 2;
   }
   
-  form input:focus, form select:focus, form textarea:focus { 
-    outline: none; 
-    border-color: var(--primary); 
-    background: #fff; 
+  label {
+    display: block;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text-main);
+    margin-bottom: 6px;
   }
   
-  /* Elementos expansíveis de Perguntas Frequentes (FAQ) */
-  .faq-item { 
-    background: var(--surface); 
-    border: 1px solid var(--border); 
-    border-radius: 8px; 
-    margin-bottom: 15px; 
-    padding: 15px; 
+  input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    background: #fff;
+    color: var(--text-main);
+    outline: none;
+    transition: border-color 0.2s;
   }
   
-  .faq-item summary { 
-    font-weight: bold; 
-    cursor: pointer; 
-    color: var(--primary); 
-    font-size: 17px; 
-    outline: none; 
-    list-style: none; 
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent); /* Foco em laranja */
   }
   
-  /* Layout do Dashboard do Utilizador */
-  .dashboard { 
-    display: flex; 
-    gap: 30px; 
-    margin-top: 10px; 
+  /* ==========================================
+     CORREÇÃO DEFINITIVA: CEP E ENDEREÇO (GRID)
+     ========================================== */
+  .cep-grid-container {
+    display: grid;
+    grid-template-columns: 110px 1.5fr 60px 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
   }
   
-  .sidebar { 
-    width: 260px; 
-    background: var(--surface); 
-    padding: 20px; 
-    border-radius: 12px; 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
-    height: fit-content; 
-    border: 1px solid var(--border); 
+  .cep-grid-container input {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 10px;
+    font-size: 14px;
   }
   
-  .sidebar h3 { 
-    color: var(--primary); 
-    margin-bottom: 15px; 
-    border-bottom: 2px solid var(--border); 
-    padding-bottom: 8px; 
-    font-size: 17px; 
+  @media (max-width: 768px) {
+    .cep-grid-container {
+      grid-template-columns: 1fr 1fr;
+    }
   }
   
-  .sidebar button { 
-    width: 100%; 
-    text-align: left; 
-    padding: 12px 15px; 
-    background: none; 
-    border: none; 
-    border-radius: 8px; 
-    font-size: 15px; 
-    color: var(--text-main); 
-    cursor: pointer; 
-    margin-bottom: 5px; 
-    transition: background 0.3s; 
-    font-weight: 500; 
-    display: flex; 
-    align-items: center; 
-    gap: 10px; 
+  /* ==========================================
+     DASHBOARD
+     ========================================== */
+  .dashboard {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 30px;
+    padding: 40px 0;
   }
   
-  .sidebar button:hover { 
-    background: #EDF2F7; 
+  .sidebar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    height: fit-content;
   }
   
-  .sidebar button.active { 
-    background: var(--primary); 
-    color: #fff; 
+  .sidebar h3 {
+    font-size: 16px;
+    color: var(--text-muted);
+    margin-bottom: 15px;
+    padding-left: 10px;
   }
   
-  .dashboard-content { 
-    flex: 1; 
+  .sidebar button {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 12px 15px;
+    text-align: left;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-main);
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 5px;
+    transition: background 0.2s, color 0.2s;
   }
   
-  .orders-list > div, .provider-card { 
-    background: var(--surface); 
-    border: 1px solid var(--border); 
-    border-left: 5px solid var(--primary); 
-    padding: 20px; 
-    border-radius: 8px; 
-    margin-bottom: 15px; 
-    box-shadow: 0 2px 8px rgba(0,0,0,0.02); 
+  .sidebar button:hover, .sidebar button.active {
+    background: rgba(249, 115, 22, 0.1);
+    color: var(--accent);
   }
   
-  .provider-card { 
-    border-left: 5px solid var(--secondary); 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
+  .dashboard-content {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 30px;
   }
-  
   
-  /* =========================================================
-     7. FEEDBACK VISUAL (TOAST) E RODAPÉ (FOOTER)
-     ========================================================= */
-  .toast-central { 
-    display: none; 
-    position: fixed; 
-    top: 20px; 
-    left: 50%; 
-    transform: translateX(-50%); 
-    color: #fff; 
-    padding: 15px 30px; 
-    border-radius: 8px; 
-    font-weight: bold; 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
-    z-index: 1000; 
-    font-size: 15px; 
+  /* ==========================================
+     FAQ E RODAPÉ
+     ========================================== */
+  .faq-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 15px 20px;
+    margin-bottom: 12px;
+    cursor: pointer;
   }
   
-  footer { 
-    background: #0F172A; 
-    color: #fff; 
-    padding: 50px 20px 20px; 
-    margin-top: auto; 
+  .faq-item summary {
+    font-weight: 600;
+    color: var(--primary);
   }
   
-  .footer-content { 
-    display: flex; 
-    flex-wrap: wrap; 
-    justify-content: space-between; 
-    gap: 40px; 
-    margin-bottom: 30px; 
+  .faq-item p {
+    margin-top: 10px;
+    color: var(--text-muted);
+    font-size: 14px;
   }
   
-  .footer-brand h3 { 
-    color: var(--secondary); 
-    font-size: 22px; 
-    margin-bottom: 10px; 
+  footer {
+    background-color: #111827;
+    color: #9CA3AF;
+    margin-top: auto;
   }
   
-  .footer-brand p { 
-    color: #94A3B8; 
-    max-width: 300px; 
-    font-size: 14px; 
+  .footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    padding: 60px 0 40px;
   }
   
-  .footer-links, .footer-contact { 
-    display: flex; 
-    flex-direction: column; 
-    gap: 8px; 
+  .footer-brand h3 {
+    color: #fff;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
   
-  .footer-links h4, .footer-contact h4 { 
-    margin-bottom: 8px; 
-    color: #fff; 
-    font-size: 16px; 
+  .footer-brand p, .footer-contact p {
+    font-size: 14px;
+    margin-bottom: 10px;
   }
   
-  .footer-links a { 
-    color: #94A3B8; 
-    text-decoration: none; 
-    font-size: 14px; 
+  .footer-links h4, .footer-contact h4 {
+    color: #fff;
+    margin-bottom: 15px;
+    font-size: 16px;
   }
   
-  .footer-links a:hover { 
-    color: var(--secondary); 
+  .footer-links a {
+    display: block;
+    color: #9CA3AF;
+    text-decoration: none;
+    font-size: 14px;
+    margin-bottom: 8px;
+    transition: color 0.2s;
   }
   
-  .footer-contact p { 
-    color: #94A3B8; 
-    font-size: 14px; 
-    display: flex; 
-    align-items: center; 
-    gap: 8px; 
+  .footer-links a:hover {
+    color: #fff;
   }
   
-  .footer-bottom { 
-    text-align: center; 
-    color: #94A3B8; 
-    border-top: 1px solid rgba(255,255,255,0.1); 
-    padding-top: 15px; 
-    font-size: 13px; 
+  .footer-bottom {
+    text-align: center;
+    padding: 20px 0;
+    border-top: 1px solid #1F2937;
+    font-size: 13px;
   }
-  /* =========================================================
-   8. AJUSTE DA FOTO DE PERFIL CIRCULAR NA NAVBAR
-   ========================================================= */
-.btn-user-avatar {
-  overflow: hidden;
-  padding: 0 !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-user-avatar img {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-  border-radius: 50% !important;
-  display: block !important;
-}

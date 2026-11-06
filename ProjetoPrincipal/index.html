@@ -268,13 +268,15 @@
             <label>RG *<input type="text" id="regRg" required></label>
             <label>Telefone / WhatsApp *<input type="tel" id="regTelefone" required></label>
             <label>Data de Nascimento *<input type="date" id="regNascimento" required></label>
+            
+            <!-- CEP E ENDEREÇO COM GRID RESPONSIVO CORRIGIDO -->
             <label class="full">CEP e Endereço *
-              <div style="display:flex; gap:10px; margin-top:5px;">
-                <input type="text" id="regCep" placeholder="CEP" onblur="buscarCepCadastro()" oninput="mascaraCep(this)" required style="flex:1;">
-                <input type="text" id="regRua" placeholder="Rua" required style="flex:2;">
-                <input type="text" id="regNumero" placeholder="Nº" required style="flex:1;">
-                <input type="text" id="regBairro" placeholder="Bairro" required style="flex:2;">
-                <input type="text" id="regCidade" placeholder="Cidade - UF" required style="flex:2;">
+              <div class="cep-grid-container">
+                <input type="text" id="regCep" placeholder="CEP" onblur="buscarCepCadastro()" oninput="mascaraCep(this)" required>
+                <input type="text" id="regRua" placeholder="Rua" required>
+                <input type="text" id="regNumero" placeholder="Nº" required>
+                <input type="text" id="regBairro" placeholder="Bairro" required>
+                <input type="text" id="regCidade" placeholder="Cidade - UF" required>
               </div>
             </label>
           </div>
