@@ -197,7 +197,7 @@ function converterImagemParaBase64(event, idInputDestino) {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             
-            const tamanhoMaximo = 200;
+            const tamanhoMaximo = 400;
             let largura = img.width;
             let altura = img.height;
             
@@ -220,7 +220,7 @@ function converterImagemParaBase64(event, idInputDestino) {
             const base64Comprimido = canvas.toDataURL('image/jpeg', 0.8);
             const inputDestino = document.getElementById(idInputDestino);
             if (inputDestino) inputDestino.value = base64Comprimido;
-            mostrarToast('Imagem carregada e otimizada com sucesso!');
+            mostrarToast('Imagem processada com sucesso!');
         };
     };
     leitor.readAsDataURL(arquivo);
@@ -272,7 +272,7 @@ function verificarOutroServico(select) {
         containerNovo.style.display = 'none';
         inputCustom.required = false;
         reqDescricao.required = false;
-        reqDescricao.placeholder = "descreva brevemente como quer que o serviço seja feito (opcional)";
+        reqDescricao.placeholder = "Descreva brevemente como quer que o serviço seja feito (opcional)";
     }
 }
 
@@ -306,7 +306,7 @@ function buscarCepCadastro() { buscarCepGenerico('regCep', 'regRua', 'regBairro'
 function buscarEnderecoPorCep() { buscarCepGenerico('reqCep', 'reqRua', 'reqBairro', 'reqCidade', 'reqNumero'); }
 
 // ==========================================
-// 4. AUTENTICAÇÃO
+// 4. AUTENTICAÇÃO E PERFIL
 // ==========================================
 async function register(event) {
     event.preventDefault();
@@ -432,9 +432,6 @@ async function login(event) {
     }
 }
 
-// ==========================================
-// 5. ATUALIZAR PERFIL E SENHA
-// ==========================================
 async function carregarDadosPerfil() {
     showPage('meu-perfil');
     const idLogado = localStorage.getItem('idUsuarioLogado');
@@ -464,16 +461,12 @@ async function carregarDadosPerfil() {
             document.getElementById('perfilNascimento').value = usuario.data_nascimento ? usuario.data_nascimento.split('T')[0] : '';
             document.getElementById('perfilEndereco').value = usuario.endereco_completo || usuario.endereco || '';
             
+            const blocoProfissao = document.getElementById('bloco-perfil-profissao');
             if (tipo === 'prestador') {
+                if (blocoProfissao) blocoProfissao.style.display = 'block';
                 document.getElementById('perfilProfissao').value = usuario.profissao_funcao || '';
-                document.getElementById('perfilExperiencia').value = usuario.experiencia || 'intermediário';
-                document.getElementById('perfilValorMin').value = usuario.valor_minimo || '';
-                document.getElementById('perfilValorMax').value = usuario.valor_maximo || '';
-                document.getElementById('perfilDisponibilidade').value = usuario.disponibilidade_horario || '';
-                if (usuario.foto_perfil) {
-                    document.getElementById('perfilFotoBase64').value = usuario.foto_perfil;
-                    localStorage.setItem('fotoUsuarioLogado', usuario.foto_perfil);
-                }
+            } else {
+                if (blocoProfissao) blocoProfissao.style.display = 'none';
             }
         }
     } catch (erro) {
@@ -512,10 +505,6 @@ async function atualizarPerfil(event) {
             telefone: document.getElementById('perfilTelefone').value,
             endereco_completo: document.getElementById('perfilEndereco').value,
             profissao_funcao: document.getElementById('perfilProfissao') ? document.getElementById('perfilProfissao').value : null,
-            experiencia: document.getElementById('perfilExperiencia') ? document.getElementById('perfilExperiencia').value : null,
-            valor_minimo: document.getElementById('perfilValorMin') ? Number(document.getElementById('perfilValorMin').value) : null,
-            valor_maximo: document.getElementById('perfilValorMax') ? Number(document.getElementById('perfilValorMax').value) : null,
-            disponibilidade_horario: document.getElementById('perfilDisponibilidade') ? document.getElementById('perfilDisponibilidade').value : null,
             foto_perfil: fotoNovaBase64 || undefined
         };
     }
@@ -542,19 +531,8 @@ async function atualizarPerfil(event) {
     }
 }
 
-function atualizarSenha(event) {
-    event.preventDefault();
-    const nova = document.getElementById('novaSenha').value;
-    const conf = document.getElementById('confirmaNovaSenha').value;
-    if (nova !== conf) return mostrarToast('As senhas não coincidem.', 'erro');
-    
-    mostrarToast('Senha alterada com sucesso!', 'sucesso');
-    event.target.reset();
-    setTimeout(() => redirecionarDashboard(), 1500);
-}
-
 // ==========================================
-// 6. PEDIDOS E OPORTUNIDADES (ESTILO UBER)
+// 5. PEDIDOS, AGENDA E AVALIAÇÃO
 // ==========================================
 async function solicitarServicoCatalogo(nomeServico) {
     showPage('request');
@@ -653,7 +631,6 @@ async function submitRequest(event) {
 
     const descExtra = document.getElementById('reqDescricao').value;
     const titulo = document.getElementById('reqTitulo').value;
-    // Formata a descrição ignorando o traço caso o utilizador não escreva nada
     const descricaoFinal = descExtra ? `[${tipoServico}] ${titulo} - ${descExtra}` : `[${tipoServico}] ${titulo}`;
 
     const payload = {
@@ -687,6 +664,83 @@ async function submitRequest(event) {
     }
 }
 
+// ----------------------------------------------------
+// FLUXO DE AVALIAÇÃO COM ESTRELAS E FOTO
+// ----------------------------------------------------
+function abrirTelaAvaliacao(idSolicitacao) {
+    document.getElementById('idSolicitacaoAvaliacao').value = idSolicitacao;
+    document.getElementById('form-avaliacao').reset();
+    document.getElementById('fotoAvaliacaoBase64').value = '';
+    selecionarEstrela(0); 
+    showPage('avaliacao');
+}
+
+function selecionarEstrela(nota) {
+    document.getElementById('notaAvaliacao').value = nota;
+    const stars = document.querySelectorAll('#star-rating span');
+    
+    stars.forEach((star, index) => {
+        if (index < nota) {
+            star.style.color = '#F59E0B'; 
+        } else {
+            star.style.color = '#ccc'; 
+        }
+    });
+}
+
+async function enviarAvaliacao(event) {
+    event.preventDefault();
+    const idSolicitacao = document.getElementById('idSolicitacaoAvaliacao').value;
+    const nota = document.getElementById('notaAvaliacao').value;
+    
+    if (nota == 0) {
+        return mostrarToast('Por favor, selecione pelo menos 1 estrela para avaliar.', 'erro');
+    }
+
+    const novoStatus = `Finalizado e Avaliado (${nota} ⭐)`;
+
+    try {
+        const resposta = await fetch(`${API_URL}/solicitacoes/${idSolicitacao}/status`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: novoStatus })
+        });
+
+        if (resposta.ok) {
+            mostrarToast('Avaliação enviada com sucesso! Muito obrigado.', 'sucesso');
+            carregarMinhasSolicitacoes();
+        } else {
+            mostrarToast('Erro ao gravar avaliação no sistema.', 'erro');
+        }
+    } catch (erro) {
+        mostrarToast('Erro de comunicação com o servidor.', 'erro');
+    }
+}
+
+async function atualizarStatusServico(idSolicitacao, novoStatus, mensagemSucesso) {
+    try {
+        const resposta = await fetch(`${API_URL}/solicitacoes/${idSolicitacao}/status`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: novoStatus })
+        });
+
+        if (resposta.ok) {
+            mostrarToast(mensagemSucesso, 'sucesso');
+            const tipo = localStorage.getItem('tipoUsuarioLogado');
+            if (tipo === 'prestador') {
+                carregarAgendaPrestador();
+            } else {
+                carregarMinhasSolicitacoes();
+            }
+        } else {
+            mostrarToast('Erro ao atualizar o status do pedido.', 'erro');
+        }
+    } catch (erro) {
+        mostrarToast('Erro de comunicação com o servidor.', 'erro');
+    }
+}
+
 async function carregarMinhasSolicitacoes() {
     showPage('minhas-solicitacoes');
     const lista = document.getElementById('lista-minhas-solicitacoes');
@@ -717,6 +771,11 @@ async function carregarMinhasSolicitacoes() {
                 const descricaoPed = sol.descricao || 'Sem descrição';
                 const statusPed = sol.status || 'Pendente';
 
+                let acaoCliente = '';
+                if (statusPed.toLowerCase() === 'concluído') {
+                    acaoCliente = `<button class="btn btn-primary btn-sm" onclick="abrirTelaAvaliacao('${idPed}')" style="margin-top: 15px; background-color: #F59E0B; width: 100%; border: none;">Deixar Avaliação ⭐</button>`;
+                }
+
                 return `
                     <div style="background: var(--surface); border: 1px solid var(--border); border-left: 5px solid var(--primary); padding: 25px; border-radius: 8px; margin-bottom: 15px;">
                         <h3 style="color: var(--primary); margin-bottom: 10px; font-size: 18px;">Pedido #${idPed}</h3>
@@ -724,6 +783,7 @@ async function carregarMinhasSolicitacoes() {
                         <p style="margin-bottom: 5px;"><strong>Endereço:</strong> ${enderecoPed}</p>
                         <p style="margin-bottom: 10px;"><strong>Descrição:</strong> ${descricaoPed}</p>
                         <p>Status: <span style="color: var(--success); font-weight: bold; background: rgba(16, 185, 129, 0.1); padding: 4px 10px; border-radius: 20px;">${statusPed}</span></p>
+                        ${acaoCliente}
                     </div>
                 `;
             }).join('');
@@ -748,7 +808,6 @@ async function carregarOportunidadesPrestador() {
             solicitacoes = solicitacoes.solicitacoes || solicitacoes.dados || Object.values(solicitacoes);
         }
         
-        // FILTRO EXATO: Só mostra serviços onde o cod_prestador não existe E o status for pendente.
         const disponiveis = solicitacoes.filter(s => !s.cod_prestador && (!s.status || s.status.toLowerCase() === 'pendente'));
 
         if (Array.isArray(disponiveis) && disponiveis.length > 0) {
@@ -793,7 +852,7 @@ async function aceitarSolicitudeUber(idSolicitacao) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 cod_prestador: Number(idPrestador),
-                status: `Serviço aceito pelo prestador ${nomePrestador}`
+                status: `Aceito pelo prestador ${nomePrestador}`
             })
         });
 
@@ -835,6 +894,19 @@ async function carregarAgendaPrestador() {
                 ${minhasSolicitacoes.map(s => {
                     const dataPed = s.data_servico ? s.data_servico.split('T')[0] : 'Data não informada';
                     const servicoNome = s.servico || s.descricao || 'Serviço ResolvJá';
+                    const statusAtual = (s.status || 'Pendente').toLowerCase();
+
+                    let botoesAcao = '';
+                    if (statusAtual.includes('aceito')) {
+                        botoesAcao = `<button class="btn btn-secondary btn-sm" onclick="atualizarStatusServico('${s.id_solicitacao}', 'A caminho', '🚗 Cliente notificado que você está a caminho!')" style="margin-top: 15px; width: 100%;">Marcar como "Estou a Caminho"</button>`;
+                    } else if (statusAtual === 'a caminho') {
+                        botoesAcao = `<button class="btn btn-primary btn-sm" onclick="atualizarStatusServico('${s.id_solicitacao}', 'Concluído', '✅ Serviço marcado como concluído!')" style="margin-top: 15px; background-color: var(--success); width: 100%; border: none;">Concluir Serviço</button>`;
+                    } else if (statusAtual === 'concluído') {
+                        botoesAcao = `<p style="margin-top: 15px; font-size: 13px; color: var(--text-muted); text-align: center;">Aguardando avaliação do cliente.</p>`;
+                    } else {
+                        botoesAcao = `<p style="margin-top: 15px; font-size: 13px; color: var(--success); font-weight: bold; text-align: center;">Serviço Finalizado ⭐</p>`;
+                    }
+
                     return `
                         <div style="background: var(--surface); border: 1px solid var(--border); border-left: 5px solid var(--accent); border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
                             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
@@ -845,6 +917,7 @@ async function carregarAgendaPrestador() {
                                 <div><strong><i class="fas fa-clock" style="color: var(--secondary); margin-right: 6px;"></i>Horário:</strong> ${s.horario || 'A combinar'} (${dataPed})</div>
                                 <div style="grid-column: span 2;"><strong><i class="fas fa-map-marker-alt" style="color: var(--accent); margin-right: 6px;"></i>Endereço Completo:</strong> ${s.endereco || 'Endereço não informado'}</div>
                             </div>
+                            ${botoesAcao}
                         </div>
                     `;
                 }).join('')}

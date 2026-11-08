@@ -53,569 +53,613 @@
     </div>
   </header>
 
-  <!-- PÁGINA: HOME -->
-  <section id="home" class="page active">
-    <div class="hero">
-      <div class="container">
-        <span class="badge"><i class="fas fa-shield-alt"></i> Plataforma Verificada e Segura</span>
-        <h1>O seu problema resolvido com um <span>clique.</span></h1>
-        <p>Conectamos você aos melhores profissionais locais para serviços domésticos, reparos e assistências com total segurança e agilidade.</p>
-        <div class="hero-buttons">
-          <button class="btn btn-secondary" onclick="showPage('catalogo-completo')"><i class="fas fa-search"></i> Explorar Serviços</button>
-          <button class="btn btn-outline-light" onclick="showPage('register')">Quero ser Prestador</button>
-        </div>
-      </div>
-    </div>
-
-    <section class="section">
-      <div class="container" style="text-align: center;">
-        <div class="section-header">
-          <span class="section-label">TECNOLOGIA E PRATICIDADE</span>
-          <h2>Veja como o ResolvJá funciona na prática</h2>
-          <p>Um sistema feito para simplificar o seu dia a dia.</p>
-        </div>
-        <div class="video-container" style="max-width: 800px; margin: 0 auto; border-radius: 16px; overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,0.15);">
-          <iframe width="100%" height="450" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=0&mute=1" title="ResolvJá Apresentação" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="display: block;"></iframe>
-        </div>
-      </div>
-    </section>
-
-    <section class="section gray-bg">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-label">POR QUE ESCOLHER-NOS</span>
-          <h2>Segurança e agilidade para sua família</h2>
-        </div>
-        <div class="steps">
-          <div class="step-card">
-            <div class="step-icon"><i class="fas fa-user-check"></i></div>
-            <h3>Profissionais Verificados</h3>
-            <p>Rigorosa checagem de antecedentes e documentações.</p>
-          </div>
-          <div class="step-card">
-            <div class="step-icon"><i class="fas fa-bolt"></i></div>
-            <h3>Agendamento Rápido</h3>
-            <p>Encontre o especialista ideal na sua rua em minutos.</p>
-          </div>
-          <div class="step-card">
-            <div class="step-icon"><i class="fas fa-handshake"></i></div>
-            <h3>Garantia de Qualidade</h3>
-            <p>Avaliações reais feitas por clientes da sua região.</p>
+  <main>
+    <!-- PÁGINA: HOME -->
+    <section id="home" class="page active">
+      <div class="hero">
+        <div class="container">
+          <span class="badge"><i class="fas fa-shield-alt"></i> Plataforma Verificada e Segura</span>
+          <h1>O seu problema resolvido com um <span>clique.</span></h1>
+          <p>Conectamos você aos melhores profissionais locais para serviços domésticos, reparos e assistências com total segurança e agilidade.</p>
+          <div class="hero-buttons">
+            <button class="btn btn-secondary" onclick="showPage('catalogo-completo')"><i class="fas fa-search"></i> Explorar Serviços</button>
+            <button class="btn btn-outline-light" onclick="showPage('register')">Quero ser Prestador</button>
           </div>
         </div>
       </div>
-    </section>
-  </section>
 
-  <!-- PÁGINA: CATÁLOGO COMPLETO -->
-  <section id="catalogo-completo" class="page">
-    <div class="container">
-      <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
-      
-      <div class="section-header">
-        <span class="section-label">O QUE PRECISA RESOLVER?</span>
-        <h2>Catálogo Completo de Serviços</h2>
-        <p>Selecione uma categoria ou pesquise o trabalho desejado entre as 23 opções disponíveis.</p>
-      </div>
+      <section class="section">
+        <div class="container" style="text-align: center;">
+          <div class="section-header">
+            <span class="section-label">TECNOLOGIA E PRATICIDADE</span>
+            <h2>Veja como o ResolvJá funciona na prática</h2>
+            <p>Um sistema feito para simplificar o seu dia a dia.</p>
+          </div>
+          <div class="video-container" style="max-width: 800px; margin: 0 auto; border-radius: 16px; overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,0.15);">
+            <iframe width="100%" height="450" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=0&mute=1" title="ResolvJá Apresentação" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="display: block;"></iframe>
+          </div>
+        </div>
+      </section>
 
-      <div class="search-catalog-box" style="margin-bottom: 30px;">
-        <input type="text" id="inputBuscaCatalogo" placeholder="🔍 Pesquise por serviço (ex: eletricista, encanador, pintor, pedreiro...)" onkeyup="filtrarCatalogoServicos()" style="width: 100%; padding: 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 15px;">
-      </div>
-
-      <div class="catalog-grid" id="container-catalogo-servicos">
-        <div class="catalog-card" data-nome="trocar lâmpada elétrica iluminação luminária eletricista">
-          <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Manutenção</span></div>
-          <div class="catalog-body">
-            <h3>Trocar Lâmpada</h3>
-            <p>Instalação de lustres, plafons e lâmpadas altas com segurança.</p>
-            <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 35,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Trocar Lâmpada')">Solicitar</button></div>
+      <section class="section gray-bg">
+        <div class="container">
+          <div class="section-header">
+            <span class="section-label">POR QUE ESCOLHER-NOS</span>
+            <h2>Segurança e agilidade para sua família</h2>
           </div>
-        </div>
-        <div class="catalog-card" data-nome="arrumar um chuveiro resistência elétrica hidráulica encanador">
-          <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Hidráulica</span></div>
-          <div class="catalog-body">
-            <h3>Arrumar Chuveiro</h3>
-            <p>Troca de resistência e reparos rápidos no banheiro.</p>
-            <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 60,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Arrumar Chuveiro')">Solicitar</button></div>
-          </div>
-        </div>
-        <div class="catalog-card" data-nome="montar móveis montador armário guarda roupa">
-          <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1538688525198-9b88f6f53126?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Montagem</span></div>
-          <div class="catalog-body">
-            <h3>Montagem de Móveis</h3>
-            <p>Montagem profissional de guarda-roupas, mesas e camas.</p>
-            <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 90,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Montagem de Móveis')">Solicitar</button></div>
-          </div>
-        </div>
-        <div class="catalog-card" data-nome="limpeza de casa faxina diarista doméstica">
-          <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Doméstico</span></div>
-          <div class="catalog-body">
-            <h3>Limpeza de Casa</h3>
-            <p>Faxina residencial completa, higienização e organização.</p>
-            <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 130,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Limpeza de Casa')">Solicitar</button></div>
-          </div>
-        </div>
-        <div class="catalog-card" data-nome="pintor pintura parede casa reforma">
-          <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Reforma</span></div>
-          <div class="catalog-body">
-            <h3>Pintor Residencial</h3>
-            <p>Pintura de paredes, tetos, aplicação de massa corrida e acabamentos.</p>
-            <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 150,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Pintor Residencial')">Solicitar</button></div>
-          </div>
-        </div>
-        <div class="catalog-card" data-nome="técnico informática computador notebook formatação TI">
-          <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1588702547919-26b89e090aec?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Tecnologia</span></div>
-          <div class="catalog-body">
-            <h3>Técnico de Informática</h3>
-            <p>Formatação, limpeza de vírus, instalação de softwares e suporte.</p>
-            <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 80,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Técnico de Informática')">Solicitar</button></div>
-          </div>
-        </div>
-        <div class="catalog-card" data-nome="pedreiro construção alvenaria reforma piso">
-          <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1541888946425-d0fbb18f86f6?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Construção</span></div>
-          <div class="catalog-body">
-            <h3>Pedreiro / Alvenaria</h3>
-            <p>Assentamento de pisos, azulejos, pequenas reformas e alvenaria.</p>
-            <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 120,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Pedreiro / Alvenaria')">Solicitar</button></div>
-          </div>
-        </div>
-        <div class="catalog-card" data-nome="jardineiro cortar grama planta jardim poda">
-          <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1558904541-efa873a8c687?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Exterior</span></div>
-          <div class="catalog-body">
-            <h3>Jardineiro / Paisagismo</h3>
-            <p>Corte de grama, poda de árvores e manutenção geral de jardins.</p>
-            <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 100,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Jardineiro / Paisagismo')">Solicitar</button></div>
-          </div>
-        </div>
-        <div class="catalog-card" data-nome="marceneiro móveis planejados madeira reparo">
-          <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1507089947368-19c1da9775ae?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Marcenaria</span></div>
-          <div class="catalog-body">
-            <h3>Marceneiro</h3>
-            <p>Conserto de portas, móveis sob medida e ajustes em madeira.</p>
-            <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 110,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Marceneiro')">Solicitar</button></div>
-          </div>
-        </div>
-        <div class="catalog-card" data-nome="gesseiro gesso drywall teto sanca">
-          <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Acabamento</span></div>
-          <div class="catalog-body">
-            <h3>Gesseiro / Drywall</h3>
-            <p>Instalação de sancas, forros de gesso, paredes e divisórias em drywall.</p>
-            <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 130,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Gesseiro / Drywall')">Solicitar</button></div>
-          </div>
-        </div>
-        <div class="catalog-card" data-nome="chaveiro tranca porta fechadura cópia chave">
-          <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Segurança</span></div>
-          <div class="catalog-body">
-            <h3>Chaveiro Residencial</h3>
-            <p>Abertura de portas, troca de segredos, fechaduras e cópias.</p>
-            <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 70,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Chaveiro Residencial')">Solicitar</button></div>
-          </div>
-        </div>
-        <div class="catalog-card" data-nome="técnico ar condicionado limpeza manutenção split">
-          <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Climatização</span></div>
-          <div class="catalog-body">
-            <h3>Técnico de Ar Condicionado</h3>
-            <p>Instalação, limpeza de filtros, carga de gás e manutenção em splits.</p>
-            <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 140,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Técnico de Ar Condicionado')">Solicitar</button></div>
-          </div>
-        </div>
-        <div class="catalog-card" data-nome="vidraceiro vidro box janela espelho">
-          <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Vidraçaria</span></div>
-          <div class="catalog-body">
-            <h3>Vidraceiro</h3>
-            <p>Instalação de box para banheiro, espelhos, tampos e janelas de vidro.</p>
-            <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 120,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Vidraceiro')">Solicitar</button></div>
-          </div>
-        </div>
-        <div class="catalog-card" data-nome="dedetizador controle pragas dedetização barata rato">
-          <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1584467735871-8e853e8954d3?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Sanitização</span></div>
-          <div class="catalog-body">
-            <h3>Dedetizador / Limpeza</h3>
-            <p>Controle de pragas urbanas, desratização e sanitização de ambientes.</p>
-            <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 150,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Dedetizador / Limpeza')">Solicitar</button></div>
-          </div>
-        </div>
-        <div class="catalog-card" data-nome="tapeceiro estofador sofá poltrona reforma">
-          <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Estofados</span></div>
-          <div class="catalog-body">
-            <h3>Tapeceiro / Estofador</h3>
-            <p>Reforma de sofás, poltronas, cadeiras e troca de revestimentos.</p>
-            <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 160,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Tapeceiro / Estofador')">Solicitar</button></div>
-          </div>
-        </div>
-        <div class="catalog-card" data-nome="instalador tv suporte parede som home theater">
-          <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1593784991095-a205069470b6?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Eletrônicos</span></div>
-          <div class="catalog-body">
-            <h3>Instalador de TVs e Áudio</h3>
-            <p>Fixação de TVs na parede, configuração de painéis e som ambiente.</p>
-            <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 80,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Instalador de TVs e Áudio')">Solicitar</button></div>
-          </div>
-        </div>
-        <div class="catalog-card" data-nome="marido de aluguel reparos gerais pequenas manutenções casa">
-          <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Geral</span></div>
-          <div class="catalog-body">
-            <h3>Marido de Aluguel (Reparos)</h3>
-            <p>Pequenos reparos residenciais, troca de fechaduras, furos e fixações.</p>
-            <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 70,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Marido de Aluguel (Reparos)')">Solicitar</button></div>
-          </div>
-        </div>
-        <div class="catalog-card" data-nome="encanador desentupidor pia ralo esgoto limpeza">
-          <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1542013936693-844e454e1714?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Hidráulica</span></div>
-          <div class="catalog-body">
-            <h3>Desentupidor / Encanador</h3>
-            <p>Desentupimento de pias, ralos, vasos sanitários e redes de esgoto.</p>
-            <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 100,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Desentupidor / Encanador')">Solicitar</button></div>
-          </div>
-        </div>
-        <div class="catalog-card" data-nome="calheiro calhas rufos vazamento telhado">
-          <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Cobertura</span></div>
-          <div class="catalog-body">
-            <h3>Calheiro / Telhadista</h3>
-            <p>Limpeza e instalação de calhas, rufos e reparos em telhados.</p>
-            <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 110,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Calheiro / Telhadista')">Solicitar</button></div>
-          </div>
-        </div>
-        <div class="catalog-card" data-nome="serralheiro portão grade ferro solda reparo">
-          <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Serralheria</span></div>
-          <div class="catalog-body">
-            <h3>Serralheiro</h3>
-            <p>Manutenção e reparos em portões, grades, corrimãos e estruturas de ferro.</p>
-            <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 130,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Serralheiro')">Solicitar</button></div>
-          </div>
-        </div>
-        <div class="catalog-card" data-nome="técnico portão eletrônico interfone câmera segurança alarme">
-          <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Segurança</span></div>
-          <div class="catalog-body">
-            <h3>Técnico de Segurança Eletrônica</h3>
-            <p>Instalação e manutenção de câmeras (CFTV), alarmes e interfones.</p>
-            <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 120,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Técnico de Segurança Eletrônica')">Solicitar</button></div>
-          </div>
-        </div>
-        <div class="catalog-card" data-nome="limpador de estofados higienizadora sofá colchão tapete">
-          <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Higienização</span></div>
-          <div class="catalog-body">
-            <h3>Higienização de Estofados</h3>
-            <p>Lavagem a seco de sofás, colchões, tapetes e bancos de automóveis.</p>
-            <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 120,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Higienização de Estofados')">Solicitar</button></div>
-          </div>
-        </div>
-        <div class="catalog-card" data-nome="piscinista limpeza piscina tratamento cloro">
-          <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Lazer</span></div>
-          <div class="catalog-body">
-            <h3>Piscinista / Tratamento</h3>
-            <p>Limpeza periódica, aspiração, tratamento químico e controle de cloro.</p>
-            <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 90,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Piscinista / Tratamento')">Solicitar</button></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- PÁGINA: SOBRE NÓS -->
-  <section id="sobre" class="page">
-    <div class="container section">
-      <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
-      <div class="section-header">
-        <span class="section-label">QUEM SOMOS</span>
-        <h2>Conectando necessidades e talentos</h2>
-      </div>
-      <div class="auth-card wide" style="margin: 0 auto; text-align: left;">
-        <p style="font-size: 16px; margin-bottom: 15px; color: var(--text-main);">O <strong>ResolvJá</strong> nasceu com a missão de descomplicar o dia a dia das famílias, unindo clientes que precisam de reparos rápidos a prestadores altamente qualificados na região.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- PÁGINA: AVALIAÇÕES -->
-  <section id="avaliacoes" class="page">
-    <div class="container section">
-      <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
-      <div class="section-header">
-        <span class="section-label">DEPOIMENTOS</span>
-        <h2>O que dizem os nossos utilizadores</h2>
-      </div>
-      <div class="reviews-grid">
-        <div class="review-card">
-          <div class="stars">⭐⭐⭐⭐⭐</div>
-          <p>"Contratei um eletricista pelo site e foi super rápido. Atendimento nota 10!"</p>
-          <h4>- Dona Maria, 58 anos</h4>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- PÁGINA: SAC / AJUDA -->
-  <section id="sac" class="page">
-    <div class="container section">
-      <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
-      <div class="section-header">
-        <span class="section-label">SUPORTE</span>
-        <h2>Central de Ajuda (SAC)</h2>
-        <p>Tire as suas dúvidas mais frequentes</p>
-      </div>
-      <div style="max-width: 800px; margin: 0 auto;">
-        <details class="faq-item">
-          <summary>Como faço para contratar um prestador?</summary>
-          <p>Basta navegar pelo catálogo de serviços, selecionar a opção desejada, preencher os detalhes do problema e enviar o pedido.</p>
-        </details>
-        <details class="faq-item">
-          <summary>Como me torno um prestador de serviços?</summary>
-          <p>Clique em "Quero ser Prestador" na página inicial ou na tela de cadastro, preencha os seus dados profissionais e faça o upload da sua foto.</p>
-        </details>
-      </div>
-    </div>
-  </section>
-
-  <!-- PÁGINA: LOGIN -->
-  <section id="login" class="page">
-    <div class="container auth-page">
-      <div class="auth-card">
-        <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
-        <h2 style="text-align:center; color:var(--primary); margin-bottom: 20px;">Entrar na Conta</h2>
-        <form onsubmit="login(event)">
-          <label>Usuário ou E-mail <input type="text" id="loginUsuario" required></label>
-          <label>Senha <input type="password" id="loginSenha" required></label>
-          <button type="submit" class="btn btn-primary btn-full" style="margin-top: 15px;">Entrar</button>
-        </form>
-        <p style="text-align:center; margin-top:15px; font-size: 14px;">Não tem conta? <a href="#" onclick="showPage('register')" style="color:var(--accent); font-weight:600;">Cadastre-se</a></p>
-      </div>
-    </div>
-  </section>
-
-  <!-- PÁGINA: CADASTRO -->
-  <section id="register" class="page">
-    <div class="container auth-page">
-      <div class="auth-card wide">
-        <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
-        <h2 style="color:var(--primary); margin-bottom: 10px;">Crie a sua conta</h2>
-        <form id="form-cadastro" onsubmit="register(event)">
-          <div class="auth-grid">
-            <label>Tipo de Perfil *
-              <select id="regTipo" onchange="toggleCamposPrestador()" required>
-                <option value="">Selecione...</option>
-                <option value="solicitante">Quero contratar serviços (Cliente)</option>
-                <option value="prestador">Quero trabalhar (Prestador)</option>
-              </select>
-            </label>
-            <label>Nome Completo *<input type="text" id="regNome" required></label>
-            <label>E-mail *<input type="email" id="regEmail" required></label>
-            <label>CPF *<input type="text" id="regCpf" required></label>
-            <label>RG *<input type="text" id="regRg" required></label>
-            <label>Telefone / WhatsApp *<input type="tel" id="regTelefone" required></label>
-            <label>Data de Nascimento *<input type="date" id="regNascimento" required></label>
-            
-            <label class="full">CEP e Endereço *
-              <div class="cep-grid-container">
-                <input type="text" id="regCep" placeholder="CEP" onblur="buscarCepCadastro()" oninput="mascaraCep(this)" required>
-                <input type="text" id="regRua" placeholder="Rua" required>
-                <input type="text" id="regNumero" placeholder="Nº" required>
-                <input type="text" id="regBairro" placeholder="Bairro" required>
-                <input type="text" id="regCidade" placeholder="Cidade - UF" required>
-              </div>
-            </label>
-          </div>
-
-          <div id="campos-prestador" class="auth-grid" style="display: none; background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 15px; border: 1px solid var(--border);">
-            <label class="full"><strong style="color:var(--primary);">Informações Profissionais & Foto de Perfil</strong></label>
-            <label>Profissão / Função *<input type="text" id="regProfissao" placeholder="Ex: Eletricista"></label>
-            <label>Nível de Experiência *
-              <select id="regExperiencia">
-                <option value="básico">Iniciante</option>
-                <option value="intermediário" selected>Experiente</option>
-                <option value="avançado">Especialista</option>
-              </select>
-            </label>
-            <label>Valor Mínimo (R$) *<input type="number" step="0.01" id="regValorMin" value="50.00" required></label>
-            <label>Valor Máximo (R$) *<input type="number" step="0.01" id="regValorMax" value="150.00" required></label>
-            <label class="full">Disponibilidade de Horário *<input type="text" id="regDisponibilidade" placeholder="Ex: Seg a Sáb, 8h às 18h" required></label>
-            
-            <label class="full">
-              Foto de Perfil (Carregar do Dispositivo)
-              <input type="file" id="regFotoFile" accept="image/*" onchange="converterImagemParaBase64(event, 'regFotoBase64')">
-              <input type="hidden" id="regFotoBase64">
-            </label>
-          </div>
-
-          <div class="auth-grid" style="margin-top: 15px; border-top: 1px solid var(--border); padding-top: 15px;">
-            <label>Senha *<input type="password" id="regSenha" required></label>
-            <label>Confirmar Senha *<input type="password" id="regSenha2" required></label>
-          </div>
-          <button type="submit" class="btn btn-primary btn-full" style="margin-top: 20px;">Criar Conta</button>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <!-- PÁGINA: DASHBOARD DO CLIENTE -->
-  <section id="dashboard-solicitante" class="page">
-    <div class="container dashboard">
-      <aside class="sidebar">
-        <h3>Painel do Cliente</h3>
-        <button class="active" onclick="showPage('dashboard-solicitante')"><i class="fas fa-home"></i> Início</button>
-        <button onclick="showPage('catalogo-completo')"><i class="fas fa-plus"></i> Novo Pedido</button>
-        <button onclick="carregarMinhasSolicitacoes()"><i class="fas fa-list"></i> Meus Pedidos</button>
-        <button onclick="carregarPrestadoresDisponiveis()"><i class="fas fa-search"></i> Buscar Profissionais</button>
-      </aside>
-      <main class="dashboard-content">
-        <div class="section-header" style="text-align: left; margin-bottom: 20px;">
-          <h2 id="tituloSaudacaoSolicitante">Área do Solicitante</h2>
-          <p>Gerencie os seus pedidos e encontre profissionais cadastrados.</p>
-        </div>
-      </main>
-    </div>
-  </section>
-
-  <!-- PÁGINA: DASHBOARD DO PRESTADOR -->
-  <section id="dashboard-prestador" class="page">
-    <div class="container dashboard">
-      <aside class="sidebar">
-        <h3>Painel do Prestador</h3>
-        <button class="active" onclick="showPage('dashboard-prestador')"><i class="fas fa-home"></i> Início</button>
-        <button onclick="carregarDadosPerfil()"><i class="fas fa-user-edit"></i> Meu Perfil Profissional</button>
-        <button onclick="carregarOportunidadesPrestador()"><i class="fas fa-briefcase"></i> Oportunidades</button>
-        <button onclick="carregarAgendaPrestador()"><i class="fas fa-calendar-alt"></i> Agenda</button>
-      </aside>
-      <main class="dashboard-content">
-        <div class="section-header" style="text-align: left; margin-bottom: 20px;">
-          <h2 id="tituloSaudacaoPrestador">Área do Prestador de Serviços 🛠️</h2>
-          <p>Bem-vindo ao seu painel profissional. Acompanhe a sua agenda e oportunidades.</p>
-        </div>
-        <div id="conteudoDinamicoPrestador"></div>
-      </main>
-    </div>
-  </section>
-
-  <!-- PÁGINA: MINHAS SOLICITAÇÕES -->
-  <section id="minhas-solicitacoes" class="page">
-    <div class="container dashboard">
-      <aside class="sidebar">
-        <h3>Painel do Cliente</h3>
-        <button onclick="showPage('dashboard-solicitante')"><i class="fas fa-home"></i> Início</button>
-        <button class="active" onclick="carregarMinhasSolicitacoes()"><i class="fas fa-list"></i> Meus Pedidos</button>
-      </aside>
-      <main class="dashboard-content">
-        <h2>Meus Pedidos Registados 📋</h2>
-        <div id="lista-minhas-solicitacoes" class="orders-list" style="margin-top: 20px;"></div>
-      </main>
-    </div>
-  </section>
-
-  <!-- PÁGINA: FORMULÁRIO DE PEDIDO -->
-  <section id="request" class="page">
-    <div class="container auth-page">
-      <div class="auth-card wide">
-        <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
-        <h2 style="color:var(--primary); margin: 15px 0;">Detalhes do Pedido</h2>
-        <form onsubmit="submitRequest(event)">
-          <label>Serviço Selecionado *
-            <select id="selectTipoServico" onchange="verificarOutroServico(this)" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: #fff; font-weight: bold; color: var(--primary);"></select>
-          </label>
-          <label id="container-novo-servico" style="display: none;">Descreva a Nova Função * <input type="text" id="reqTipoServicoCustom"></label>
-          <label>Título / Resumo do Problema * <input type="text" id="reqTitulo" required placeholder="Ex: Curto-circuito na tomada da sala"></label>
-          <label>Descrição Detalhada * <textarea id="reqDescricao" rows="3" required placeholder="Explique o que precisa ser feito..."></textarea></label>
-          
-          <div class="auth-grid">
-            <label>Data Desejada * <input type="date" id="reqData" required></label>
-            <label>Horário (De - Até) * 
-              <div style="display: flex; gap: 10px; align-items: center; justify-content: space-between;">
-                <input type="time" id="reqHoraInicio" required style="flex: 1;">
-                <span style="font-weight: bold; color: var(--text-muted);">até</span>
-                <input type="time" id="reqHoraFim" required style="flex: 1;">
-              </div>
-            </label>
-          </div>
-
-          <label class="full" style="margin-top: 15px;">CEP e Endereço do Serviço *
-            <div class="cep-grid-container">
-              <input type="text" id="reqCep" placeholder="CEP" onblur="buscarEnderecoPorCep()" oninput="mascaraCep(this)" required>
-              <input type="text" id="reqRua" placeholder="Rua" required>
-              <input type="text" id="reqNumero" placeholder="Nº" required>
-              <input type="text" id="reqBairro" placeholder="Bairro" required>
-              <input type="text" id="reqCidade" placeholder="Cidade - UF" required>
+          <div class="steps">
+            <div class="step-card">
+              <div class="step-icon"><i class="fas fa-user-check"></i></div>
+              <h3>Profissionais Verificados</h3>
+              <p>Rigorosa checagem de antecedentes e documentações.</p>
             </div>
-          </label>
-
-          <button type="submit" class="btn btn-primary btn-full" style="margin-top:20px;">Confirmar e Enviar Pedido</button>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <!-- PÁGINA: LISTA DE PRESTADORES -->
-  <section id="providers" class="page">
-    <div class="container section">
-      <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
-      <div class="section-header">
-        <h2>Profissionais Prontos para Ajudar</h2>
-        <p>Lista de especialistas registados na plataforma.</p>
-      </div>
-      <div class="providers-list" id="container-lista-prestadores"></div>
-    </div>
-  </section>
-
-  <!-- PÁGINA: DETALHE DO PRESTADOR -->
-  <section id="detalhe-prestador" class="page">
-    <div class="container section">
-      <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
-      <div id="container-detalhe-prestador" style="max-width: 800px; margin: 0 auto;"></div>
-    </div>
-  </section>
-
-  <!-- PÁGINA: ATUALIZAR CADASTRO -->
-  <section id="meu-perfil" class="page">
-    <div class="container auth-page">
-      <div class="auth-card wide">
-        <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
-        <h2 style="color:var(--primary); margin-bottom: 15px;">Atualizar Dados Cadastrais</h2>
-        <form id="form-atualizar-perfil" onsubmit="atualizarPerfil(event)">
-          <div class="auth-grid">
-            <label>Nome Completo *<input type="text" id="perfilNome" required></label>
-            <label>E-mail *<input type="email" id="perfilEmail" required></label>
-            <label>Telemóvel / WhatsApp *<input type="tel" id="perfilTelefone" required></label>
-            
-            <label>CPF (Não alterável) <input type="text" id="perfilCpf" disabled style="background:#e9ecef; cursor:not-allowed;"></label>
-            <label>RG (Não alterável) <input type="text" id="perfilRg" disabled style="background:#e9ecef; cursor:not-allowed;"></label>
-            <label>Data de Nascimento (Não alterável) <input type="date" id="perfilNascimento" disabled style="background:#e9ecef; cursor:not-allowed;"></label>
-            
-            <label class="full">Endereço Completo *<input type="text" id="perfilEndereco" required></label>
-            
-            <label>Profissão / Função <input type="text" id="perfilProfissao"></label>
-            <label>Nível de Experiência 
-              <select id="perfilExperiencia">
-                <option value="básico">Iniciante</option>
-                <option value="intermediário">Experiente</option>
-                <option value="avançado">Especialista</option>
-              </select>
-            </label>
-            <label>Valor Mínimo (R$) <input type="number" step="0.01" id="perfilValorMin"></label>
-            <label>Valor Máximo (R$) <input type="number" step="0.01" id="perfilValorMax"></label>
-            <label class="full">Disponibilidade de Horário <input type="text" id="perfilDisponibilidade"></label>
-            
-            <label class="full">
-              Alterar Foto de Perfil (Carregar do Dispositivo)
-              <input type="file" id="perfilFotoFile" accept="image/*" onchange="converterImagemParaBase64(event, 'perfilFotoBase64')">
-              <input type="hidden" id="perfilFotoBase64">
-            </label>
+            <div class="step-card">
+              <div class="step-icon"><i class="fas fa-bolt"></i></div>
+              <h3>Agendamento Rápido</h3>
+              <p>Encontre o especialista ideal na sua rua em minutos.</p>
+            </div>
+            <div class="step-card">
+              <div class="step-icon"><i class="fas fa-handshake"></i></div>
+              <h3>Garantia de Qualidade</h3>
+              <p>Avaliações reais feitas por clientes da sua região.</p>
+            </div>
           </div>
-          <button type="submit" class="btn btn-primary btn-full" style="margin-top: 20px;">Salvar Alterações</button>
-        </form>
-      </div>
-    </div>
-  </section>
+        </div>
+      </section>
+    </section>
 
-  <!-- PÁGINA: ATUALIZAR SENHA -->
-  <section id="atualizar-senha" class="page">
-    <div class="container auth-page">
-      <div class="auth-card">
+    <!-- PÁGINA: CATÁLOGO COMPLETO -->
+    <section id="catalogo-completo" class="page">
+      <div class="container">
         <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
-        <h2 style="color:var(--primary);">Alterar Senha</h2>
-        <form onsubmit="atualizarSenha(event)" style="margin-top: 20px;">
-          <label>Nova Senha <input type="password" id="novaSenha" required></label>
-          <label>Confirmar Nova Senha <input type="password" id="confirmaNovaSenha" required></label>
-          <button type="submit" class="btn btn-primary btn-full" style="margin-top: 15px;">Atualizar Senha</button>
-        </form>
+        
+        <div class="section-header">
+          <span class="section-label">O QUE PRECISA RESOLVER?</span>
+          <h2>Catálogo Completo de Serviços</h2>
+          <p>Selecione uma categoria ou pesquise o trabalho desejado entre as 23 opções disponíveis.</p>
+        </div>
+
+        <div class="search-catalog-box" style="margin-bottom: 30px;">
+          <input type="text" id="inputBuscaCatalogo" placeholder="🔍 Pesquise por serviço (ex: eletricista, encanador, pintor, pedreiro...)" onkeyup="filtrarCatalogoServicos()" style="width: 100%; padding: 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 15px;">
+        </div>
+
+        <div class="catalog-grid" id="container-catalogo-servicos">
+          <div class="catalog-card" data-nome="trocar lâmpada elétrica iluminação luminária eletricista">
+            <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Manutenção</span></div>
+            <div class="catalog-body">
+              <h3>Trocar Lâmpada</h3>
+              <p>Instalação de lustres, plafons e lâmpadas altas com segurança.</p>
+              <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 35,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Trocar Lâmpada')">Solicitar</button></div>
+            </div>
+          </div>
+          <div class="catalog-card" data-nome="arrumar um chuveiro resistência elétrica hidráulica encanador">
+            <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Hidráulica</span></div>
+            <div class="catalog-body">
+              <h3>Arrumar Chuveiro</h3>
+              <p>Troca de resistência e reparos rápidos no banheiro.</p>
+              <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 60,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Arrumar Chuveiro')">Solicitar</button></div>
+            </div>
+          </div>
+          <div class="catalog-card" data-nome="montar móveis montador armário guarda roupa">
+            <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1538688525198-9b88f6f53126?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Montagem</span></div>
+            <div class="catalog-body">
+              <h3>Montagem de Móveis</h3>
+              <p>Montagem profissional de guarda-roupas, mesas e camas.</p>
+              <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 90,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Montagem de Móveis')">Solicitar</button></div>
+            </div>
+          </div>
+          <div class="catalog-card" data-nome="limpeza de casa faxina diarista doméstica">
+            <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Doméstico</span></div>
+            <div class="catalog-body">
+              <h3>Limpeza de Casa</h3>
+              <p>Faxina residencial completa, higienização e organização.</p>
+              <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 130,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Limpeza de Casa')">Solicitar</button></div>
+            </div>
+          </div>
+          <div class="catalog-card" data-nome="pintor pintura parede casa reforma">
+            <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Reforma</span></div>
+            <div class="catalog-body">
+              <h3>Pintor Residencial</h3>
+              <p>Pintura de paredes, tetos, aplicação de massa corrida e acabamentos.</p>
+              <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 150,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Pintor Residencial')">Solicitar</button></div>
+            </div>
+          </div>
+          <div class="catalog-card" data-nome="técnico informática computador notebook formatação TI">
+            <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1588702547919-26b89e090aec?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Tecnologia</span></div>
+            <div class="catalog-body">
+              <h3>Técnico de Informática</h3>
+              <p>Formatação, limpeza de vírus, instalação de softwares e suporte.</p>
+              <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 80,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Técnico de Informática')">Solicitar</button></div>
+            </div>
+          </div>
+          <div class="catalog-card" data-nome="pedreiro construção alvenaria reforma piso">
+            <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1541888946425-d0fbb18f86f6?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Construção</span></div>
+            <div class="catalog-body">
+              <h3>Pedreiro / Alvenaria</h3>
+              <p>Assentamento de pisos, azulejos, pequenas reformas e alvenaria.</p>
+              <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 120,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Pedreiro / Alvenaria')">Solicitar</button></div>
+            </div>
+          </div>
+          <div class="catalog-card" data-nome="jardineiro cortar grama planta jardim poda">
+            <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1558904541-efa873a8c687?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Exterior</span></div>
+            <div class="catalog-body">
+              <h3>Jardineiro / Paisagismo</h3>
+              <p>Corte de grama, poda de árvores e manutenção geral de jardins.</p>
+              <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 100,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Jardineiro / Paisagismo')">Solicitar</button></div>
+            </div>
+          </div>
+          <div class="catalog-card" data-nome="marceneiro móveis planejados madeira reparo">
+            <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1507089947368-19c1da9775ae?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Marcenaria</span></div>
+            <div class="catalog-body">
+              <h3>Marceneiro</h3>
+              <p>Conserto de portas, móveis sob medida e ajustes em madeira.</p>
+              <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 110,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Marceneiro')">Solicitar</button></div>
+            </div>
+          </div>
+          <div class="catalog-card" data-nome="gesseiro gesso drywall teto sanca">
+            <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Acabamento</span></div>
+            <div class="catalog-body">
+              <h3>Gesseiro / Drywall</h3>
+              <p>Instalação de sancas, forros de gesso, paredes e divisórias em drywall.</p>
+              <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 130,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Gesseiro / Drywall')">Solicitar</button></div>
+            </div>
+          </div>
+          <div class="catalog-card" data-nome="chaveiro tranca porta fechadura cópia chave">
+            <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Segurança</span></div>
+            <div class="catalog-body">
+              <h3>Chaveiro Residencial</h3>
+              <p>Abertura de portas, troca de segredos, fechaduras e cópias.</p>
+              <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 70,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Chaveiro Residencial')">Solicitar</button></div>
+            </div>
+          </div>
+          <div class="catalog-card" data-nome="técnico ar condicionado limpeza manutenção split">
+            <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Climatização</span></div>
+            <div class="catalog-body">
+              <h3>Técnico de Ar Condicionado</h3>
+              <p>Instalação, limpeza de filtros, carga de gás e manutenção em splits.</p>
+              <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 140,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Técnico de Ar Condicionado')">Solicitar</button></div>
+            </div>
+          </div>
+          <div class="catalog-card" data-nome="vidraceiro vidro box janela espelho">
+            <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Vidraçaria</span></div>
+            <div class="catalog-body">
+              <h3>Vidraceiro</h3>
+              <p>Instalação de box para banheiro, espelhos, tampos e janelas de vidro.</p>
+              <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 120,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Vidraceiro')">Solicitar</button></div>
+            </div>
+          </div>
+          <div class="catalog-card" data-nome="dedetizador controle pragas dedetização barata rato">
+            <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1584467735871-8e853e8954d3?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Sanitização</span></div>
+            <div class="catalog-body">
+              <h3>Dedetizador / Limpeza</h3>
+              <p>Controle de pragas urbanas, desratização e sanitização de ambientes.</p>
+              <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 150,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Dedetizador / Limpeza')">Solicitar</button></div>
+            </div>
+          </div>
+          <div class="catalog-card" data-nome="tapeceiro estofador sofá poltrona reforma">
+            <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Estofados</span></div>
+            <div class="catalog-body">
+              <h3>Tapeceiro / Estofador</h3>
+              <p>Reforma de sofás, poltronas, cadeiras e troca de revestimentos.</p>
+              <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 160,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Tapeceiro / Estofador')">Solicitar</button></div>
+            </div>
+          </div>
+          <div class="catalog-card" data-nome="instalador tv suporte parede som home theater">
+            <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1593784991095-a205069470b6?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Eletrônicos</span></div>
+            <div class="catalog-body">
+              <h3>Instalador de TVs e Áudio</h3>
+              <p>Fixação de TVs na parede, configuração de painéis e som ambiente.</p>
+              <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 80,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Instalador de TVs e Áudio')">Solicitar</button></div>
+            </div>
+          </div>
+          <div class="catalog-card" data-nome="marido de aluguel reparos gerais pequenas manutenções casa">
+            <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Geral</span></div>
+            <div class="catalog-body">
+              <h3>Marido de Aluguel (Reparos)</h3>
+              <p>Pequenos reparos residenciais, troca de fechaduras, furos e fixações.</p>
+              <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 70,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Marido de Aluguel (Reparos)')">Solicitar</button></div>
+            </div>
+          </div>
+          <div class="catalog-card" data-nome="encanador desentupidor pia ralo esgoto limpeza">
+            <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1542013936693-844e454e1714?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Hidráulica</span></div>
+            <div class="catalog-body">
+              <h3>Desentupidor / Encanador</h3>
+              <p>Desentupimento de pias, ralos, vasos sanitários e redes de esgoto.</p>
+              <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 100,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Desentupidor / Encanador')">Solicitar</button></div>
+            </div>
+          </div>
+          <div class="catalog-card" data-nome="calheiro calhas rufos vazamento telhado">
+            <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Cobertura</span></div>
+            <div class="catalog-body">
+              <h3>Calheiro / Telhadista</h3>
+              <p>Limpeza e instalação de calhas, rufos e reparos em telhados.</p>
+              <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 110,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Calheiro / Telhadista')">Solicitar</button></div>
+            </div>
+          </div>
+          <div class="catalog-card" data-nome="serralheiro portão grade ferro solda reparo">
+            <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Serralheria</span></div>
+            <div class="catalog-body">
+              <h3>Serralheiro</h3>
+              <p>Manutenção e reparos em portões, grades, corrimãos e estruturas de ferro.</p>
+              <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 130,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Serralheiro')">Solicitar</button></div>
+            </div>
+          </div>
+          <div class="catalog-card" data-nome="técnico portão eletrônico interfone câmera segurança alarme">
+            <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Segurança</span></div>
+            <div class="catalog-body">
+              <h3>Técnico de Segurança Eletrônica</h3>
+              <p>Instalação e manutenção de câmeras (CFTV), alarmes e interfones.</p>
+              <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 120,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Técnico de Segurança Eletrônica')">Solicitar</button></div>
+            </div>
+          </div>
+          <div class="catalog-card" data-nome="limpador de estofados higienizadora sofá colchão tapete">
+            <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Higienização</span></div>
+            <div class="catalog-body">
+              <h3>Higienização de Estofados</h3>
+              <p>Lavagem a seco de sofás, colchões, tapetes e bancos de automóveis.</p>
+              <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 120,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Higienização de Estofados')">Solicitar</button></div>
+            </div>
+          </div>
+          <div class="catalog-card" data-nome="piscinista limpeza piscina tratamento cloro">
+            <div class="catalog-img" style="background-image: url('https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=600&q=80');"><span class="catalog-badge">Lazer</span></div>
+            <div class="catalog-body">
+              <h3>Piscinista / Tratamento</h3>
+              <p>Limpeza periódica, aspiração, tratamento químico e controle de cloro.</p>
+              <div class="catalog-footer"><span class="catalog-price">A partir de <strong>R$ 90,00</strong></span><button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('Piscinista / Tratamento')">Solicitar</button></div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+
+    <!-- PÁGINA: SOBRE NÓS -->
+    <section id="sobre" class="page">
+      <div class="container section">
+        <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
+        <div class="section-header">
+          <span class="section-label">QUEM SOMOS</span>
+          <h2>Conectando necessidades e talentos</h2>
+        </div>
+        <div class="auth-card wide" style="margin: 0 auto; text-align: left;">
+          <p style="font-size: 16px; margin-bottom: 15px; color: var(--text-main);">O <strong>ResolvJá</strong> nasceu com a missão de descomplicar o dia a dia das famílias, unindo clientes que precisam de reparos rápidos a prestadores altamente qualificados na região.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PÁGINA: AVALIAÇÕES -->
+    <section id="avaliacoes" class="page">
+      <div class="container section">
+        <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
+        <div class="section-header">
+          <span class="section-label">DEPOIMENTOS</span>
+          <h2>O que dizem os nossos utilizadores</h2>
+        </div>
+        <div class="reviews-grid">
+          <div class="review-card">
+            <div class="stars">⭐⭐⭐⭐⭐</div>
+            <p>"Contratei um eletricista pelo site e foi super rápido. Atendimento nota 10!"</p>
+            <h4>- Dona Maria, 58 anos</h4>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PÁGINA: SAC / AJUDA -->
+    <section id="sac" class="page">
+      <div class="container section">
+        <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
+        <div class="section-header">
+          <span class="section-label">SUPORTE</span>
+          <h2>Central de Ajuda (SAC)</h2>
+          <p>Tire as suas dúvidas mais frequentes</p>
+        </div>
+        <div style="max-width: 800px; margin: 0 auto;">
+          <details class="faq-item">
+            <summary>Como faço para contratar um prestador?</summary>
+            <p>Basta navegar pelo catálogo de serviços, selecionar a opção desejada, preencher os detalhes do problema e enviar o pedido.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Como me torno um prestador de serviços?</summary>
+            <p>Clique em "Quero ser Prestador" na página inicial ou na tela de cadastro, preencha os seus dados profissionais e faça o upload da sua foto.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- PÁGINA: LOGIN -->
+    <section id="login" class="page">
+      <div class="container auth-page">
+        <div class="auth-card">
+          <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
+          <h2 style="text-align:center; color:var(--primary); margin-bottom: 20px;">Entrar na Conta</h2>
+          <form onsubmit="login(event)">
+            <label>Usuário ou E-mail <input type="text" id="loginUsuario" required></label>
+            <label>Senha <input type="password" id="loginSenha" required></label>
+            <button type="submit" class="btn btn-primary btn-full" style="margin-top: 15px;">Entrar</button>
+          </form>
+          <p style="text-align:center; margin-top:15px; font-size: 14px;">Não tem conta? <a href="#" onclick="showPage('register')" style="color:var(--accent); font-weight:600;">Cadastre-se</a></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PÁGINA: CADASTRO -->
+    <section id="register" class="page">
+      <div class="container auth-page">
+        <div class="auth-card wide">
+          <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
+          <h2 style="color:var(--primary); margin-bottom: 10px;">Crie a sua conta</h2>
+          <form id="form-cadastro" onsubmit="register(event)">
+            <div class="auth-grid">
+              <label>Tipo de Perfil *
+                <select id="regTipo" onchange="toggleCamposPrestador()" required>
+                  <option value="">Selecione...</option>
+                  <option value="solicitante">Quero contratar serviços (Cliente)</option>
+                  <option value="prestador">Quero trabalhar (Prestador)</option>
+                </select>
+              </label>
+              <label>Nome Completo *<input type="text" id="regNome" required></label>
+              <label>E-mail *<input type="email" id="regEmail" required></label>
+              <label>CPF *<input type="text" id="regCpf" required></label>
+              <label>RG *<input type="text" id="regRg" required></label>
+              <label>Telefone / WhatsApp *<input type="tel" id="regTelefone" required></label>
+              <label>Data de Nascimento *<input type="date" id="regNascimento" required></label>
+              
+              <label class="full">CEP e Endereço *
+                <div class="cep-grid-container">
+                  <input type="text" id="regCep" placeholder="CEP" onblur="buscarCepCadastro()" oninput="mascaraCep(this)" required>
+                  <input type="text" id="regRua" placeholder="Rua" required>
+                  <input type="text" id="regNumero" placeholder="Nº" required>
+                  <input type="text" id="regBairro" placeholder="Bairro" required>
+                  <input type="text" id="regCidade" placeholder="Cidade - UF" required>
+                </div>
+              </label>
+            </div>
+
+            <div id="campos-prestador" class="auth-grid" style="display: none; background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 15px; border: 1px solid var(--border);">
+              <label class="full"><strong style="color:var(--primary);">Informações Profissionais & Foto de Perfil</strong></label>
+              <label>Profissão / Função *<input type="text" id="regProfissao" placeholder="Ex: Eletricista"></label>
+              <label>Nível de Experiência *
+                <select id="regExperiencia">
+                  <option value="básico">Iniciante</option>
+                  <option value="intermediário" selected>Experiente</option>
+                  <option value="avançado">Especialista</option>
+                </select>
+              </label>
+              <label>Valor Mínimo (R$) *<input type="number" step="0.01" id="regValorMin" value="50.00" required></label>
+              <label>Valor Máximo (R$) *<input type="number" step="0.01" id="regValorMax" value="150.00" required></label>
+              <label class="full">Disponibilidade de Horário *<input type="text" id="regDisponibilidade" placeholder="Ex: Seg a Sáb, 8h às 18h" required></label>
+              
+              <label class="full">
+                Foto de Perfil (Carregar do Dispositivo)
+                <input type="file" id="regFotoFile" accept="image/*" onchange="converterImagemParaBase64(event, 'regFotoBase64')">
+                <input type="hidden" id="regFotoBase64">
+              </label>
+            </div>
+
+            <div class="auth-grid" style="margin-top: 15px; border-top: 1px solid var(--border); padding-top: 15px;">
+              <label>Senha *<input type="password" id="regSenha" required></label>
+              <label>Confirmar Senha *<input type="password" id="regSenha2" required></label>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full" style="margin-top: 20px;">Criar Conta</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- PÁGINA: DASHBOARD DO CLIENTE -->
+    <section id="dashboard-solicitante" class="page">
+      <div class="container dashboard">
+        <aside class="sidebar">
+          <h3>Painel do Cliente</h3>
+          <button class="active" onclick="showPage('dashboard-solicitante')"><i class="fas fa-home"></i> Início</button>
+          <button onclick="showPage('catalogo-completo')"><i class="fas fa-plus"></i> Novo Pedido</button>
+          <button onclick="carregarMinhasSolicitacoes()"><i class="fas fa-list"></i> Meus Pedidos</button>
+          <button onclick="carregarPrestadoresDisponiveis()"><i class="fas fa-search"></i> Buscar Profissionais</button>
+        </aside>
+        <main class="dashboard-content">
+          <div class="section-header" style="text-align: left; margin-bottom: 20px;">
+            <h2 id="tituloSaudacaoSolicitante">Área do Solicitante</h2>
+            <p>Gerencie os seus pedidos e encontre profissionais cadastrados.</p>
+          </div>
+        </main>
+      </div>
+    </section>
+
+    <!-- PÁGINA: DASHBOARD DO PRESTADOR -->
+    <section id="dashboard-prestador" class="page">
+      <div class="container dashboard">
+        <aside class="sidebar">
+          <h3>Painel do Prestador</h3>
+          <button class="active" onclick="showPage('dashboard-prestador')"><i class="fas fa-home"></i> Início</button>
+          <button onclick="carregarDadosPerfil()"><i class="fas fa-user-edit"></i> Meu Perfil Profissional</button>
+          <button onclick="carregarOportunidadesPrestador()"><i class="fas fa-briefcase"></i> Oportunidades</button>
+          <button onclick="carregarAgendaPrestador()"><i class="fas fa-calendar-alt"></i> Agenda</button>
+        </aside>
+        <main class="dashboard-content">
+          <div class="section-header" style="text-align: left; margin-bottom: 20px;">
+            <h2 id="tituloSaudacaoPrestador">Área do Prestador de Serviços 🛠️</h2>
+            <p>Bem-vindo ao seu painel profissional. Acompanhe a sua agenda e oportunidades.</p>
+          </div>
+          <div id="conteudoDinamicoPrestador"></div>
+        </main>
+      </div>
+    </section>
+
+    <!-- PÁGINA: MINHAS SOLICITAÇÕES -->
+    <section id="minhas-solicitacoes" class="page">
+      <div class="container dashboard">
+        <aside class="sidebar">
+          <h3>Painel do Cliente</h3>
+          <button onclick="showPage('dashboard-solicitante')"><i class="fas fa-home"></i> Início</button>
+          <button class="active" onclick="carregarMinhasSolicitacoes()"><i class="fas fa-list"></i> Meus Pedidos</button>
+        </aside>
+        <main class="dashboard-content">
+          <h2>Meus Pedidos Registados 📋</h2>
+          <div id="lista-minhas-solicitacoes" class="orders-list" style="margin-top: 20px;"></div>
+        </main>
+      </div>
+    </section>
+
+    <!-- PÁGINA: AVALIAÇÃO DO PROFISSIONAL -->
+    <section id="avaliacao" class="page">
+      <div class="container auth-page">
+        <div class="auth-card" style="max-width: 500px; margin: 0 auto;">
+          <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
+          <h2 style="color: var(--primary); text-align: center; margin-bottom: 5px;">Avaliar Serviço ⭐</h2>
+          <p style="text-align: center; color: var(--text-muted); margin-bottom: 20px;">A sua opinião ajuda outros clientes.</p>
+          
+          <form id="form-avaliacao" onsubmit="enviarAvaliacao(event)">
+              <input type="hidden" id="idSolicitacaoAvaliacao">
+              
+              <div class="input-group" style="text-align: center; margin-bottom: 25px;">
+                  <label style="font-weight: bold; font-size: 16px; display: block; margin-bottom: 10px;">Que nota daria a este profissional?</label>
+                  <div id="star-rating" style="font-size: 45px; color: #ccc; cursor: pointer; margin: 10px 0; user-select: none;">
+                      <span data-value="1" onclick="selecionarEstrela(1)">★</span>
+                      <span data-value="2" onclick="selecionarEstrela(2)">★</span>
+                      <span data-value="3" onclick="selecionarEstrela(3)">★</span>
+                      <span data-value="4" onclick="selecionarEstrela(4)">★</span>
+                      <span data-value="5" onclick="selecionarEstrela(5)">★</span>
+                  </div>
+                  <input type="hidden" id="notaAvaliacao" value="0" required>
+              </div>
+
+              <div class="input-group" style="margin-bottom: 15px;">
+                  <label for="comentarioAvaliacao" style="font-weight: bold; display: block; margin-bottom: 5px;">Deixe um comentário (opcional)</label>
+                  <textarea id="comentarioAvaliacao" rows="3" placeholder="O profissional foi pontual? O serviço ficou bom?" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); font-family: inherit; resize: vertical;"></textarea>
+              </div>
+
+              <div class="input-group" style="margin-bottom: 25px;">
+                  <label for="fotoAvaliacao" style="font-weight: bold; display: block; margin-bottom: 5px;">Adicionar Foto do Serviço (opcional)</label>
+                  <input type="file" id="fotoAvaliacao" accept="image/*" onchange="converterImagemParaBase64(event, 'fotoAvaliacaoBase64')" style="width: 100%; padding: 8px; border: 1px dashed var(--border); border-radius: 8px; background: #f9f9f9;">
+                  <input type="hidden" id="fotoAvaliacaoBase64">
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-full" style="background-color: #F59E0B; border: none; font-size: 16px; padding: 12px; margin-bottom: 10px; width: 100%; border-radius: 8px; color: white; cursor: pointer; font-weight: bold;">Enviar Avaliação</button>
+              
+              <button type="button" class="btn btn-secondary btn-full" style="background-color: transparent; color: var(--text-muted); border: 1px solid var(--border); width: 100%; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold;" onclick="voltarTelaAnterior()">Cancelar</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- PÁGINA: FORMULÁRIO DE PEDIDO -->
+    <section id="request" class="page">
+      <div class="container auth-page">
+        <div class="auth-card wide">
+          <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
+          <h2 style="color:var(--primary); margin: 15px 0;">Detalhes do Pedido</h2>
+          <form onsubmit="submitRequest(event)">
+            <label>Serviço Selecionado *
+              <select id="selectTipoServico" onchange="verificarOutroServico(this)" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: #fff; font-weight: bold; color: var(--primary);"></select>
+            </label>
+            <label id="container-novo-servico" style="display: none;">Descreva a Nova Função * <input type="text" id="reqTipoServicoCustom"></label>
+            <label>Título / Resumo do Problema * <input type="text" id="reqTitulo" required placeholder="Ex: Curto-circuito na tomada da sala"></label>
+            <label>Descrição Detalhada * <textarea id="reqDescricao" rows="3" required placeholder="Explique o que precisa ser feito..."></textarea></label>
+            
+            <div class="auth-grid">
+              <label>Data Desejada * <input type="date" id="reqData" required></label>
+              <label>Horário (De - Até) * 
+                <div style="display: flex; gap: 10px; align-items: center; justify-content: space-between;">
+                  <input type="time" id="reqHoraInicio" required style="flex: 1;">
+                  <span style="font-weight: bold; color: var(--text-muted);">até</span>
+                  <input type="time" id="reqHoraFim" required style="flex: 1;">
+                </div>
+              </label>
+            </div>
+
+            <label class="full" style="margin-top: 15px;">CEP e Endereço do Serviço *
+              <div class="cep-grid-container">
+                <input type="text" id="reqCep" placeholder="CEP" onblur="buscarEnderecoPorCep()" oninput="mascaraCep(this)" required>
+                <input type="text" id="reqRua" placeholder="Rua" required>
+                <input type="text" id="reqNumero" placeholder="Nº" required>
+                <input type="text" id="reqBairro" placeholder="Bairro" required>
+                <input type="text" id="reqCidade" placeholder="Cidade - UF" required>
+              </div>
+            </label>
+
+            <button type="submit" class="btn btn-primary btn-full" style="margin-top:20px;">Confirmar e Enviar Pedido</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- PÁGINA: LISTA DE PRESTADORES -->
+    <section id="providers" class="page">
+      <div class="container section">
+        <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
+        <div class="section-header">
+          <h2>Profissionais Prontos para Ajudar</h2>
+          <p>Lista de especialistas registados na plataforma.</p>
+        </div>
+        <div class="providers-list" id="container-lista-prestadores"></div>
+      </div>
+    </section>
+
+    <!-- PÁGINA: DETALHE DO PRESTADOR -->
+    <section id="detalhe-prestador" class="page">
+      <div class="container section">
+        <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
+        <div id="container-detalhe-prestador" style="max-width: 800px; margin: 0 auto;"></div>
+      </div>
+    </section>
+
+    <!-- PÁGINA: ATUALIZAR CADASTRO -->
+    <section id="meu-perfil" class="page">
+      <div class="container auth-page">
+        <div class="auth-card wide">
+          <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
+          <h2 style="color:var(--primary); margin-bottom: 15px;">Atualizar Dados Cadastrais</h2>
+          <form id="form-atualizar-perfil" onsubmit="atualizarPerfil(event)">
+            <div class="auth-grid">
+              <label>Nome Completo *<input type="text" id="perfilNome" required></label>
+              <label>E-mail *<input type="email" id="perfilEmail" required></label>
+              <label>Telemóvel / WhatsApp *<input type="tel" id="perfilTelefone" required></label>
+              
+              <label>CPF (Não alterável) <input type="text" id="perfilCpf" disabled style="background:#e9ecef; cursor:not-allowed;"></label>
+              <label>RG (Não alterável) <input type="text" id="perfilRg" disabled style="background:#e9ecef; cursor:not-allowed;"></label>
+              <label>Data de Nascimento (Não alterável) <input type="date" id="perfilNascimento" disabled style="background:#e9ecef; cursor:not-allowed;"></label>
+              
+              <label class="full">Endereço Completo *<input type="text" id="perfilEndereco" required></label>
+              
+              <label>Profissão / Função <input type="text" id="perfilProfissao"></label>
+              <label>Nível de Experiência 
+                <select id="perfilExperiencia">
+                  <option value="básico">Iniciante</option>
+                  <option value="intermediário">Experiente</option>
+                  <option value="avançado">Especialista</option>
+                </select>
+              </label>
+              <label>Valor Mínimo (R$) <input type="number" step="0.01" id="perfilValorMin"></label>
+              <label>Valor Máximo (R$) <input type="number" step="0.01" id="perfilValorMax"></label>
+              <label class="full">Disponibilidade de Horário <input type="text" id="perfilDisponibilidade"></label>
+              
+              <label class="full">
+                Alterar Foto de Perfil (Carregar do Dispositivo)
+                <input type="file" id="perfilFotoFile" accept="image/*" onchange="converterImagemParaBase64(event, 'perfilFotoBase64')">
+                <input type="hidden" id="perfilFotoBase64">
+              </label>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full" style="margin-top: 20px;">Salvar Alterações</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- PÁGINA: ATUALIZAR SENHA -->
+    <section id="atualizar-senha" class="page">
+      <div class="container auth-page">
+        <div class="auth-card">
+          <button class="btn-back" onclick="voltarTelaAnterior()"><i class="fas fa-arrow-left"></i> Voltar</button>
+          <h2 style="color:var(--primary);">Alterar Senha</h2>
+          <form onsubmit="atualizarSenha(event)" style="margin-top: 20px;">
+            <label>Nova Senha <input type="password" id="novaSenha" required></label>
+            <label>Confirmar Nova Senha <input type="password" id="confirmaNovaSenha" required></label>
+            <button type="submit" class="btn btn-primary btn-full" style="margin-top: 15px;">Atualizar Senha</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <!-- MODAL PARA AMPLIAR A FOTO -->
   <div id="modalFotoPerfil" onclick="fecharModalFoto()" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); justify-content: center; align-items: center; cursor: pointer;">
