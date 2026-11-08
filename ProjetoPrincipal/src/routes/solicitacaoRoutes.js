@@ -11,4 +11,10 @@ router.get('/', solicitacaoController.listar);
 // Rota para atualizar o status de uma solicitação (PUT /api/solicitacoes/:id/status)
 router.put('/:id/status', solicitacaoController.atualizarStatus);
 
+// Rota para avaliar e salvar comentário na solicitação (PUT /api/solicitacoes/:id/avaliar)
+router.put('/:id/avaliar', solicitacaoController.avaliar);
+
+// Rota para o prestador responder à avaliação do cliente (PUT /api/solicitacoes/:id/responder-avaliacao)
+router.put('/:id/responder-avaliacao', solicitacaoController.responderAvaliacao);
+
 module.exports = router;

@@ -65,6 +65,54 @@ class SolicitacaoController {
             });
         }
     }
+
+    async avaliar(req, res) {
+        const { id } = req.params;
+        const { status, nota, comentario, foto_avaliacao } = req.body;
+
+        try {
+            const solicitacaoAvaliada = await solicitacaoRepository.avaliar(id, status, nota, comentario, foto_avaliacao);
+
+            if (!solicitacaoAvaliada) {
+                return res.status(404).json({
+                    erro: 'Solicitação não encontrada.'
+                });
+            }
+
+            return res.json({
+                mensagem: 'Avaliação registrada com sucesso!',
+                solicitacao: solicitacaoAvaliada
+            });
+        } catch (error) {
+            return res.status(500).json({
+                erro: error.message
+            });
+        }
+    }
+
+    async responderAvaliacao(req, res) {
+        const { id } = req.params;
+        const { resposta } = req.body;
+
+        try {
+            const solicitacaoAtualizada = await solicitacaoRepository.responderAvaliacao(id, resposta);
+
+            if (!solicitacaoAtualizada) {
+                return res.status(404).json({
+                    erro: 'Solicitação não encontrada.'
+                });
+            }
+
+            return res.json({
+                mensagem: 'Resposta registrada com sucesso!',
+                solicitacao: solicitacaoAtualizada
+            });
+        } catch (error) {
+            return res.status(500).json({
+                erro: error.message
+            });
+        }
+    }
 }
 
 module.exports = new SolicitacaoController();

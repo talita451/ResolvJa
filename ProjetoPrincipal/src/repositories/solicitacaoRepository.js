@@ -52,6 +52,10 @@ class SolicitacaoRepository {
                 s.descricao,
                 s.valor_combinado,
                 s.status,
+                s.nota_avaliacao,
+                s.comentario_avaliacao,
+                s.foto_avaliacao,
+                s.resposta_avaliacao,
                 s.criado_em
             FROM solicitacao s
             INNER JOIN solicitante sol
@@ -81,6 +85,10 @@ class SolicitacaoRepository {
                 s.descricao,
                 s.valor_combinado,
                 s.status,
+                s.nota_avaliacao,
+                s.comentario_avaliacao,
+                s.foto_avaliacao,
+                s.resposta_avaliacao,
                 s.criado_em
             FROM solicitacao s
             INNER JOIN tipo_servico ts
@@ -99,7 +107,6 @@ class SolicitacaoRepository {
         let query;
         let values;
 
-        // Validação rigorosa: assegura que o cod_prestador entra no banco se enviado
         if (codPrestador !== null && codPrestador !== undefined) {
             query = `
                 UPDATE solicitacao
@@ -119,6 +126,30 @@ class SolicitacaoRepository {
         }
 
         const { rows } = await pool.query(query, values);
+        return rows[0];
+    }
+
+    async avaliar(idSolicitacao, status, nota, comentario, foto) {
+        const query = `
+            UPDATE solicitacao
+            SET status = $1, nota_avaliacao = $2, comentario_avaliacao = $3, foto_avaliacao = $4
+            WHERE id_solicitacao = $5
+            RETURNING *;
+        `;
+        const values = [status, nota, comentario, foto, idSolicitacao];
+        
+        const { rows } = await pool.query(query, values);
+        return rows[0];
+    }
+
+    async responderAvaliacao(idSolicitacao, resposta) {
+        const query = `
+            UPDATE solicitacao
+            SET resposta_avaliacao = $1
+            WHERE id_solicitacao = $2
+            RETURNING *;
+        `;
+        const { rows } = await pool.query(query, [resposta, idSolicitacao]);
         return rows[0];
     }
 }

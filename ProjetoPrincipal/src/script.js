@@ -532,7 +532,7 @@ async function atualizarPerfil(event) {
 }
 
 // ==========================================
-// 5. PEDIDOS, AGENDA E AVALIAÇÃO
+// 5. PEDIDOS E AGENDA
 // ==========================================
 async function solicitarServicoCatalogo(nomeServico) {
     showPage('request');
@@ -665,19 +665,19 @@ async function submitRequest(event) {
 }
 
 // ----------------------------------------------------
-// FLUXO DE AVALIAÇÃO COM ESTRELAS E FOTO
+// FLUXO DE AVALIAÇÃO COM ESTRELAS E FOTO (CLIENTE)
 // ----------------------------------------------------
 function abrirTelaAvaliacao(idSolicitacao) {
     document.getElementById('idSolicitacaoAvaliacao').value = idSolicitacao;
     document.getElementById('form-avaliacao').reset();
     document.getElementById('fotoAvaliacaoBase64').value = '';
-    selecionarEstrela(0); 
+    selecionarEstrela(0, 'star-rating', 'notaAvaliacao'); 
     showPage('avaliacao');
 }
 
-function selecionarEstrela(nota) {
-    document.getElementById('notaAvaliacao').value = nota;
-    const stars = document.querySelectorAll('#star-rating span');
+function selecionarEstrela(nota, containerId, inputId) {
+    document.getElementById(inputId).value = nota;
+    const stars = document.querySelectorAll(`#${containerId} span`);
     
     stars.forEach((star, index) => {
         if (index < nota) {
@@ -692,23 +692,30 @@ async function enviarAvaliacao(event) {
     event.preventDefault();
     const idSolicitacao = document.getElementById('idSolicitacaoAvaliacao').value;
     const nota = document.getElementById('notaAvaliacao').value;
+    const comentario = document.getElementById('comentarioAvaliacao').value;
+    const fotoAvaliacao = document.getElementById('fotoAvaliacaoBase64').value;
     
     if (nota == 0) {
         return mostrarToast('Por favor, selecione pelo menos 1 estrela para avaliar.', 'erro');
     }
 
-    const novoStatus = `Finalizado e Avaliado (${nota} ⭐)`;
+    const novoStatus = `Finalizado e Avaliado`;
 
     try {
-        const resposta = await fetch(`${API_URL}/solicitacoes/${idSolicitacao}/status`, {
+        const resposta = await fetch(`${API_URL}/solicitacoes/${idSolicitacao}/avaliar`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status: novoStatus })
+            body: JSON.stringify({ 
+                status: novoStatus,
+                nota: Number(nota),
+                comentario: comentario,
+                foto_avaliacao: fotoAvaliacao 
+            })
         });
 
         if (resposta.ok) {
-            mostrarToast('Avaliação enviada com sucesso! Muito obrigado.', 'sucesso');
-            carregarMinhasSolicitacoes();
+            mostrarToast('Avaliação do profissional enviada! Gostaríamos da sua opinião sobre o site.', 'sucesso');
+            showPage('avaliacao-site');
         } else {
             mostrarToast('Erro ao gravar avaliação no sistema.', 'erro');
         }
@@ -717,6 +724,89 @@ async function enviarAvaliacao(event) {
     }
 }
 
+// ----------------------------------------------------
+// AVALIAÇÃO DO SITE (PLATAFORMA)
+// ----------------------------------------------------
+async function enviarAvaliacaoSite(event) {
+    event.preventDefault();
+    const nota = document.getElementById('notaAvaliacaoSite').value;
+    const comentario = document.getElementById('comentarioAvaliacaoSite').value;
+    const idLogado = localStorage.getItem('idUsuarioLogado');
+    const tipoLogado = localStorage.getItem('tipoUsuarioLogado');
+
+    if (nota == 0) {
+        return mostrarToast('Por favor, selecione pelo menos 1 estrela para o site.', 'erro');
+    }
+
+    try {
+        let nomeUsuario = "Usuário";
+        if(idLogado) {
+            const endpoint = tipoLogado === 'prestador' ? '/prestadores' : '/solicitantes';
+            const res = await fetch(`${API_URL}${endpoint}`, { cache: 'no-store' });
+            const usuarios = await res.json();
+            const user = usuarios.find(u => String(u.cod_prestador || u.id_solicitante) === String(idLogado));
+            if (user) nomeUsuario = user.nome;
+        }
+
+        const payload = {
+            id_usuario: idLogado || null,
+            nome_usuario: nomeUsuario,
+            nota: Number(nota),
+            comentario: comentario
+        };
+
+        const resposta = await fetch(`${API_URL}/avaliacoes-site`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (resposta.ok) {
+            mostrarToast('Avaliação do site publicada com sucesso! Obrigado.', 'sucesso');
+            document.getElementById('form-avaliacao-site').reset();
+            selecionarEstrela(0, 'star-rating-site', 'notaAvaliacaoSite');
+            showPage('home');
+        } else {
+            mostrarToast('Erro ao enviar avaliação do site.', 'erro');
+        }
+    } catch (erro) {
+        mostrarToast('Erro de comunicação com o servidor.', 'erro');
+    }
+}
+
+async function abrirTelaAvaliacoesSite() {
+    showPage('avaliacoes');
+    const container = document.getElementById('lista-avaliacoes-site');
+    if (!container) return;
+
+    container.innerHTML = '<p style="text-align:center; color: var(--text-muted);">Carregando depoimentos...</p>';
+
+    try {
+        const resposta = await fetch(`${API_URL}/avaliacoes-site`, { cache: 'no-store' });
+        const avaliacoes = await resposta.json();
+
+        if (resposta.ok && Array.isArray(avaliacoes) && avaliacoes.length > 0) {
+            container.innerHTML = avaliacoes.map(av => {
+                const estrelasHTML = '⭐'.repeat(av.nota);
+                return `
+                    <div class="review-card">
+                        <div class="stars">${estrelasHTML}</div>
+                        <p>"${av.comentario}"</p>
+                        <h4>- ${av.nome_usuario}</h4>
+                    </div>
+                `;
+            }).join('');
+        } else {
+            container.innerHTML = '<p style="text-align:center; color: var(--text-muted);">Ainda não há avaliações sobre a plataforma.</p>';
+        }
+    } catch (e) {
+        container.innerHTML = '<p style="text-align:center; color: var(--error);">Erro ao carregar avaliações do site.</p>';
+    }
+}
+
+// ----------------------------------------------------
+// ATUALIZAÇÃO GERAL DE STATUS
+// ----------------------------------------------------
 async function atualizarStatusServico(idSolicitacao, novoStatus, mensagemSucesso) {
     try {
         const resposta = await fetch(`${API_URL}/solicitacoes/${idSolicitacao}/status`, {
@@ -869,6 +959,7 @@ async function aceitarSolicitudeUber(idSolicitacao) {
 }
 
 async function carregarAgendaPrestador() {
+    showPage('dashboard-prestador');
     const conteudo = document.getElementById('conteudoDinamicoPrestador');
     if (!conteudo) return;
     conteudo.innerHTML = '<p style="color: var(--text-muted);">A carregar a sua agenda de serviços...</p>';
@@ -882,13 +973,17 @@ async function carregarAgendaPrestador() {
             solicitacoes = solicitacoes.solicitacoes || solicitacoes.dados || Object.values(solicitacoes);
         }
         
-        const minhasSolicitacoes = solicitacoes.filter(s => String(s.cod_prestador) === String(idPrestador));
+        const minhasSolicitacoes = solicitacoes.filter(s => 
+            String(s.cod_prestador) === String(idPrestador) && 
+            !(s.status || '').toLowerCase().includes('avaliado') &&
+            (s.status || '').toLowerCase() !== 'concluído'
+        );
 
         if (Array.isArray(minhasSolicitacoes) && minhasSolicitacoes.length > 0) {
             conteudo.innerHTML = `
                 <div style="margin-bottom: 25px;">
                     <h3 style="color: var(--primary); font-size: 22px; margin-bottom: 5px;">Minha Agenda Profissional 📅</h3>
-                    <p style="color: var(--text-muted); font-size: 14px;">Compromissos confirmados, endereços e horários.</p>
+                    <p style="color: var(--text-muted); font-size: 14px;">Compromissos confirmados, a caminho ou aguardando conclusão.</p>
                 </div>
                 <div style="display: grid; gap: 20px;">
                 ${minhasSolicitacoes.map(s => {
@@ -900,11 +995,7 @@ async function carregarAgendaPrestador() {
                     if (statusAtual.includes('aceito')) {
                         botoesAcao = `<button class="btn btn-secondary btn-sm" onclick="atualizarStatusServico('${s.id_solicitacao}', 'A caminho', '🚗 Cliente notificado que você está a caminho!')" style="margin-top: 15px; width: 100%;">Marcar como "Estou a Caminho"</button>`;
                     } else if (statusAtual === 'a caminho') {
-                        botoesAcao = `<button class="btn btn-primary btn-sm" onclick="atualizarStatusServico('${s.id_solicitacao}', 'Concluído', '✅ Serviço marcado como concluído!')" style="margin-top: 15px; background-color: var(--success); width: 100%; border: none;">Concluir Serviço</button>`;
-                    } else if (statusAtual === 'concluído') {
-                        botoesAcao = `<p style="margin-top: 15px; font-size: 13px; color: var(--text-muted); text-align: center;">Aguardando avaliação do cliente.</p>`;
-                    } else {
-                        botoesAcao = `<p style="margin-top: 15px; font-size: 13px; color: var(--success); font-weight: bold; text-align: center;">Serviço Finalizado ⭐</p>`;
+                        botoesAcao = `<button class="btn btn-primary btn-sm" onclick="atualizarStatusServico('${s.id_solicitacao}', 'Concluído', '✅ Serviço marcado como concluído! Ele será movido para os concluídos após a avaliação.')" style="margin-top: 15px; background-color: var(--success); width: 100%; border: none;">Concluir Serviço</button>`;
                     }
 
                     return `
@@ -927,13 +1018,134 @@ async function carregarAgendaPrestador() {
             conteudo.innerHTML = `
                 <div style="text-align: center; padding: 40px; color: var(--text-muted);">
                     <i class="fas fa-calendar-times" style="font-size: 48px; color: var(--accent); margin-bottom: 15px;"></i>
-                    <h3>Nenhum serviço agendado no momento</h3>
-                    <p>Assim que aceitar oportunidades, os detalhes aparecerão aqui.</p>
+                    <h3>Nenhum serviço pendente na agenda</h3>
+                    <p>Verifique as oportunidades ou a aba de Concluídos.</p>
                 </div>
             `;
         }
     } catch (e) {
         conteudo.innerHTML = '<p style="color: var(--error);">Erro ao carregar a agenda.</p>';
+    }
+}
+
+// ==========================================
+// RESPOSTA DO PRESTADOR À AVALIAÇÃO
+// ==========================================
+async function enviarRespostaAvaliacao(idSolicitacao) {
+    const input = document.getElementById(`input-resp-${idSolicitacao}`);
+    const resposta = input ? input.value.trim() : '';
+
+    if (!resposta) {
+        return mostrarToast('Digite uma resposta antes de enviar.', 'erro');
+    }
+
+    try {
+        const res = await fetch(`${API_URL}/solicitacoes/${idSolicitacao}/responder-avaliacao`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ resposta })
+        });
+
+        if (res.ok) {
+            mostrarToast('Resposta enviada com sucesso!', 'sucesso');
+            carregarConcluidosPrestador();
+        } else {
+            mostrarToast('Erro ao enviar resposta.', 'erro');
+        }
+    } catch (e) {
+        mostrarToast('Erro de comunicação com o servidor.', 'erro');
+    }
+}
+
+async function carregarConcluidosPrestador() {
+    showPage('dashboard-prestador');
+    const conteudo = document.getElementById('conteudoDinamicoPrestador');
+    if (!conteudo) return;
+    conteudo.innerHTML = '<p style="color: var(--text-muted);">A buscar histórico de serviços concluídos...</p>';
+    
+    const idPrestador = localStorage.getItem('idUsuarioLogado');
+    try {
+        const res = await fetch(`${API_URL}/solicitacoes`, { cache: 'no-store' });
+        let solicitacoes = await res.json();
+        
+        if (solicitacoes && !Array.isArray(solicitacoes)) {
+            solicitacoes = solicitacoes.solicitacoes || solicitacoes.dados || Object.values(solicitacoes);
+        }
+        
+        const concluidos = solicitacoes.filter(s => 
+            String(s.cod_prestador) === String(idPrestador) && 
+            ((s.status || '').toLowerCase().includes('avaliado') || (s.status || '').toLowerCase() === 'concluído')
+        );
+
+        if (Array.isArray(concluidos) && concluidos.length > 0) {
+            conteudo.innerHTML = `
+                <div style="margin-bottom: 25px;">
+                    <h3 style="color: var(--primary); font-size: 22px; margin-bottom: 5px;">Serviços Concluídos ✅</h3>
+                    <p style="color: var(--text-muted); font-size: 14px;">Seu histórico de trabalhos finalizados e avaliações recebidas.</p>
+                </div>
+                <div style="display: grid; gap: 20px;">
+                ${concluidos.map(s => {
+                    const dataPed = s.data_servico ? s.data_servico.split('T')[0] : 'Data não informada';
+                    const servicoNome = s.servico || s.descricao || 'Serviço ResolvJá';
+                    
+                    let avaliacaoHtml = '';
+                    if (s.nota_avaliacao && s.nota_avaliacao > 0) {
+                        const estrelas = '⭐'.repeat(s.nota_avaliacao);
+                        let respostaHtml = '';
+
+                        if (s.resposta_avaliacao) {
+                            respostaHtml = `
+                                <div style="margin-top: 10px; padding: 10px; background: #fff; border-left: 3px solid var(--accent); border-radius: 4px;">
+                                    <strong>Sua resposta:</strong> <span style="color: var(--text-muted);">"${s.resposta_avaliacao}"</span>
+                                </div>
+                            `;
+                        } else {
+                            respostaHtml = `
+                                <div style="margin-top: 10px; display: flex; gap: 10px;">
+                                    <input type="text" id="input-resp-${s.id_solicitacao}" placeholder="Responda a esta avaliação..." style="flex: 1; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px;">
+                                    <button class="btn btn-secondary btn-sm" onclick="enviarRespostaAvaliacao('${s.id_solicitacao}')">Responder</button>
+                                </div>
+                            `;
+                        }
+
+                        avaliacaoHtml = `
+                            <div style="margin-top: 15px; background: #f0fdf4; padding: 15px; border-radius: 8px; border: 1px dashed var(--success);">
+                                <strong>Avaliação do Cliente:</strong> ${estrelas} <br>
+                                <span style="color: var(--text-muted); font-style: italic;">"${s.comentario_avaliacao || 'Sem comentário'}"</span>
+                                ${respostaHtml}
+                            </div>
+                        `;
+                    } else {
+                        avaliacaoHtml = `<p style="margin-top: 15px; font-size: 13px; color: var(--text-muted); text-align: center;">Aguardando o cliente deixar a avaliação.</p>`;
+                    }
+
+                    return `
+                        <div style="background: var(--surface); border: 1px solid var(--border); border-left: 5px solid var(--success); border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                                <h4 style="color: var(--primary); font-size: 18px; margin: 0;"><i class="fas fa-check-circle" style="color: var(--success); margin-right: 8px;"></i>${servicoNome}</h4>
+                                <span style="background: rgba(16, 185, 129, 0.15); color: var(--success); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">${s.status}</span>
+                            </div>
+                            <div style="font-size: 14px; color: var(--text-main);">
+                                <div><strong>Local:</strong> ${s.endereco || 'Endereço não informado'}</div>
+                                <div><strong>Data de Conclusão:</strong> ${dataPed}</div>
+                            </div>
+                            ${avaliacaoHtml}
+                        </div>
+                    `;
+                }).join('')}
+                </div>
+            `;
+        } else {
+            conteudo.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                    <i class="fas fa-box-open" style="font-size: 48px; color: var(--border); margin-bottom: 15px;"></i>
+                    <h3>Nenhum serviço concluído</h3>
+                    <p>Os serviços finalizados aparecerão aqui.</p>
+                </div>
+            `;
+        }
+    } catch (e) {
+        conteudo.innerHTML = '<p style="color: var(--error);">Erro ao carregar serviços concluídos.</p>';
     }
 }
 
@@ -965,7 +1177,7 @@ async function carregarPrestadoresDisponiveis() {
                                 <h3 style="color: var(--primary); margin-bottom: 4px; font-size: 18px;">${p.nome}</h3>
                                 <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 6px;">${profissao}</p>
                                 <div style="display: flex; gap: 15px; font-size: 14px; color: var(--text-main);">
-                                    <span style="color: #F59E0B;"><i class="fas fa-star"></i> 5.0</span>
+                                    <span style="color: #F59E0B;"><i class="fas fa-star"></i> Ver Avaliações</span>
                                     <span><i class="fas fa-map-marker-alt"></i> ${p.endereco_completo ? p.endereco_completo.split('-')[0] : 'Endereço Indisponível'}</span>
                                 </div>
                                 <div style="color: var(--success); font-weight: bold; margin-top: 8px;">Diária a partir de R$ ${valorMin}</div>
@@ -996,6 +1208,39 @@ async function verPerfilPrestador(codPrestador) {
             return;
         }
 
+        const resSols = await fetch(`${API_URL}/solicitacoes`, { cache: 'no-store' });
+        const solicitacoesAll = await resSols.json();
+        const avaliacoesPrestador = solicitacoesAll.filter(s => String(s.cod_prestador) === String(codPrestador) && s.nota_avaliacao && s.nota_avaliacao > 0);
+        
+        let mediaNotas = 5.0;
+        let avaliacoesHTML = '<p style="color:var(--text-muted);">Ainda não há avaliações de clientes.</p>';
+
+        if (avaliacoesPrestador.length > 0) {
+            const soma = avaliacoesPrestador.reduce((acc, curr) => acc + Number(curr.nota_avaliacao), 0);
+            mediaNotas = (soma / avaliacoesPrestador.length).toFixed(1);
+
+            avaliacoesHTML = avaliacoesPrestador.map(av => {
+                const estrelas = '⭐'.repeat(av.nota_avaliacao);
+                const respostaPrestador = av.resposta_avaliacao 
+                    ? `<div style="margin-top: 10px; padding: 10px; background: #f9f9f9; border-left: 3px solid var(--accent); border-radius: 4px; font-size: 13px;">
+                           <strong>Resposta do Profissional:</strong> <span style="color: var(--text-muted);">"${av.resposta_avaliacao}"</span>
+                       </div>` 
+                    : '';
+
+                return `
+                    <div style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 10px;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom: 5px;">
+                            <strong>${av.solicitante_nome || 'Cliente'}</strong>
+                            <span>${estrelas}</span>
+                        </div>
+                        <p style="color: var(--text-muted); font-style: italic;">"${av.comentario_avaliacao || 'Serviço prestado com sucesso.'}"</p>
+                        <small style="color: #aaa;">Serviço: ${av.servico || av.descricao}</small>
+                        ${respostaPrestador}
+                    </div>
+                `;
+            }).join('');
+        }
+
         const avatar = p.foto_perfil 
             ? `<img src="${p.foto_perfil}" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--secondary); display: block; margin: 0 auto 15px;">`
             : `<div style="width: 100px; height: 100px; background: var(--secondary); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: bold; margin: 0 auto 15px;">${p.nome.charAt(0)}</div>`;
@@ -1008,13 +1253,18 @@ async function verPerfilPrestador(codPrestador) {
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; background: #fdfdfd; padding: 15px; border-radius: 8px; border: 1px solid var(--border);">
                     <div><strong>Experiência:</strong> ${p.experiencia || 'Não informada'}</div>
-                    <div><strong>Avaliação:</strong> ⭐ 5.0 (Serviços Verificados)</div>
+                    <div><strong>Avaliação Geral:</strong> ⭐ ${mediaNotas} (${avaliacoesPrestador.length} avaliações)</div>
                     <div><strong>Valor Diária / Base:</strong> R$ ${p.valor_minimo ? Number(p.valor_minimo).toFixed(2) : 'A combinar'}</div>
                     <div><strong>Disponibilidade:</strong> ${p.disponibilidade_horario || 'A combinar'}</div>
                 </div>
 
                 <h3 style="color: var(--primary); margin-bottom: 10px; font-size: 18px;">Histórico e Serviços Realizados</h3>
                 <p style="color: var(--text-main); margin-bottom: 20px;">${p.descricao_funcoes || 'Profissional dedicado com histórico de excelência em atendimento na região.'}</p>
+
+                <h3 style="color: var(--primary); margin-bottom: 10px; font-size: 18px; border-top: 1px solid var(--border); padding-top: 20px;">Avaliações Recebidas</h3>
+                <div style="margin-bottom: 25px;">
+                    ${avaliacoesHTML}
+                </div>
 
                 <button class="btn btn-primary btn-full" onclick="solicitarServicoCatalogo('${p.profissao_funcao || 'Geral'}')">Contratar este Profissional</button>
             </div>
