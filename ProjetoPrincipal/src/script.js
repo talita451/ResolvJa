@@ -99,7 +99,7 @@ async function redirecionarDashboard() {
 
     try {
         const endpoint = tipo === 'prestador' ? `/prestadores` : `/solicitantes`;
-        const res = await fetch(`${API_URL}${endpoint}`);
+        const res = await fetch(`${API_URL}${endpoint}`, { cache: 'no-store' });
         const dados = await res.json();
         const usuario = dados.find(u => String(u.cod_prestador || u.id_solicitante) === String(logado));
         
@@ -151,7 +151,7 @@ async function carregarFotoNavbarImediata() {
 
     try {
         const endpoint = tipo === 'solicitante' ? `/solicitantes` : `/prestadores`;
-        const resposta = await fetch(`${API_URL}${endpoint}`);
+        const resposta = await fetch(`${API_URL}${endpoint}`, { cache: 'no-store' });
         const dados = await resposta.json();
         const usuario = dados.find(u => String(u.cod_prestador || u.id_solicitante) === String(idLogado));
 
@@ -259,13 +259,20 @@ function toggleCamposPrestador() {
 function verificarOutroServico(select) {
     const containerNovo = document.getElementById('container-novo-servico');
     const inputCustom = document.getElementById('reqTipoServicoCustom');
-    if (!containerNovo || !inputCustom) return;
+    const reqDescricao = document.getElementById('reqDescricao');
+
+    if (!containerNovo || !inputCustom || !reqDescricao) return;
+
     if (select.value === 'Outros') {
         containerNovo.style.display = 'flex';
         inputCustom.required = true;
+        reqDescricao.required = true;
+        reqDescricao.placeholder = "Explique o que precisa ser feito...";
     } else {
         containerNovo.style.display = 'none';
         inputCustom.required = false;
+        reqDescricao.required = false;
+        reqDescricao.placeholder = "descreva brevemente como quer que o serviço seja feito (opcional)";
     }
 }
 
@@ -388,7 +395,7 @@ async function login(event) {
     const usuarioInput = document.getElementById('loginUsuario').value;
 
     try {
-        const resPrestador = await fetch(`${API_URL}/prestadores`);
+        const resPrestador = await fetch(`${API_URL}/prestadores`, { cache: 'no-store' });
         const prestadores = await resPrestador.json();
         const prestadorEncontrado = prestadores.find(p => p.email === usuarioInput || p.nome === usuarioInput);
 
@@ -404,7 +411,7 @@ async function login(event) {
             return;
         }
 
-        const resSolicitante = await fetch(`${API_URL}/solicitantes`);
+        const resSolicitante = await fetch(`${API_URL}/solicitantes`, { cache: 'no-store' });
         const solicitantes = await resSolicitante.json();
         const solicitanteEncontrado = solicitantes.find(s => s.email === usuarioInput || s.nome === usuarioInput);
 
@@ -441,7 +448,7 @@ async function carregarDadosPerfil() {
 
     try {
         const endpoint = tipo === 'solicitante' ? `/solicitantes` : `/prestadores`;
-        const resposta = await fetch(`${API_URL}${endpoint}`);
+        const resposta = await fetch(`${API_URL}${endpoint}`, { cache: 'no-store' });
         const dados = await resposta.json();
         
         if (!resposta.ok) throw new Error('Erro ao buscar dados.');
@@ -554,7 +561,7 @@ async function solicitarServicoCatalogo(nomeServico) {
     const select = document.getElementById('selectTipoServico');
     if (select) {
         try {
-            const res = await fetch(`${API_URL}/tipos-servicos`);
+            const res = await fetch(`${API_URL}/tipos-servicos`, { cache: 'no-store' });
             const tipos = await res.json();
             if (Array.isArray(tipos) && tipos.length > 0) {
                 select.innerHTML = tipos.map(t => `<option value="${t.nome_servico}" data-id="${t.id_tipo_servico}">${t.nome_servico}</option>`).join('');
@@ -572,7 +579,7 @@ async function solicitarServicoCatalogo(nomeServico) {
     if (idLogado) {
         try {
             const endpoint = tipo === 'solicitante' ? `/solicitantes` : `/prestadores`;
-            const res = await fetch(`${API_URL}${endpoint}`);
+            const res = await fetch(`${API_URL}${endpoint}`, { cache: 'no-store' });
             const dados = await res.json();
             const user = dados.find(u => String(u.cod_prestador || u.id_solicitante) === String(idLogado));
             
@@ -622,7 +629,7 @@ async function submitRequest(event) {
 
     let codPrestadorAtribuido = null;
     try {
-        const resPrestadores = await fetch(`${API_URL}/prestadores`);
+        const resPrestadores = await fetch(`${API_URL}/prestadores`, { cache: 'no-store' });
         const prestadores = await resPrestadores.json();
         
         if (Array.isArray(prestadores) && prestadores.length > 0) {
@@ -644,6 +651,11 @@ async function submitRequest(event) {
         console.log("Erro ao buscar prestador automático.");
     }
 
+    const descExtra = document.getElementById('reqDescricao').value;
+    const titulo = document.getElementById('reqTitulo').value;
+    // Formata a descrição ignorando o traço caso o utilizador não escreva nada
+    const descricaoFinal = descExtra ? `[${tipoServico}] ${titulo} - ${descExtra}` : `[${tipoServico}] ${titulo}`;
+
     const payload = {
         id_solicitante: Number(idLogado), 
         id_tipo_servico: idTipoServico, 
@@ -651,7 +663,7 @@ async function submitRequest(event) {
         data_servico: document.getElementById('reqData').value,
         horario: intervaloHorario,
         endereco: enderecoFormatado,
-        descricao: `[${tipoServico}] ${document.getElementById('reqTitulo').value} - ${document.getElementById('reqDescricao').value}`,
+        descricao: descricaoFinal,
         valor_combinado: 0
     };
 
@@ -689,7 +701,7 @@ async function carregarMinhasSolicitacoes() {
     }
 
     try {
-        const resposta = await fetch(`${API_URL}/solicitantes/${idLogado}/solicitacoes`);
+        const resposta = await fetch(`${API_URL}/solicitantes/${idLogado}/solicitacoes`, { cache: 'no-store' });
         let dados = await resposta.json();
         
         if (dados && !Array.isArray(dados)) {
@@ -729,14 +741,15 @@ async function carregarOportunidadesPrestador() {
     conteudo.innerHTML = '<p style="color: var(--text-muted);">A procurar oportunidades disponíveis...</p>';
     
     try {
-        const res = await fetch(`${API_URL}/solicitacoes`);
+        const res = await fetch(`${API_URL}/solicitacoes`, { cache: 'no-store' });
         let solicitacoes = await res.json();
         
         if (solicitacoes && !Array.isArray(solicitacoes)) {
             solicitacoes = solicitacoes.solicitacoes || solicitacoes.dados || Object.values(solicitacoes);
         }
         
-        const disponiveis = solicitacoes.filter(s => !s.cod_prestador || s.status === 'Pendente' || s.status === 'pendente');
+        // FILTRO EXATO: Só mostra serviços onde o cod_prestador não existe E o status for pendente.
+        const disponiveis = solicitacoes.filter(s => !s.cod_prestador && (!s.status || s.status.toLowerCase() === 'pendente'));
 
         if (Array.isArray(disponiveis) && disponiveis.length > 0) {
             conteudo.innerHTML = `
@@ -770,22 +783,22 @@ async function aceitarSolicitudeUber(idSolicitacao) {
     }
 
     try {
-        const resPrestadores = await fetch(`${API_URL}/prestadores`);
+        const resPrestadores = await fetch(`${API_URL}/prestadores`, { cache: 'no-store' });
         const prestadores = await resPrestadores.json();
         const prestadorLogado = prestadores.find(p => String(p.cod_prestador) === String(idPrestador));
-        const nomePrestador = prestadorLogado ? prestadorLogado.nome : 'Um profissional';
+        const nomePrestador = prestadorLogado ? prestadorLogado.nome : 'Profissional';
 
-        const resposta = await fetch(`${API_URL}/solicitacoes/${idSolicitacao}`, {
+        const resposta = await fetch(`${API_URL}/solicitacoes/${idSolicitacao}/status`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 cod_prestador: Number(idPrestador),
-                status: `Aceito por ${nomePrestador}`
+                status: `Serviço aceito pelo prestador ${nomePrestador}`
             })
         });
 
         if (resposta.ok) {
-            mostrarToast('Solicitação aceita com sucesso! Adicionada à sua agenda.');
+            mostrarToast('Serviço aceito com sucesso! Adicionado à sua agenda.');
             carregarOportunidadesPrestador();
         } else {
             const erroJson = await resposta.json();
@@ -803,7 +816,7 @@ async function carregarAgendaPrestador() {
     
     const idPrestador = localStorage.getItem('idUsuarioLogado');
     try {
-        const res = await fetch(`${API_URL}/solicitacoes`);
+        const res = await fetch(`${API_URL}/solicitacoes`, { cache: 'no-store' });
         let solicitacoes = await res.json();
         
         if (solicitacoes && !Array.isArray(solicitacoes)) {
@@ -814,21 +827,37 @@ async function carregarAgendaPrestador() {
 
         if (Array.isArray(minhasSolicitacoes) && minhasSolicitacoes.length > 0) {
             conteudo.innerHTML = `
-                <h3 style="color: var(--primary); margin-bottom: 15px;">Os seus Agendamentos 📅</h3>
+                <div style="margin-bottom: 25px;">
+                    <h3 style="color: var(--primary); font-size: 22px; margin-bottom: 5px;">Minha Agenda Profissional 📅</h3>
+                    <p style="color: var(--text-muted); font-size: 14px;">Compromissos confirmados, endereços e horários.</p>
+                </div>
+                <div style="display: grid; gap: 20px;">
                 ${minhasSolicitacoes.map(s => {
                     const dataPed = s.data_servico ? s.data_servico.split('T')[0] : 'Data não informada';
+                    const servicoNome = s.servico || s.descricao || 'Serviço ResolvJá';
                     return `
-                        <div style="background: var(--surface); border: 1px solid var(--border); padding: 20px; border-radius: 8px; margin-bottom: 15px; border-left: 5px solid var(--secondary);">
-                            <p><strong>Data:</strong> ${dataPed} (${s.horario || ''})</p>
-                            <p><strong>Morada:</strong> ${s.endereco}</p>
-                            <p><strong>Detalhes:</strong> ${s.descricao}</p>
-                            <p><strong>Estado:</strong> <span style="color: var(--success); font-weight: bold;">${s.status}</span></p>
+                        <div style="background: var(--surface); border: 1px solid var(--border); border-left: 5px solid var(--accent); border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                                <h4 style="color: var(--primary); font-size: 18px; margin: 0;"><i class="fas fa-tools" style="color: var(--accent); margin-right: 8px;"></i>${servicoNome}</h4>
+                                <span style="background: rgba(16, 185, 129, 0.15); color: var(--success); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">${s.status}</span>
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; font-size: 14px; color: var(--text-main);">
+                                <div><strong><i class="fas fa-clock" style="color: var(--secondary); margin-right: 6px;"></i>Horário:</strong> ${s.horario || 'A combinar'} (${dataPed})</div>
+                                <div style="grid-column: span 2;"><strong><i class="fas fa-map-marker-alt" style="color: var(--accent); margin-right: 6px;"></i>Endereço Completo:</strong> ${s.endereco || 'Endereço não informado'}</div>
+                            </div>
                         </div>
                     `;
                 }).join('')}
+                </div>
             `;
         } else {
-            conteudo.innerHTML = '<p style="color: var(--text-muted);">Ainda não tem serviços aceitos na sua agenda.</p>';
+            conteudo.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                    <i class="fas fa-calendar-times" style="font-size: 48px; color: var(--accent); margin-bottom: 15px;"></i>
+                    <h3>Nenhum serviço agendado no momento</h3>
+                    <p>Assim que aceitar oportunidades, os detalhes aparecerão aqui.</p>
+                </div>
+            `;
         }
     } catch (e) {
         conteudo.innerHTML = '<p style="color: var(--error);">Erro ao carregar a agenda.</p>';
@@ -843,7 +872,7 @@ async function carregarPrestadoresDisponiveis() {
     container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 20px;">A procurar profissionais na sua área...</p>';
 
     try {
-        const resposta = await fetch(`${API_URL}/prestadores`);
+        const resposta = await fetch(`${API_URL}/prestadores`, { cache: 'no-store' });
         const prestadores = await resposta.json();
 
         if (resposta.ok && prestadores.length > 0) {
@@ -885,7 +914,7 @@ async function verPerfilPrestador(codPrestador) {
     container.innerHTML = '<p style="text-align: center; color: var(--text-muted);">A carregar perfil do profissional...</p>';
 
     try {
-        const res = await fetch(`${API_URL}/prestadores`);
+        const res = await fetch(`${API_URL}/prestadores`, { cache: 'no-store' });
         const prestadores = await res.json();
         const p = prestadores.find(item => String(item.cod_prestador) === String(codPrestador));
 
@@ -955,13 +984,13 @@ async function alternarModoUsuario() {
     const nomeDestino = tipoDestino === 'solicitante' ? 'Cliente' : 'Prestador';
 
     try {
-        const resAtual = await fetch(`${API_URL}${endpointAtual}`);
+        const resAtual = await fetch(`${API_URL}${endpointAtual}`, { cache: 'no-store' });
         const dadosAtual = await resAtual.json();
         const userAtual = dadosAtual.find(u => String(u.cod_prestador || u.id_solicitante) === String(idLogado));
         
         if (!userAtual) throw new Error("Utilizador atual não encontrado.");
         
-        const resDestino = await fetch(`${API_URL}${endpointDestino}`);
+        const resDestino = await fetch(`${API_URL}${endpointDestino}`, { cache: 'no-store' });
         const dadosDestino = await resDestino.json();
         const userDestino = dadosDestino.find(u => u.email.trim() === userAtual.email.trim());
 

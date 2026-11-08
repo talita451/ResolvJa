@@ -42,10 +42,12 @@ class SolicitacaoController {
 
     async atualizarStatus(req, res) {
         const { id } = req.params;
-        const { status } = req.body;
+        const { status, cod_prestador } = req.body;
+
+        console.log(`[BACKEND] Atualizando pedido ${id} | Status: ${status} | Prestador: ${cod_prestador}`);
 
         try {
-            const solicitacaoAtualizada = await solicitacaoRepository.atualizarStatus(id, status);
+            const solicitacaoAtualizada = await solicitacaoRepository.atualizarStatus(id, status, cod_prestador);
 
             if (!solicitacaoAtualizada) {
                 return res.status(404).json({
