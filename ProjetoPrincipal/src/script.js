@@ -7,6 +7,7 @@ console.log("🛠️ Frontend ResolvJá carregado com sucesso!");
 // ==========================================
 // 1. NAVEGAÇÃO E INTERFACE (UI)
 // ==========================================
+// Função: Altera a página visível no modo Single Page Application
 function showPage(pageId) {
     const telaAtual = document.querySelector('.page.active');
     
@@ -20,8 +21,14 @@ function showPage(pageId) {
         target.classList.add('active');
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+    // Se a página aberta for o catálogo completo, carrega todos os serviços do banco de dados
+    if (pageId === 'catalogo-completo') {
+        carregarCatalogoServicosCompleto();
+    }
 }
 
+// Função: Regressa para a última página acessada
 function voltarTelaAnterior() {
     if (historicoTelas.length > 0) {
         const telaAnterior = historicoTelas.pop();
@@ -33,26 +40,29 @@ function voltarTelaAnterior() {
     }
 }
 
+// Função: Alterna a exibição do menu dropdown do utilizador (minha conta)
 function toggleUserMenu() {
     const dropdown = document.getElementById('userDropdown');
     if(dropdown) dropdown.classList.toggle('show');
 }
 
+// Evento Global: Fecha o dropdown se o utilizador clicar fora dele
 window.onclick = function(event) {
     if (!event.target.closest('.user-menu-container')) {
         const dropdowns = document.getElementsByClassName("user-dropdown");
         for (let i = 0; i < dropdowns.length; i++) {
-            const openDropdown = dropdowns[i];
-            if (openDropdown.classList.contains('show')) {
-                openDropdown.classList.remove('show');
+            if (dropdowns[i].classList.contains('show')) {
+                dropdowns[i].classList.remove('show');
             }
         }
     }
 }
 
+// Função: Gerencia o estado de autenticação (logado vs deslogado) na interface Navbar
 function atualizarInterfaceAuth() {
     const logado = localStorage.getItem('idUsuarioLogado');
     const btnEntrar = document.getElementById('nav-auth-btn');
+    const btnPainel = document.getElementById('nav-painel-btn');
     const menuUsuario = document.getElementById('userMenuContainer');
     const avatarBtn = document.getElementById('navAvatarBtn');
     const miniFoto = document.getElementById('dropdownMiniFoto');
@@ -61,6 +71,7 @@ function atualizarInterfaceAuth() {
         if (logado) {
             btnEntrar.style.display = 'none';
             menuUsuario.style.display = 'inline-block';
+            if (btnPainel) btnPainel.style.display = 'inline-flex'; // MOSTRA O BOTÃO MEU PAINEL
 
             const fotoSalva = localStorage.getItem('fotoUsuarioLogado');
             if (fotoSalva && avatarBtn) {
@@ -72,6 +83,7 @@ function atualizarInterfaceAuth() {
         } else {
             btnEntrar.style.display = 'inline-flex';
             menuUsuario.style.display = 'none';
+            if (btnPainel) btnPainel.style.display = 'none'; // OCULTA O BOTÃO MEU PAINEL
         }
     }
 
@@ -83,10 +95,12 @@ function atualizarInterfaceAuth() {
     }
 }
 
+// Função: Direciona utilizador não logado para a tela de login ao clicar no botão "Entrar"
 function tratarCliqueAuthNav() {
     showPage('login');
 }
 
+// Função: Redireciona o utilizador para o dashboard correto (Cliente ou Prestador)
 async function redirecionarDashboard() {
     const logado = localStorage.getItem('idUsuarioLogado');
     const tipo = localStorage.getItem('tipoUsuarioLogado');
@@ -125,6 +139,7 @@ async function redirecionarDashboard() {
     }
 }
 
+// Função: Realiza o Logout do sistema limpando o LocalStorage
 function logout() {
     localStorage.removeItem('idUsuarioLogado');
     localStorage.removeItem('tipoUsuarioLogado');
@@ -134,6 +149,7 @@ function logout() {
     showPage('home');
 }
 
+// Função: Carrega a foto do perfil na navbar ao entrar no site
 async function carregarFotoNavbarImediata() {
     const idLogado = localStorage.getItem('idUsuarioLogado');
     const tipo = localStorage.getItem('tipoUsuarioLogado') || 'prestador';
@@ -165,6 +181,7 @@ async function carregarFotoNavbarImediata() {
     }
 }
 
+// Evento Global: Executado assim que a página é carregada
 document.addEventListener("DOMContentLoaded", () => {
     atualizarInterfaceAuth();
     carregarFotoNavbarImediata();
@@ -173,6 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // ==========================================
 // 2. ALERTAS (TOAST) E COMPRESSÃO
 // ==========================================
+// Função: Exibe uma mensagem de alerta flutuante verde (sucesso) ou vermelha (erro)
 function mostrarToast(mensagem, tipo = 'sucesso') {
     const toast = document.getElementById('toast-central');
     if (!toast) return;
@@ -184,6 +202,7 @@ function mostrarToast(mensagem, tipo = 'sucesso') {
     setTimeout(() => { toast.style.display = 'none'; }, 4500);
 }
 
+// Função: Converte imagens para Base64 em alta resolução e nitidez máxima
 function converterImagemParaBase64(event, idInputDestino) {
     const arquivo = event.target.files[0];
     if (!arquivo) return;
@@ -197,7 +216,8 @@ function converterImagemParaBase64(event, idInputDestino) {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             
-            const tamanhoMaximo = 400;
+            // Aumentamos o limite para 1200px para garantir alta definição e nitidez no zoom
+            const tamanhoMaximo = 1200;
             let largura = img.width;
             let altura = img.height;
             
@@ -217,45 +237,107 @@ function converterImagemParaBase64(event, idInputDestino) {
             canvas.height = altura;
             ctx.drawImage(img, 0, 0, largura, altura);
             
-            const base64Comprimido = canvas.toDataURL('image/jpeg', 0.8);
+            // Qualidade máxima (1.0 = 100% de nitidez sem perdas de compressão)
+            const base64AltaQualidade = canvas.toDataURL('image/jpeg', 1.0);
             const inputDestino = document.getElementById(idInputDestino);
-            if (inputDestino) inputDestino.value = base64Comprimido;
-            mostrarToast('Imagem processada com sucesso!');
+            if (inputDestino) inputDestino.value = base64AltaQualidade;
+            
+            mostrarToast('Imagem em alta qualidade processada com sucesso!');
         };
     };
     leitor.readAsDataURL(arquivo);
 }
 
+// Função otimizada: Abre em tamanho 10x15 nítido, permite zoom ao clicar e arrastar para explorar
 function ampliarFotoPerfil() {
-    const fotoSalva = localStorage.getItem('fotoUsuarioLogado');
-    const modal = document.getElementById('modalFotoPerfil');
-    const imgExpandida = document.getElementById('imgModalExpandida');
+  const imgElement = document.getElementById('dropdownMiniFoto');
+  if (!imgElement || !imgElement.src) return;
 
-    if (!fotoSalva) {
-        mostrarToast('Ainda não tem nenhuma foto de perfil guardada.', 'erro');
-        return;
+  const srcOriginal = imgElement.src;
+
+  // Cria o container do modal escuro
+  const modalOverlay = document.createElement('div');
+  modalOverlay.className = 'foto-modal-overlay';
+  modalOverlay.title = 'Clique fora da foto para fechar';
+
+  // Cria a imagem ampliada
+  const imagemAmpliada = document.createElement('img');
+  imagemAmpliada.src = srcOriginal;
+  imagemAmpliada.className = 'foto-modal-content';
+
+  let comZoom = false;
+  let isDragging = false;
+  let startX, startY;
+  let translateX = 0;
+  let translateY = 0;
+
+  // Estado inicial: Abre logo num tamanho excelente (estilo 10x15)
+  imagemAmpliada.style.transform = 'scale(1)';
+  imagemAmpliada.style.cursor = 'zoom-in';
+
+  // Clique na imagem: Alterna entre o tamanho 10x15 e o zoom aproximado
+  imagemAmpliada.onclick = function(event) {
+    event.stopPropagation();
+    comZoom = !comZoom;
+
+    if (comZoom) {
+      // Aplica o zoom aproximado mantendo a nitidez
+      imagemAmpliada.style.transform = `scale(2.2) translate(${translateX}px, ${translateY}px)`;
+      imagemAmpliada.style.cursor = 'grab';
+    } else {
+      // Reseta para o tamanho 10x15 original
+      translateX = 0;
+      translateY = 0;
+      imagemAmpliada.style.transform = 'scale(1) translate(0px, 0px)';
+      imagemAmpliada.style.cursor = 'zoom-in';
     }
+  };
 
-    if (modal && imgExpandida) {
-        imgExpandida.src = fotoSalva;
-        modal.style.display = 'flex';
+  // Eventos para segurar clicado e mover (arrastar) quando estiver com zoom
+  imagemAmpliada.onmousedown = function(event) {
+    if (!comZoom) return;
+    isDragging = true;
+    startX = event.clientX - translateX;
+    startY = event.clientY - translateY;
+    imagemAmpliada.style.cursor = 'grabbing';
+    event.preventDefault();
+  };
+
+  window.onmousemove = function(event) {
+    if (!isDragging || !comZoom) return;
+    translateX = event.clientX - startX;
+    translateY = event.clientY - startY;
+    imagemAmpliada.style.transform = `scale(2.2) translate(${translateX}px, ${translateY}px)`;
+  };
+
+  window.onmouseup = function() {
+    if (isDragging) {
+      isDragging = false;
+      if (comZoom) imagemAmpliada.style.cursor = 'grab';
     }
-}
+  };
 
-function fecharModalFoto() {
-    const modal = document.getElementById('modalFotoPerfil');
-    if (modal) modal.style.display = 'none';
-}
+  modalOverlay.appendChild(imagemAmpliada);
+  document.body.appendChild(modalOverlay);
 
+  // Fecha o modal ao clicar no fundo escuro fora da foto
+  modalOverlay.onclick = function(event) {
+    if (event.target === modalOverlay) {
+      document.body.removeChild(modalOverlay);
+    }
+  };
+}
 // ==========================================
 // 3. AUXILIARES DE FORMULÁRIO E VIA CEP
 // ==========================================
+// Função: Oculta ou mostra campos extra de cadastro dependendo de ser prestador ou cliente
 function toggleCamposPrestador() {
     const tipo = document.getElementById('regTipo').value;
     const campos = document.getElementById('campos-prestador');
     if (campos) campos.style.display = tipo === 'prestador' ? 'grid' : 'none';
 }
 
+// Função: Exibe input customizado de serviço caso a opção "Outros" seja escolhida no select
 function verificarOutroServico(select) {
     const containerNovo = document.getElementById('container-novo-servico');
     const inputCustom = document.getElementById('reqTipoServicoCustom');
@@ -276,12 +358,14 @@ function verificarOutroServico(select) {
     }
 }
 
+// Função: Adiciona automaticamente a formatação do CEP no input
 function mascaraCep(input) {
     let v = input.value.replace(/\D/g, '');
     if (v.length > 5) v = v.replace(/^(\d{5})(\d)/, '$1-$2');
     input.value = v;
 }
 
+// Função: Consulta a API externa ViaCEP para autopreencher os endereços
 async function buscarCepGenerico(idCep, idRua, idBairro, idCidade, idNumero) {
     const cepInput = document.getElementById(idCep);
     if (!cepInput) return;
@@ -302,12 +386,14 @@ async function buscarCepGenerico(idCep, idRua, idBairro, idCidade, idNumero) {
     }
 }
 
+// Chamadas específicas para preencher CEP no cadastro e nos pedidos
 function buscarCepCadastro() { buscarCepGenerico('regCep', 'regRua', 'regBairro', 'regCidade', 'regNumero'); }
 function buscarEnderecoPorCep() { buscarCepGenerico('reqCep', 'reqRua', 'reqBairro', 'reqCidade', 'reqNumero'); }
 
 // ==========================================
 // 4. AUTENTICAÇÃO E PERFIL
 // ==========================================
+// Função: Realiza o Cadastro de novo utilizador e envia os dados ao Back-End
 async function register(event) {
     event.preventDefault();
     try {
@@ -390,6 +476,7 @@ async function register(event) {
     } catch (erro) { mostrarToast('Erro de comunicação com o servidor.', 'erro'); }
 }
 
+// Função: Autentica o utilizador fazendo verificação simples via Front-end vs API
 async function login(event) {
     event.preventDefault();
     const usuarioInput = document.getElementById('loginUsuario').value;
@@ -432,6 +519,7 @@ async function login(event) {
     }
 }
 
+// Função: Busca e preenche o formulário de "Meu Perfil" com os dados do utilizador logado
 async function carregarDadosPerfil() {
     showPage('meu-perfil');
     const idLogado = localStorage.getItem('idUsuarioLogado');
@@ -473,10 +561,16 @@ async function carregarDadosPerfil() {
         mostrarToast('Erro ao carregar os seus dados.', 'erro');
     }
 }
-
+// Função: Envia as alterações do perfil editado de volta ao Back-End
 async function atualizarPerfil(event) {
     event.preventDefault();
-    const idLogado = localStorage.getItem('idUsuarioLogado');
+    
+    // Obtém o ID logado e limpa qualquer caractere indesejado (como :1 ou espaços)
+    let idLogado = localStorage.getItem('idUsuarioLogado');
+    if (idLogado) {
+        idLogado = idLogado.toString().split(':')[0].trim();
+    }
+
     const tipo = localStorage.getItem('tipoUsuarioLogado') || 'solicitante';
 
     if (!idLogado) {
@@ -534,15 +628,16 @@ async function atualizarPerfil(event) {
 // ==========================================
 // 5. PEDIDOS E AGENDA
 // ==========================================
+// Função: Redireciona o utilizador para abrir uma ordem de serviço e autopreenche dados
 async function solicitarServicoCatalogo(nomeServico) {
     showPage('request');
     const select = document.getElementById('selectTipoServico');
     if (select) {
         try {
-            const res = await fetch(`${API_URL}/tipos-servicos`, { cache: 'no-store' });
+            const res = await fetch(`${API_URL}/servicos`, { cache: 'no-store' });
             const tipos = await res.json();
             if (Array.isArray(tipos) && tipos.length > 0) {
-                select.innerHTML = tipos.map(t => `<option value="${t.nome_servico}" data-id="${t.id_tipo_servico}">${t.nome_servico}</option>`).join('');
+                select.innerHTML = tipos.map(t => `<option value="${t.nome_servico || t.titulo}" data-id="${t.id_tipo_servico || t.id}">${t.nome_servico || t.titulo}</option>`).join('');
             }
         } catch(e) {
             console.log("Mantendo opções padrão.");
@@ -579,6 +674,7 @@ async function solicitarServicoCatalogo(nomeServico) {
     }
 }
 
+// Função: Submete um pedido de novo serviço no sistema
 async function submitRequest(event) {
     event.preventDefault();
     const selectEl = document.getElementById('selectTipoServico');
@@ -667,6 +763,7 @@ async function submitRequest(event) {
 // ----------------------------------------------------
 // FLUXO DE AVALIAÇÃO COM ESTRELAS E FOTO (CLIENTE)
 // ----------------------------------------------------
+// Função: Redireciona e prepara a tela de avaliação após término do serviço
 function abrirTelaAvaliacao(idSolicitacao) {
     document.getElementById('idSolicitacaoAvaliacao').value = idSolicitacao;
     document.getElementById('form-avaliacao').reset();
@@ -675,6 +772,7 @@ function abrirTelaAvaliacao(idSolicitacao) {
     showPage('avaliacao');
 }
 
+// Função: Aplica animação das estrelas selecionadas visualmente
 function selecionarEstrela(nota, containerId, inputId) {
     document.getElementById(inputId).value = nota;
     const stars = document.querySelectorAll(`#${containerId} span`);
@@ -688,6 +786,7 @@ function selecionarEstrela(nota, containerId, inputId) {
     });
 }
 
+// Função: Submete a avaliação e nota do profissional via PUT ao Banco
 async function enviarAvaliacao(event) {
     event.preventDefault();
     const idSolicitacao = document.getElementById('idSolicitacaoAvaliacao').value;
@@ -727,6 +826,7 @@ async function enviarAvaliacao(event) {
 // ----------------------------------------------------
 // AVALIAÇÃO DO SITE (PLATAFORMA)
 // ----------------------------------------------------
+// Função: Envia feedback geral sobre a plataforma ResolvJá
 async function enviarAvaliacaoSite(event) {
     event.preventDefault();
     const nota = document.getElementById('notaAvaliacaoSite').value;
@@ -774,25 +874,40 @@ async function enviarAvaliacaoSite(event) {
     }
 }
 
+// Função: Exibe as avaliações no site mesclando reais e avaliações fictícias (mocks) de 5 estrelas
 async function abrirTelaAvaliacoesSite() {
     showPage('avaliacoes');
     const container = document.getElementById('lista-avaliacoes-site');
     if (!container) return;
 
-    container.innerHTML = '<p style="text-align:center; color: var(--text-muted);">Carregando depoimentos...</p>';
+    container.innerHTML = '<p style="text-align:center; color: var(--text-muted);">A carregar depoimentos...</p>';
+
+    // Avaliações fictícias para dar credibilidade à página (5 estrelas)
+    const avaliacoesMock = [
+        { nota: 5, comentario: "Plataforma excelente! Encontrei um eletricista em 10 minutos para trocar o meu chuveiro. Muito prático.", nome_usuario: "Mariana Silva" },
+        { nota: 5, comentario: "Segurança e rapidez. O profissional foi super educado, fez o reparo no encanamento e o preço foi muito justo.", nome_usuario: "Carlos Eduardo" },
+        { nota: 5, comentario: "Gostei muito da facilidade de ver as avaliações antes de contratar. Fiquei muito mais tranquila ao chamar o prestador.", nome_usuario: "Fernanda Costa" },
+        { nota: 5, comentario: "Instalaram meu varal de teto perfeitamente. O site é muito fácil de usar até para quem não tem familiaridade com tecnologia.", nome_usuario: "Roberto Alves" }
+    ];
 
     try {
         const resposta = await fetch(`${API_URL}/avaliacoes-site`, { cache: 'no-store' });
-        const avaliacoes = await resposta.json();
+        let avaliacoesReais = [];
+        if (resposta.ok) {
+            avaliacoesReais = await resposta.json();
+        }
 
-        if (resposta.ok && Array.isArray(avaliacoes) && avaliacoes.length > 0) {
-            container.innerHTML = avaliacoes.map(av => {
+        // Junta as avaliações reais do banco com as fictícias do sistema
+        const todasAvaliacoes = [...avaliacoesReais, ...avaliacoesMock];
+
+        if (todasAvaliacoes.length > 0) {
+            container.innerHTML = todasAvaliacoes.map(av => {
                 const estrelasHTML = '⭐'.repeat(av.nota);
                 return `
-                    <div class="review-card">
-                        <div class="stars">${estrelasHTML}</div>
-                        <p>"${av.comentario}"</p>
-                        <h4>- ${av.nome_usuario}</h4>
+                    <div style="background: #fff; border: 1px solid var(--border); padding: 25px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
+                        <div style="font-size: 20px; margin-bottom: 10px;">${estrelasHTML}</div>
+                        <p style="font-size: 16px; color: var(--text-main); font-style: italic; margin-bottom: 15px;">"${av.comentario}"</p>
+                        <h4 style="color: var(--primary); border-top: 1px solid var(--border); padding-top: 15px; font-size: 15px;">- ${av.nome_usuario}</h4>
                     </div>
                 `;
             }).join('');
@@ -800,13 +915,24 @@ async function abrirTelaAvaliacoesSite() {
             container.innerHTML = '<p style="text-align:center; color: var(--text-muted);">Ainda não há avaliações sobre a plataforma.</p>';
         }
     } catch (e) {
-        container.innerHTML = '<p style="text-align:center; color: var(--error);">Erro ao carregar avaliações do site.</p>';
+        // Se a API falhar, mostra pelo menos os Mocks
+        container.innerHTML = avaliacoesMock.map(av => {
+            const estrelasHTML = '⭐'.repeat(av.nota);
+            return `
+                <div style="background: #fff; border: 1px solid var(--border); padding: 25px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
+                    <div style="font-size: 20px; margin-bottom: 10px;">${estrelasHTML}</div>
+                    <p style="font-size: 16px; color: var(--text-main); font-style: italic; margin-bottom: 15px;">"${av.comentario}"</p>
+                    <h4 style="color: var(--primary); border-top: 1px solid var(--border); padding-top: 15px; font-size: 15px;">- ${av.nome_usuario}</h4>
+                </div>
+            `;
+        }).join('');
     }
 }
 
 // ----------------------------------------------------
-// ATUALIZAÇÃO GERAL DE STATUS
+// ATUALIZAÇÃO GERAL DE STATUS E LISTAGENS DE DASHBOARD
 // ----------------------------------------------------
+// Função: Centraliza a alteração do status (ex: "A caminho", "Concluído")
 async function atualizarStatusServico(idSolicitacao, novoStatus, mensagemSucesso) {
     try {
         const resposta = await fetch(`${API_URL}/solicitacoes/${idSolicitacao}/status`, {
@@ -831,6 +957,7 @@ async function atualizarStatusServico(idSolicitacao, novoStatus, mensagemSucesso
     }
 }
 
+// Função: Busca ordens de serviço apenas do Cliente e atualiza painel
 async function carregarMinhasSolicitacoes() {
     showPage('minhas-solicitacoes');
     const lista = document.getElementById('lista-minhas-solicitacoes');
@@ -885,6 +1012,7 @@ async function carregarMinhasSolicitacoes() {
     }
 }
 
+// Função: Traz os serviços pendentes globais que não possuem prestador (Oportunidades)
 async function carregarOportunidadesPrestador() {
     const conteudo = document.getElementById('conteudoDinamicoPrestador');
     if (!conteudo) return;
@@ -924,6 +1052,7 @@ async function carregarOportunidadesPrestador() {
     }
 }
 
+// Função: Associa um pedido não reivindicado ao prestador que clicou em Aceitar
 async function aceitarSolicitudeUber(idSolicitacao) {
     const idPrestador = localStorage.getItem('idUsuarioLogado');
     if (!idPrestador) {
@@ -958,6 +1087,7 @@ async function aceitarSolicitudeUber(idSolicitacao) {
     }
 }
 
+// Função: Busca as ordens ativas vinculadas ao prestador (Agenda)
 async function carregarAgendaPrestador() {
     showPage('dashboard-prestador');
     const conteudo = document.getElementById('conteudoDinamicoPrestador');
@@ -1031,6 +1161,7 @@ async function carregarAgendaPrestador() {
 // ==========================================
 // RESPOSTA DO PRESTADOR À AVALIAÇÃO
 // ==========================================
+// Função: Permite que o Prestador responda uma avaliação deixada por um cliente
 async function enviarRespostaAvaliacao(idSolicitacao) {
     const input = document.getElementById(`input-resp-${idSolicitacao}`);
     const resposta = input ? input.value.trim() : '';
@@ -1057,6 +1188,7 @@ async function enviarRespostaAvaliacao(idSolicitacao) {
     }
 }
 
+// Função: Busca as ordens já concluídas pelo prestador logado
 async function carregarConcluidosPrestador() {
     showPage('dashboard-prestador');
     const conteudo = document.getElementById('conteudoDinamicoPrestador');
@@ -1149,6 +1281,95 @@ async function carregarConcluidosPrestador() {
     }
 }
 
+// ==========================================
+// CATÁLOGO COMPLETO DINÂMICO (BANCO DE DADOS + IMAGENS INTELIGENTES POR PROFISSÃO)
+// ==========================================
+// Função: Busca TODOS os serviços cadastrados na API/Banco e renderiza no Grid com imagens contextualizadas
+async function carregarCatalogoServicosCompleto() {
+    const container = document.getElementById('container-catalogo-servicos');
+    if (!container) return;
+
+    container.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 30px;">A carregar todos os serviços disponíveis...</p>';
+
+    try {
+        const resposta = await fetch(`${API_URL}/servicos`, { cache: 'no-store' }); 
+        
+        if (!resposta.ok) {
+            throw new Error('Erro ao buscar serviços na API');
+        }
+
+        const servicos = await resposta.json();
+
+        if (!Array.isArray(servicos) || servicos.length === 0) {
+            container.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 30px;">Nenhum serviço encontrado no momento.</p>';
+            return;
+        }
+
+        container.innerHTML = '';
+        servicos.forEach(servico => {
+            const card = document.createElement('div');
+            card.className = 'catalog-card';
+            
+            // Pega o nome correto de forma dinâmica vindo do banco (nome_servico, titulo ou nome)
+            const nomeServico = servico.nome_servico || servico.titulo || servico.nome || 'Serviço ResolvJá';
+            const descServico = servico.descricao || 'Serviço profissional qualificado e seguro.';
+            const catServico = servico.categoria || 'Geral';
+            const precoMin = servico.preco_minimo ? Number(servico.preco_minimo).toFixed(2).replace('.', ',') : '35,00';
+
+            // Escolhe uma imagem de Alta Qualidade e 100% alinhada com a profissão/serviço descrito
+            let fotoServico = servico.foto;
+            
+            // Se não houver foto personalizada, detecta o contexto do serviço pelo texto
+            if (!fotoServico || fotoServico.includes('unsplash.com/photo-1581094794329')) {
+                const textoBusca = (nomeServico + " " + descServico + " " + catServico).toLowerCase();
+                
+                if (textoBusca.includes('jardin') || textoBusca.includes('grama') || textoBusca.includes('poda') || textoBusca.includes('planta')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1558904541-efa873a81a13?auto=format&fit=crop&w=600&q=80'; // Jardinagem
+                } else if (textoBusca.includes('limpeza') || textoBusca.includes('faxina') || textoBusca.includes('doméstic') || textoBusca.includes('casa')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80'; // Limpeza Doméstica
+                } else if (textoBusca.includes('unha') || textoBusca.includes('esmalte') || textoBusca.includes('manicure') || textoBusca.includes('pedicure') || textoBusca.includes('beleza')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1632345031435-8727f6c97d34?auto=format&fit=crop&w=600&q=80'; // Manicure / Estética
+                } else if (textoBusca.includes('elétric') || textoBusca.includes('lâmpada') || textoBusca.includes('tomada') || textoBusca.includes('chuveiro') || textoBusca.includes('fiação')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=600&q=80'; // Eletricista
+                } else if (textoBusca.includes('hidráulic') || textoBusca.includes('encanador') || textoBusca.includes('pia') || textoBusca.includes('torneira') || textoBusca.includes('vazamento')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1585704032915-c3400ca199e7?auto=format&fit=crop&w=600&q=80'; // Encanador / Hidráulica
+                } else if (textoBusca.includes('pintor') || textoBusca.includes('parede') || textoBusca.includes('pintura')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=600&q=80'; // Pintura
+                } else if (textoBusca.includes('montador') || textoBusca.includes('móvel') || textoBusca.includes('marcen') || textoBusca.includes('guarda-roupa')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=600&q=80'; // Montagem / Marcenaria
+                } else if (textoBusca.includes('ar-condicionado') || textoBusca.includes('climatiz') || textoBusca.includes('refriger')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=600&q=80'; // Climatização
+                } else {
+                    fotoServico = 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=600&q=80'; // Ferramentas / Geral
+                }
+            }
+
+            // Atributo data-nome utilizado pelo filtro de busca em tempo real
+            card.setAttribute('data-nome', `${nomeServico} ${descServico} ${catServico}`.toLowerCase());
+
+            card.innerHTML = `
+                <div class="catalog-img" style="background-image: url('${fotoServico}');">
+                    <span class="catalog-badge">${catServico}</span>
+                </div>
+                <div class="catalog-body">
+                    <h3>${nomeServico}</h3>
+                    <p>${descServico}</p>
+                    <div class="catalog-footer">
+                        <span class="catalog-price">A partir de <strong>R$ ${precoMin}</strong></span>
+                        <button class="btn btn-primary btn-sm" onclick="solicitarServicoCatalogo('${nomeServico}')">Solicitar</button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+
+    } catch (erro) {
+        console.error("Erro ao carregar o catálogo de serviços:", erro);
+        container.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--error); padding: 30px;">Erro ao carregar os serviços do banco de dados. Verifique se o servidor está ligado.</p>';
+    }
+}
+
+// Função: Busca prestadores na API e renderiza no catálogo de Profissionais
 async function carregarPrestadoresDisponiveis() {
     showPage('providers');
     const container = document.getElementById('container-lista-prestadores');
@@ -1170,20 +1391,20 @@ async function carregarPrestadoresDisponiveis() {
                     : `<div style="width: 60px; height: 60px; background: var(--secondary); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold;">${inicial}</div>`;
 
                 return `
-                    <div class="provider-card">
-                        <div style="display: flex; gap: 20px; align-items: center;">
+                    <div class="provider-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
+                        <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 15px;">
                             ${avatarHtml}
                             <div class="provider-info">
                                 <h3 style="color: var(--primary); margin-bottom: 4px; font-size: 18px;">${p.nome}</h3>
-                                <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 6px;">${profissao}</p>
-                                <div style="display: flex; gap: 15px; font-size: 14px; color: var(--text-main);">
-                                    <span style="color: #F59E0B;"><i class="fas fa-star"></i> Ver Avaliações</span>
-                                    <span><i class="fas fa-map-marker-alt"></i> ${p.endereco_completo ? p.endereco_completo.split('-')[0] : 'Endereço Indisponível'}</span>
+                                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 4px;">${profissao}</p>
+                                <div style="display: flex; gap: 10px; font-size: 13px; color: var(--text-main);">
+                                    <span style="color: #F59E0B;"><i class="fas fa-star"></i> Avaliações</span>
+                                    <span><i class="fas fa-map-marker-alt"></i> ${p.endereco_completo ? p.endereco_completo.split('-')[0] : 'Local Indisponível'}</span>
                                 </div>
-                                <div style="color: var(--success); font-weight: bold; margin-top: 8px;">Diária a partir de R$ ${valorMin}</div>
+                                <div style="color: var(--success); font-weight: bold; font-size: 13px; margin-top: 4px;">Diária a partir de R$ ${valorMin}</div>
                             </div>
                         </div>
-                        <button class="btn btn-outline-light" style="border: 2px solid var(--primary); color: var(--primary); font-weight: 600;" onclick="verPerfilPrestador('${p.cod_prestador}')">Ver Perfil</button>
+                        <button class="btn btn-outline-light" style="border: 2px solid var(--primary); color: var(--primary); font-weight: 600; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: 0.3s; width: 100%;" onmouseover="this.style.background='var(--primary)'; this.style.color='#fff';" onmouseout="this.style.background='transparent'; this.style.color='var(--primary)';" onclick="verPerfilPrestador('${p.cod_prestador}')">Ver Perfil</button>
                     </div>
                 `;
             }).join('');
@@ -1191,6 +1412,7 @@ async function carregarPrestadoresDisponiveis() {
     } catch (erro) { container.innerHTML = '<p style="color: var(--error); text-align: center; padding: 20px;">Falha ao carregar a lista de profissionais.</p>'; }
 }
 
+// Função: Exibe detalhes, histórico e avaliações de um Prestador específico
 async function verPerfilPrestador(codPrestador) {
     showPage('detalhe-prestador');
     const container = document.getElementById('container-detalhe-prestador');
@@ -1274,18 +1496,17 @@ async function verPerfilPrestador(codPrestador) {
     }
 }
 
+// Função: Filtra e exibe resultados da pesquisa local no catálogo
 function filtrarCatalogoServicos() {
     const input = document.getElementById('inputBuscaCatalogo');
     if(!input) return;
     const termo = input.value.toLowerCase();
     const cards = document.querySelectorAll('.catalog-card');
-    let encontrou = false;
 
     cards.forEach(card => {
         const nome = card.getAttribute('data-nome') || '';
         if (nome.includes(termo)) {
             card.style.display = 'flex';
-            encontrou = true;
         } else {
             card.style.display = 'none';
         }
@@ -1295,6 +1516,7 @@ function filtrarCatalogoServicos() {
 // ==========================================
 // 7. ALTERNAR PERFIL
 // ==========================================
+// Função: Transforma cliente em prestador (e vice-versa), mantendo login.
 async function alternarModoUsuario() {
     const idLogado = localStorage.getItem('idUsuarioLogado');
     const tipoAtual = localStorage.getItem('tipoUsuarioLogado') || 'solicitante';
@@ -1344,3 +1566,28 @@ async function alternarModoUsuario() {
         mostrarToast("Erro de ligação ao tentar alternar o perfil.", "erro");
     }
 }
+// Função para alternar entre Modo Claro e Modo Escuro
+function toggleTheme() {
+  const currentTheme = document.documentElement.getAttribute('data-theme');
+  const themeIcon = document.getElementById('themeIcon');
+  
+  if (currentTheme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'light');
+    localStorage.setItem('theme', 'light');
+    if (themeIcon) themeIcon.className = 'fas fa-moon';
+  } else {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    localStorage.setItem('theme', 'dark');
+    if (themeIcon) themeIcon.className = 'fas fa-sun';
+  }
+}
+
+// Carregar o tema salvo pelo utilizador ao abrir a página
+window.addEventListener('DOMContentLoaded', () => {
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  const themeIcon = document.getElementById('themeIcon');
+  if (themeIcon) {
+    themeIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+  }
+});

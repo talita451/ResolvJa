@@ -8,12 +8,14 @@ const errorHandler = require('./src/middlewares/errorHandler');
 dotenv.config();
 
 const app = express();
-
 // Habilita o CORS para permitir requisições do front-end
 app.use(cors());
 
-// Permite que o servidor receba dados em formato JSON
-app.use(express.json());
+// Permite que o servidor receba dados em formato JSON e imagens grandes (Base64)
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+
 
 // =========================================================================
 // 1. SERVIR ARQUIVOS ESTÁTICOS DO FRONT-END (HTML, CSS, JS)

@@ -64,10 +64,32 @@ class PrestadorController {
     async atualizar(req, res) {
         try {
             const { id } = req.params;
+            
+            // 1. Busca os dados atuais do prestador para não perder colunas que não vieram no formulário
+            const prestadorAtualRes = await pool.query('SELECT * FROM prestador WHERE cod_prestador = $1', [id]);
+            if (prestadorAtualRes.rows.length === 0) {
+                return res.status(404).json({ erro: 'Prestador não encontrado.' });
+            }
+            const atual = prestadorAtualRes.rows[0];
+
+            // 2. Extrai os dados enviados pelo corpo da requisição (mantendo os antigos caso algum venha vazio/undefined)
             const {
                 nome, email, telefone, endereco_completo, profissao_funcao,
                 experiencia, valor_minimo, valor_maximo, disponibilidade_horario, foto_perfil
             } = req.body;
+
+            const novoNome = nome !== undefined ? nome : atual.nome;
+            const novoEmail = email !== undefined ? email : atual.email;
+            const novoTelefone = telefone !== undefined ? telefone : atual.telefone;
+            const novoEndereco = endereco_completo !== undefined ? endereco_completo : atual.endereco_completo;
+            const novaProfissao = profissao_funcao !== undefined ? profissao_funcao : atual.profissao_funcao;
+            const novaExperiencia = experiencia !== undefined ? experiencia : atual.experiencia;
+            const novoValorMin = valor_minimo !== undefined ? valor_minimo : atual.valor_minimo;
+            const novoValorMax = valor_maximo !== undefined ? valor_maximo : atual.valor_maximo;
+            const novaDisponibilidade = disponibilidade_horario !== undefined ? disponibilidade_horario : atual.disponibilidade_horario;
+            
+            // Se veio uma nova foto de perfil, usa-a; caso contrário, preserva a foto anterior
+            const novaFoto = (foto_perfil !== undefined && foto_perfil !== '') ? foto_perfil : atual.foto_perfil;
 
             const query = `
                 UPDATE prestador SET
@@ -79,15 +101,12 @@ class PrestadorController {
             `;
 
             const values = [
-                nome, email, telefone, endereco_completo, profissao_funcao,
-                experiencia, valor_minimo, valor_maximo, disponibilidade_horario, foto_perfil, id
+                novoNome, novoEmail, novoTelefone, novoEndereco,
+                novaProfissao, novaExperiencia, novoValorMin,
+                novoValorMax, novaDisponibilidade, novaFoto, id
             ];
 
             const resultado = await pool.query(query, values);
-
-            if (resultado.rows.length === 0) {
-                return res.status(404).json({ erro: 'Prestador não encontrado.' });
-            }
 
             return res.json({
                 mensagem: 'Cadastro atualizado com sucesso!',
