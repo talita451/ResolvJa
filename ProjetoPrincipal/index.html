@@ -45,7 +45,7 @@
             <i class="fas fa-user" id="navUserIcon"></i>
           </button>
           <div class="user-dropdown" id="userDropdown">
-            <div style="padding: 12px 16px; border-bottom: 1px solid var(--border); text-align: center; background: #fdfdfd;">
+            <div style="padding: 12px 16px; border-bottom: 1px solid var(--border); text-align: center; background: var(--surface);">
               <img id="dropdownMiniFoto" src="" alt="Foto" onclick="ampliarFotoPerfil(); toggleUserMenu()" style="width: 55px; height: 55px; border-radius: 50%; object-fit: cover; cursor: pointer; border: 2px solid var(--accent); display: block; margin: 0 auto;" title="Clique para ampliar a foto">
               <span style="font-size: 11px; color: var(--text-muted); display: block; margin-top: 4px;">Clique na foto para ampliar</span>
             </div>
@@ -54,7 +54,7 @@
             <a href="#" onclick="showPage('atualizar-senha'); toggleUserMenu()"><i class="fas fa-key"></i> Atualizar Senha</a>
             
             <!-- BOTÃO DE ALTERNAR PERFIL -->
-            <a href="#" onclick="alternarModoUsuario(); toggleUserMenu()" id="btnAlternarPerfil" style="border-top: 1px solid var(--border); background: #f0fdf4;"><i class="fas fa-exchange-alt"></i> Alternar Perfil</a>
+            <a href="#" onclick="alternarModoUsuario(); toggleUserMenu()" id="btnAlternarPerfil" style="border-top: 1px solid var(--border); background: var(--card-hover-bg);"><i class="fas fa-exchange-alt"></i> Alternar Perfil</a>
             
             <a href="#" onclick="logout(); toggleUserMenu()"><i class="fas fa-sign-out-alt"></i> Sair</a>
           </div>
@@ -68,6 +68,7 @@
     <section id="home" class="page active">
       <div class="hero">
         <div class="container">
+          <span class="badge"><i class="fas fa-shield-alt"></i> Plataforma Verificada e Segura</span>
           <h1>O seu problema resolvido com um <span>clique.</span></h1>
           <p>Conectamos você aos melhores profissionais locais para serviços domésticos, reparos e assistências com total segurança e agilidade.</p>
           <div class="hero-buttons">
@@ -112,7 +113,7 @@
               <h3>Confiança e Transparência</h3>
               <p>Deseja solicitar um serviço simples, rápido e eficaz, mas não quer ficar esperando indicação ou está com medo de não ser um bom profissional?</p>
               <p class="highlight">Visite o perfil dos nossos prestadores e veja a avaliação que cada um recebeu.</p>
-              <button class="btn btn-outline-dark btn-full" style="border: 2px solid var(--primary); color: var(--primary); font-weight: bold;" onclick="carregarPrestadoresDisponiveis()">CONHEÇA NOSSOS PRESTADORES</button>
+              <button class="btn btn-primary btn-full" onclick="carregarPrestadoresDisponiveis()">CONHEÇA NOSSOS PRESTADORES</button>
             </div>
 
           </div>
@@ -273,7 +274,7 @@
           </details>
         </div>
         
-        <div style="text-align: center; background: #fff; padding: 30px; border-radius: 12px; border: 1px solid var(--border); max-width: 800px; margin: 0 auto;">
+        <div style="text-align: center; background: var(--surface); padding: 30px; border-radius: 12px; border: 1px solid var(--border); max-width: 800px; margin: 0 auto;">
             <h3 style="color: var(--primary); margin-bottom: 10px;">Ainda te restou alguma dúvida?</h3>
             <p style="color: var(--text-muted); margin-bottom: 20px;">Entre em contato conosco através do e-mail. Ficaremos felizes em atender você!</p>
             <a href="mailto:atendimento@resolvja.com.br" class="btn btn-secondary" style="font-size: 16px;"><i class="fas fa-envelope"></i> atendimento@resolvja.com.br</a>
@@ -490,7 +491,7 @@
 
               <div class="input-group" style="margin-bottom: 25px;">
                   <label for="fotoAvaliacao" style="font-weight: bold; display: block; margin-bottom: 5px;">Adicionar Foto do Serviço (opcional)</label>
-                  <input type="file" id="fotoAvaliacao" accept="image/*" onchange="converterImagemParaBase64(event, 'fotoAvaliacaoBase64')" style="width: 100%; padding: 8px; border: 1px dashed var(--border); border-radius: 8px; background: #f9f9f9;">
+                  <input type="file" id="fotoAvaliacao" accept="image/*" onchange="converterImagemParaBase64(event, 'fotoAvaliacaoBase64')" style="width: 100%; padding: 8px; border: 1px dashed var(--border); border-radius: 8px; background: var(--card-hover-bg);">
                   <input type="hidden" id="fotoAvaliacaoBase64">
               </div>
 
@@ -645,15 +646,15 @@
                         </div>
                         <div>
                             <label>CPF (Não editável)</label>
-                            <input type="text" id="perfilCpf" disabled style="background: #eef2f6;">
+                            <input type="text" id="perfilCpf" disabled style="background: var(--card-hover-bg);">
                         </div>
                         <div>
                             <label>RG (Não editável)</label>
-                            <input type="text" id="perfilRg" disabled style="background: #eef2f6;">
+                            <input type="text" id="perfilRg" disabled style="background: var(--card-hover-bg);">
                         </div>
                         <div>
                             <label>Data de Nascimento (Não editável)</label>
-                            <input type="date" id="perfilNascimento" disabled style="background: #eef2f6;">
+                            <input type="date" id="perfilNascimento" disabled style="background: var(--card-hover-bg);">
                         </div>
                         
                         <div class="full">
@@ -717,8 +718,7 @@
         </div>
     </div>
     <div class="footer-bottom">
-      <strong>Plataforma Protegida</strong> — ResolvJá &copy; 2026. Todos os direitos reservados.
-    </p>
+        <p>&copy; 2026 ResolvJá. Todos os direitos reservados.</p>
     </div>
   </footer>
 
