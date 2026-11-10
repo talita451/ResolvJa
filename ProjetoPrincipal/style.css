@@ -1,877 +1,1025 @@
 /* ==========================================================================
    1. VARIÁVEIS GLOBAIS E CORES (MODO CLARO E MODO ESCURO "BLACKOUT")
    ========================================================================== */
-:root {
-  --primary: #1E3A8A;             /* Cor primária azul institucional */
-  --secondary: #3B82F6;           /* Cor secundária azul claro */
-  --accent: #F97316;              /* Cor de destaque (Laranja oficial) */
-  --success: #10B981;             /* Cor de sucesso (Verde) */
-  --error: #EF4444;               /* Cor de erro (Vermelho) */
-  --background: #F8F9FA;          /* Cor de fundo padrão da página */
-  --surface: #FFFFFF;             /* Cor de fundo dos cartões e blocos (Branco) */
-  --text-main: #333333;           /* Cor principal do texto */
-  --text-muted: #666666;          /* Cor secundária/suave do texto */
-  --border: #DDDDDD;              /* Cor das bordas padrão */
-  --card-hover-bg: #F0F4FF;       /* Fundo do cartão ao passar o mouse */
-}
-
-/* Configuração do Modo Escuro "Blackout" (Preto absoluto e cinza escuro) */
-[data-theme="dark"] {
-  --primary: #60A5FA;
-  --secondary: #3B82F6;
-  --accent: #FB923C;
-  --success: #34D399;
-  --error: #F87171;
-  --background: #000000 !important;      /* Fundo da página totalmente preto */
-  --surface: #121212 !important;         /* Fundo dos cartões em cinza carvão escuro */
-  --text-main: #F3F4F6 !important;       /* Texto principal claro de alta legibilidade */
-  --text-muted: #D1D5DB !important;      /* Texto secundário contrastante */
-  --border: #2A2A2A !important;          /* Bordas escuras discretas */
-  --card-hover-bg: #1A1A1A !important;   /* Fundo ao passar o mouse nos cartões no escuro */
-}
-
-/* ==========================================================================
-   2. RESET GLOBAL E TRANSIÇÕES
-   ========================================================================== */
-* {
-  margin: 0;                      /* Remove margens padrão de todos os elementos */
-  padding: 0;                     /* Remove preenchimentos internos padrão */
-  box-sizing: border-box;         /* Garante que bordas e paddings não alterem a largura total */
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Define a fonte padrão do site */
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Transição suave ao mudar o tema */
-}
-
-body {
-  background-color: var(--background); /* Aplica a cor de fundo global */
-  color: var(--text-main);              /* Aplica a cor de texto global */
-  display: flex;                        /* Organiza o corpo em layout flexível */
-  flex-direction: column;               /* Empilha os elementos do corpo verticalmente */
-  min-height: 100vh;                    /* Garante altura mínima de 100% da tela */
-}
-
-.container {
-  max-width: 1200px;                    /* Limita a largura máxima do conteúdo central */
-  margin: 0 auto;                       /* Centraliza o container na horizontal */
-  padding: 0 20px;                      /* Espaçamento interno lateral */
-  width: 100%;                          /* Ocupa 100% da largura disponível até o limite */
-}
-
-/* ==========================================================================
-   3. ALERTA TOAST CENTRALIZADO (NOTIFICAÇÕES FLUTUANTES)
-   ========================================================================== */
-.toast-central {
-  position: fixed;                      /* Fixa a notificação na tela, ignorando o scroll */
-  top: 20px;                            /* Distância do topo da tela */
-  left: 50%;                            /* Centraliza horizontalmente pelo ponto inicial */
-  transform: translateX(-50%);          /* Ajusta o centro exato da caixa */
-  background: var(--success);           /* Cor de fundo (sucesso) */
-  color: #fff;                          /* Texto branco */
-  padding: 12px 24px;                   /* Espaçamento interno da caixa de aviso */
-  border-radius: 8px;                   /* Arredondamento das bordas */
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* Sombra elegante ao redor */
-  z-index: 10000;                       /* Mantém acima de qualquer outro elemento */
-  display: none;                        /* Oculto por padrão até ser acionado via JS */
-  font-weight: 600;                     /* Texto em negrito */
-  text-align: center;                   /* Centraliza o texto */
-}
-
-/* ==========================================================================
-   4. BARRA DE NAVEGAÇÃO (NAVBAR) E LOGOTIPO
-   ========================================================================== */
-.navbar {
-  background-color: var(--surface);     /* Cor de fundo da barra de navegação */
-  border-bottom: 1px solid var(--border); /* Linha divisória inferior */
-  position: sticky;                     /* Fixa o menu no topo ao fazer scroll */
-  top: 0;                               /* Cola no topo da janela */
-  z-index: 1000;                        /* Mantém a navbar acima do conteúdo da página */
-}
-
-.navbar-content {
-  display: flex;                        /* Organiza os itens da navbar lado a lado */
-  justify-content: space-between;       /* Espaça o logotipo à esquerda e o menu à direita */
-  align-items: center;                  /* Alinha os itens verticalmente ao centro */
-  height: 70px;                         /* Altura fixa da barra de navegação */
-}
-
-.logo {
-  font-size: 24px;                      /* Tamanho da fonte do logotipo */
-  font-weight: bold;                    /* Logotipo em negrito */
-  color: var(--primary);                /* Cor principal do logotipo */
-  text-decoration: none;                /* Remove sublinhado do link */
-  display: flex;                        /* Alinha ícone e texto lado a lado */
-  align-items: center;                  /* Alinhamento vertical central */
-  gap: 8px;                             /* Espaço entre o ícone e o texto "ResolvJá" */
-}
-
-.logo span {
-  color: var(--accent);                 /* Destaca a sílaba "Já" com a cor laranja */
-}
-
-#main-nav {
-  display: flex;                        /* Alinha os links do menu principal em linha */
-  align-items: center;                  /* Centraliza verticalmente */
-  gap: 20px;                            /* Espaçamento entre cada link do menu */
-}
-
-#main-nav a:not(.btn) {
-  color: var(--text-main);              /* Cor dos links de texto do menu */
-  text-decoration: none;                /* Remove sublinhado dos links */
-  font-weight: 500;                     /* Peso médio para os textos do menu */
-  transition: color 0.2s;               /* Transição suave na cor ao passar o mouse */
-}
-
-#main-nav a:not(.btn):hover {
-  color: var(--accent);                 /* Altera a cor do link para laranja ao passar o mouse */
-}
-
-/* Botão de alternância do Modo Escuro/Claro na Navbar */
-.btn-theme-toggle {
-  background: none;                     /* Sem fundo padrão */
-  border: 1px solid var(--border);      /* Borda discreta ao redor do botão */
-  color: var(--text-main);              /* Cor do ícone (lua/sol) */
-  width: 40px;                          /* Largura fixa em formato circular */
-  height: 40px;                         /* Altura fixa em formato circular */
-  border-radius: 50%;                   /* Torna o botão perfeitamente redondo */
-  display: flex;                        /* Centraliza o ícone */
-  align-items: center;                  /* Centraliza verticalmente */
-  justify-content: center;              /* Centraliza horizontalmente */
-  cursor: pointer;                      /* Altera o cursor para indicativo de clique */
-  font-size: 16px;                      /* Tamanho do ícone */
-  transition: background 0.2s, border-color 0.2s; /* Transição suave */
-}
-
-.btn-theme-toggle:hover {
-  background: var(--border);            /* Altera o fundo levemente ao passar o mouse */
-  color: var(--accent);                 /* Muda a cor do ícone para laranja */
-}
-
-/* Menu Dropdown do Utilizador (Avatar e Opções) */
-.user-menu-container {
-  position: relative;                   /* Contêiner de referência para posicionar o menu dropdown */
-  display: inline-block;                /* Mantém o comportamento em linha */
-}
-
-.btn-user-avatar {
-  width: 42px;                          /* Largura do avatar do utilizador */
-  height: 42px;                         /* Altura do avatar do utilizador */
-  border-radius: 50%;                   /* Deixa o avatar redondo */
-  border: 2px solid var(--accent);      /* Borda laranja ao redor da foto */
-  background: var(--surface);           /* Fundo de fallback */
-  cursor: pointer;                      /* Cursor de clique */
-  display: flex;                        /* Centraliza imagem/ícone */
-  align-items: center;                  /* Centraliza verticalmente */
-  justify-content: center;              /* Centraliza horizontalmente */
-  overflow: hidden;                     /* Esconde excessos para manter a foto redonda */
-  padding: 0;                           /* Remove espaçamentos internos */
-}
-
-.btn-user-avatar img {
-  width: 100% !important;               /* Ocupa 100% da largura do botão do avatar */
-  height: 100% !important;              /* Ocupa 100% da altura do botão do avatar */
-  object-fit: cover !important;         /* Ajusta a imagem sem distorcer proporcionalmente */
-  object-position: center !important;   /* Centraliza o enquadramento da foto */
-  border-radius: 50% !important;        /* Força a imagem a ser redonda */
-  display: block !important;            /* Remove espaçamentos fantasma em bloco */
-}
-
-.user-dropdown {
-  display: none;                        /* Oculto por padrão até ser ativado */
-  position: absolute;                   /* Posicionamento flutuante abaixo do avatar */
-  right: 0;                             /* Alinhado à direita do container do utilizador */
-  top: 55px;                            /* Distância abaixo do avatar */
-  background-color: var(--surface);     /* Cor de fundo do painel de opções */
-  min-width: 220px;                     /* Largura mínima do menu dropdown */
-  box-shadow: 0 8px 24px rgba(0,0,0,0.3); /* Sombra marcante */
-  border-radius: 8px;                   /* Arredondamento das bordas */
-  border: 1px solid var(--border);      /* Borda discreta */
-  z-index: 1001;                        /* Acima de outros elementos */
-  overflow: hidden;                     /* Esconde excessos nos cantos arredondados */
-}
-
-.user-dropdown.show {
-  display: block;                       /* Exibe o menu quando a classe .show é acionada */
-}
-
-.user-dropdown a {
-  color: var(--text-main);              /* Cor do texto dos itens do menu */
-  padding: 12px 16px;                   /* Espaçamento interno de cada opção */
-  text-decoration: none;                /* Remove sublinhado */
-  display: flex;                        /* Alinha ícone e texto lado a lado */
-  align-items: center;                  /* Alinhamento vertical central */
-  gap: 10px;                            /* Espaço entre ícone e texto */
-  font-size: 14px;                      /* Tamanho da fonte */
-  transition: background 0.2s;          /* Transição suave de fundo */
-}
-
-.user-dropdown a:hover {
-  background-color: var(--card-hover-bg); /* Altera o fundo ao passar o mouse nas opções */
-  color: var(--primary);                /* Altera a cor do texto para azul primário */
-}
-
-/* ==========================================================================
-   5. BOTÕES E ELEMENTOS GERAIS
-   ========================================================================== */
-.btn {
-  display: inline-flex;                 /* Alinha ícones e textos dentro do botão perfeitamente */
-  align-items: center;                  /* Centraliza verticalmente */
-  justify-content: center;              /* Centraliza horizontalmente */
-  gap: 8px;                             /* Espaço entre ícone e texto do botão */
-  padding: 10px 20px;                   /* Espaçamento interno do botão */
-  border-radius: 6px;                   /* Arredondamento suave das pontas */
-  font-weight: 600;                     /* Texto do botão em negrito */
-  cursor: pointer;                      /* Cursor de clique */
-  text-decoration: none;                /* Remove sublinhado se aplicado a links */
-  border: none;                         /* Remove bordas padrão */
-  transition: opacity 0.2s;             /* Efeito de transparência suave ao passar o mouse */
-}
-
-.btn-primary {
-  background-color: var(--primary);     /* Cor de fundo do botão primário (Azul) */
-  color: #fff;                          /* Texto branco */
-}
-
-.btn-primary:hover {
-  opacity: 0.9;                         /* Reduz ligeiramente a opacidade ao passar o mouse */
-}
-
-.btn-secondary {
-  background-color: var(--accent);      /* Cor de fundo do botão secundário (Laranja) */
-  color: #fff;                          /* Texto branco */
-}
-
-.btn-outline-light {
-  background: transparent;              /* Fundo transparente */
-  border: 2px solid #fff;               /* Borda branca grossa */
-  color: #fff;                          /* Texto branco */
-}
-
-.btn-sm {
-  padding: 6px 14px;                    /* Versão menor do botão */
-  font-size: 14px;                      /* Fonte menor */
-}
-
-.btn-full {
-  width: 100%;                          /* Faz o botão ocupar toda a largura disponível do container */
-}
-
-.btn-back {
-  background: none;                     /* Sem fundo */
-  border: none;                         /* Sem borda */
-  color: var(--text-muted);             /* Cor de texto secundária */
-  font-size: 15px;                      /* Tamanho da fonte */
-  cursor: pointer;                      /* Cursor de clique */
-  display: inline-flex;                 /* Alinha ícone de seta e texto */
-  align-items: center;                  /* Centraliza verticalmente */
-  gap: 6px;                             /* Espaço entre seta e palavra "Voltar" */
-  margin-bottom: 20px;                  /* Distância para o conteúdo abaixo */
-}
-
-.btn-back:hover {
-  color: var(--primary);                /* Destaca a cor do botão voltar ao passar o mouse */
-}
-
-/* ==========================================================================
-   6. SISTEMA DE PÁGINAS (SPA - SINGLE PAGE APPLICATION)
-   ========================================================================== */
-.page {
-  display: none;                        /* Oculta todas as páginas por padrão */
-}
-
-.page.active {
-  display: block;                       /* Exibe apenas a página que possui a classe .active */
-}
-
-/* ==========================================================================
-   7. HERO SECTION (BANNER PRINCIPAL DA HOME)
-   ========================================================================== */
-.hero {
-  background: linear-gradient(135deg, var(--primary), var(--secondary)); /* Fundo em gradiente azul */
-  color: #fff;                          /* Texto branco */
-  padding: 50px 0;                      /* Espaçamento superior e inferior generoso */
-  text-align: center;                   /* Centraliza todo o texto do banner */
-}
-
-/* Adaptação automática do Banner Principal no Modo Escuro */
-[data-theme="dark"] .hero {
-  background: linear-gradient(135deg, #111827, #1f2937) !important; /* Gradiente escuro sofisticado */
-  border-bottom: 1px solid var(--border); /* Linha divisória discreta na base do banner */
-}
-
-.hero .badge {
-  background: rgba(249, 115, 22, 0.25); /* Fundo translúcido laranja suave */
-  color: #FFEDD5;                       /* Texto em tom creme/laranja claro */
-  border: 1px solid rgba(249, 115, 22, 0.4); /* Borda fina laranja translúcida */
-  padding: 6px 14px;                    /* Espaçamento interno da etiqueta */
-  border-radius: 20px;                  /* Formato de pílula arredondada */
-  font-size: 14px;                      /* Tamanho da fonte */
-  display: inline-block;                /* Comportamento em bloco ajustado */
-  margin-bottom: 20px;                  /* Espaço abaixo da etiqueta */
-}
-
-.hero h1 {
-  font-size: 42px;                      /* Título principal grande */
-  margin-bottom: 15px;                  /* Espaço abaixo do título */
-  line-height: 1.2;                     /* Altura de linha proporcional */
-}
-
-.hero h1 span {
-  color: var(--accent);                 /* Destaca a palavra "clique." com a cor laranja */
-}
-
-.hero p {
-  font-size: 18px;                      /* Texto descritivo legível */
-  max-width: 700px;                     /* Limita a largura máxima para boa leitura */
-  margin: 0 auto 30px;                  /* Centraliza e dá espaço abaixo */
-  opacity: 0.9;                         /* Leve transparência para elegância */
-}
-
-.hero-buttons {
-  display: flex;                        /* Alinha os botões do hero lado a lado */
-  justify-content: center;              /* Centraliza os botões horizontalmente */
-  gap: 15px;                            /* Espaçamento entre os botões */
-}
-
-/* ==========================================================================
-   8. VÍDEOS LADO A LADO NO TOPO (CORRIGIDO E GARANTIDO)
-   ========================================================================== */
-.videos-lado-a-lado {
-  width: 100vw;                         /* Ocupa exatamente 100% da largura da janela de ponta a ponta */
-  position: relative;                   /* Posição relativa para cálculo de margens */
-  left: 50%;                            /* Desloca 50% para a direita */
-  right: 50%;                           /* Desloca 50% para a esquerda */
-  margin-left: -50vw;                   /* Estende a largura para cobrir todo o monitor à esquerda */
-  margin-right: -50vw;                  /* Estende a largura para cobrir todo o monitor à direita */
-  display: grid;                        /* Organiza os dois vídeos em grelha */
-  grid-template-columns: 1fr 1fr;       /* Cria duas colunas exatas de tamanho igual (50% / 50%) */
-  height: 450px;                        /* Altura fixa padrão para os vídeos */
-  background-color: #000;               /* Fundo preto de suporte caso o vídeo demore a carregar */
-  overflow: hidden;                     /* Esconde excessos caso o vídeo ultrapasse */
-  z-index: 10;                          /* Garante prioridade correta de sobreposição */
-}
-
-.videos-lado-a-lado video {
-  width: 100%;                          /* O vídeo ocupa 100% da sua coluna */
-  height: 100%;                         /* O vídeo ocupa 100% da altura da seção */
-  object-fit: cover;                    /* Corta e ajusta proporcionalmente sem distorcer o vídeo */
-  display: block;                       /* Remove espaços fantasmas em bloco */
-  opacity: 0.85;                        /* Leve opacidade estética */
-}
-
-/* Responsividade para telemóveis: empilha os vídeos um em cima do outro */
-@media (max-width: 768px) {
+   :root {
+    --primary: #1E3A8A;             /* Cor primária azul institucional */
+    --secondary: #3B82F6;           /* Cor secundária azul claro */
+    --accent: #F97316;              /* Cor de destaque (Laranja oficial) */
+    --success: #10B981;             /* Cor de sucesso (Verde) */
+    --error: #EF4444;               /* Cor de erro (Vermelho) */
+    --background: #F8F9FA;          /* Cor de fundo padrão da página */
+    --surface: #FFFFFF;             /* Cor de fundo dos cartões e blocos (Branco) */
+    --text-main: #333333;           /* Cor principal do texto */
+    --text-muted: #666666;          /* Cor secundária/suave do texto */
+    --border: #DDDDDD;              /* Cor das bordas padrão */
+    --card-hover-bg: #F0F4FF;       /* Fundo do cartão ao passar o mouse */
+  }
+  
+  /* Configuração do Modo Escuro "Blackout" (Preto absoluto e cinza escuro) */
+  [data-theme="dark"] {
+    --primary: #60A5FA;
+    --secondary: #3B82F6;
+    --accent: #FB923C;
+    --success: #34D399;
+    --error: #F87171;
+    --background: #000000 !important;      /* Fundo da página totalmente preto */
+    --surface: #121212 !important;         /* Fundo dos cartões em cinza carvão escuro */
+    --text-main: #F3F4F6 !important;       /* Texto principal claro de alta legibilidade */
+    --text-muted: #D1D5DB !important;      /* Texto secundário contrastante */
+    --border: #2A2A2A !important;          /* Bordas escuras discretas */
+    --card-hover-bg: #1A1A1A !important;   /* Fundo ao passar o mouse nos cartões no escuro */
+  }
+  
+  /* ==========================================================================
+     2. RESET GLOBAL E TRANSIÇÕES
+     ========================================================================== */
+  * {
+    margin: 0;                      /* Remove margens padrão de todos os elementos */
+    padding: 0;                     /* Remove preenchimentos internos padrão */
+    box-sizing: border-box;         /* Garante que bordas e paddings não alterem a largura total */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Define a fonte padrão do site */
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Transição suave ao mudar o tema */
+  }
+  
+  body {
+    background-color: var(--background); /* Aplica a cor de fundo global */
+    color: var(--text-main);              /* Aplica a cor de texto global */
+    display: flex;                        /* Organiza o corpo em layout flexível */
+    flex-direction: column;               /* Empilha os elementos do corpo verticalmente */
+    min-height: 100vh;                    /* Garante altura mínima de 100% da tela */
+  }
+  
+  .container {
+    max-width: 1200px;                    /* Limita a largura máxima do conteúdo central */
+    margin: 0 auto;                       /* Centraliza o container na horizontal */
+    padding: 0 20px;                      /* Espaçamento interno lateral */
+    width: 100%;                          /* Ocupa 100% da largura disponível até o limite */
+  }
+  
+  /* ==========================================================================
+     3. ALERTA TOAST CENTRALIZADO (NOTIFICAÇÕES FLUTUANTES)
+     ========================================================================== */
+  .toast-central {
+    position: fixed;                      /* Fixa a notificação na tela, ignorando o scroll */
+    top: 20px;                            /* Distância do topo da tela */
+    left: 50%;                            /* Centraliza horizontalmente pelo ponto inicial */
+    transform: translateX(-50%);          /* Ajusta o centro exato da caixa */
+    background: var(--success);           /* Cor de fundo (sucesso) */
+    color: #fff;                          /* Texto branco */
+    padding: 12px 24px;                   /* Espaçamento interno da caixa de aviso */
+    border-radius: 8px;                   /* Arredondamento das bordas */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* Sombra elegante ao redor */
+    z-index: 10000;                       /* Mantém acima de qualquer outro elemento */
+    display: none;                        /* Oculto por padrão até ser acionado via JS */
+    font-weight: 600;                     /* Texto em negrito */
+    text-align: center;                   /* Centraliza o texto */
+  }
+  
+  /* ==========================================================================
+     4. BARRA DE NAVEGAÇÃO (NAVBAR) E LOGOTIPO
+     ========================================================================== */
+  .navbar {
+    background-color: var(--surface);     /* Cor de fundo da barra de navegação */
+    border-bottom: 1px solid var(--border); /* Linha divisória inferior */
+    position: sticky;                     /* Fixa o menu no topo ao fazer scroll */
+    top: 0;                               /* Cola no topo da janela */
+    z-index: 1000;                        /* Mantém a navbar acima do conteúdo da página */
+  }
+  
+  .navbar-content {
+    display: flex;                        /* Organiza os itens da navbar lado a lado */
+    justify-content: space-between;       /* Espaça o logotipo à esquerda e o menu à direita */
+    align-items: center;                  /* Alinha os itens verticalmente ao centro */
+    height: 70px;                         /* Altura fixa da barra de navegação */
+  }
+  
+  .logo {
+    font-size: 24px;                      /* Tamanho da fonte do logotipo */
+    font-weight: bold;                    /* Logotipo em negrito */
+    color: var(--primary);                /* Cor principal do logotipo */
+    text-decoration: none;                /* Remove sublinhado do link */
+    display: flex;                        /* Alinha ícone e texto lado a lado */
+    align-items: center;                  /* Alinhamento vertical central */
+    gap: 8px;                             /* Espaço entre o ícone e o texto "ResolvJá" */
+  }
+  
+  .logo span {
+    color: var(--accent);                 /* Destaca a sílaba "Já" com a cor laranja */
+  }
+  
+  #main-nav {
+    display: flex;                        /* Alinha os links do menu principal em linha */
+    align-items: center;                  /* Centraliza verticalmente */
+    gap: 20px;                            /* Espaçamento entre cada link do menu */
+  }
+  
+  #main-nav a:not(.btn) {
+    color: var(--text-main);              /* Cor dos links de texto do menu */
+    text-decoration: none;                /* Remove sublinhado dos links */
+    font-weight: 500;                     /* Peso médio para os textos do menu */
+    transition: color 0.2s;               /* Transição suave na cor ao passar o mouse */
+  }
+  
+  #main-nav a:not(.btn):hover {
+    color: var(--accent);                 /* Altera a cor do link para laranja ao passar o mouse */
+  }
+  
+  /* Botão de alternância do Modo Escuro/Claro na Navbar */
+  .btn-theme-toggle {
+    background: none;                     /* Sem fundo padrão */
+    border: 1px solid var(--border);      /* Borda discreta ao redor do botão */
+    color: var(--text-main);              /* Cor do ícone (lua/sol) */
+    width: 40px;                          /* Largura fixa em formato circular */
+    height: 40px;                         /* Altura fixa em formato circular */
+    border-radius: 50%;                   /* Torna o botão perfeitamente redondo */
+    display: flex;                        /* Centraliza o ícone */
+    align-items: center;                  /* Centraliza verticalmente */
+    justify-content: center;              /* Centraliza horizontalmente */
+    cursor: pointer;                      /* Altera o cursor para indicativo de clique */
+    font-size: 16px;                      /* Tamanho do ícone */
+    transition: background 0.2s, border-color 0.2s; /* Transição suave */
+  }
+  
+  .btn-theme-toggle:hover {
+    background: var(--border);            /* Altera o fundo levemente ao passar o mouse */
+    color: var(--accent);                 /* Muda a cor do ícone para laranja */
+  }
+  
+  /* Menu Dropdown do Utilizador (Avatar e Opções) */
+  .user-menu-container {
+    position: relative;                   /* Contêiner de referência para posicionar o menu dropdown */
+    display: inline-block;                /* Mantém o comportamento em linha */
+  }
+  
+  .btn-user-avatar {
+    width: 42px;                          /* Largura do avatar do utilizador */
+    height: 42px;                         /* Altura do avatar do utilizador */
+    border-radius: 50%;                   /* Deixa o avatar redondo */
+    border: 2px solid var(--accent);      /* Borda laranja ao redor da foto */
+    background: var(--surface);           /* Fundo de fallback */
+    cursor: pointer;                      /* Cursor de clique */
+    display: flex;                        /* Centraliza imagem/ícone */
+    align-items: center;                  /* Centraliza verticalmente */
+    justify-content: center;              /* Centraliza horizontalmente */
+    overflow: hidden;                     /* Esconde excessos para manter a foto redonda */
+    padding: 0;                           /* Remove espaçamentos internos */
+  }
+  
+  .btn-user-avatar img {
+    width: 100% !important;               /* Ocupa 100% da largura do botão do avatar */
+    height: 100% !important;              /* Ocupa 100% da altura do botão do avatar */
+    object-fit: cover !important;         /* Ajusta a imagem sem distorcer proporcionalmente */
+    object-position: center !important;   /* Centraliza o enquadramento da foto */
+    border-radius: 50% !important;        /* Força a imagem a ser redonda */
+    display: block !important;            /* Remove espaçamentos fantasma em bloco */
+  }
+  
+  .user-dropdown {
+    display: none;                        /* Oculto por padrão até ser ativado */
+    position: absolute;                   /* Posicionamento flutuante abaixo do avatar */
+    right: 0;                             /* Alinhado à direita do container do utilizador */
+    top: 55px;                            /* Distância abaixo do avatar */
+    background-color: var(--surface);     /* Cor de fundo do painel de opções */
+    min-width: 220px;                     /* Largura mínima do menu dropdown */
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3); /* Sombra marcante */
+    border-radius: 8px;                   /* Arredondamento das bordas */
+    border: 1px solid var(--border);      /* Borda discreta */
+    z-index: 1001;                        /* Acima de outros elementos */
+    overflow: hidden;                     /* Esconde excessos nos cantos arredondados */
+  }
+  
+  .user-dropdown.show {
+    display: block;                       /* Exibe o menu quando a classe .show é acionada */
+  }
+  
+  .user-dropdown a {
+    color: var(--text-main);              /* Cor do texto dos itens do menu */
+    padding: 12px 16px;                   /* Espaçamento interno de cada opção */
+    text-decoration: none;                /* Remove sublinhado */
+    display: flex;                        /* Alinha ícone e texto lado a lado */
+    align-items: center;                  /* Alinhamento vertical central */
+    gap: 10px;                            /* Espaço entre ícone e texto */
+    font-size: 14px;                      /* Tamanho da fonte */
+    transition: background 0.2s;          /* Transição suave de fundo */
+  }
+  
+  .user-dropdown a:hover {
+    background-color: var(--card-hover-bg); /* Altera o fundo ao passar o mouse nas opções */
+    color: var(--primary);                /* Altera a cor do texto para azul primário */
+  }
+  
+  /* ==========================================================================
+     5. BOTÕES E ELEMENTOS GERAIS
+     ========================================================================== */
+  .btn {
+    display: inline-flex;                 /* Alinha ícones e textos dentro do botão perfeitamente */
+    align-items: center;                  /* Centraliza verticalmente */
+    justify-content: center;              /* Centraliza horizontalmente */
+    gap: 8px;                             /* Espaço entre ícone e texto do botão */
+    padding: 10px 20px;                   /* Espaçamento interno do botão */
+    border-radius: 6px;                   /* Arredondamento suave das pontas */
+    font-weight: 600;                     /* Texto do botão em negrito */
+    cursor: pointer;                      /* Cursor de clique */
+    text-decoration: none;                /* Remove sublinhado se aplicado a links */
+    border: none;                         /* Remove bordas padrão */
+    transition: opacity 0.2s;             /* Efeito de transparência suave ao passar o mouse */
+  }
+  
+  .btn-primary {
+    background-color: var(--primary);     /* Cor de fundo do botão primário (Azul) */
+    color: #fff;                          /* Texto branco */
+  }
+  
+  .btn-primary:hover {
+    opacity: 0.9;                         /* Reduz ligeiramente a opacidade ao passar o mouse */
+  }
+  
+  .btn-secondary {
+    background-color: var(--accent);      /* Cor de fundo do botão secundário (Laranja) */
+    color: #fff;                          /* Texto branco */
+  }
+  
+  .btn-outline-light {
+    background: transparent;              /* Fundo transparente */
+    border: 2px solid #fff;               /* Borda branca grossa */
+    color: #fff;                          /* Texto branco */
+  }
+  
+  .btn-sm {
+    padding: 6px 14px;                    /* Versão menor do botão */
+    font-size: 14px;                      /* Fonte menor */
+  }
+  
+  .btn-full {
+    width: 100%;                          /* Faz o botão ocupar toda a largura disponível do container */
+  }
+  
+  .btn-back {
+    background: none;                     /* Sem fundo */
+    border: none;                         /* Sem borda */
+    color: var(--text-muted);             /* Cor de texto secundária */
+    font-size: 15px;                      /* Tamanho da fonte */
+    cursor: pointer;                      /* Cursor de clique */
+    display: inline-flex;                 /* Alinha ícone de seta e texto */
+    align-items: center;                  /* Centraliza verticalmente */
+    gap: 6px;                             /* Espaço entre seta e palavra "Voltar" */
+    margin-bottom: 20px;                  /* Distância para o conteúdo abaixo */
+  }
+  
+  .btn-back:hover {
+    color: var(--primary);                /* Destaca a cor do botão voltar ao passar o mouse */
+  }
+  
+  /* ==========================================================================
+     6. SISTEMA DE PÁGINAS (SPA - SINGLE PAGE APPLICATION)
+     ========================================================================== */
+  .page {
+    display: none;                        /* Oculta todas as páginas por padrão */
+  }
+  
+  .page.active {
+    display: block;                       /* Exibe apenas a página que possui a classe .active */
+  }
+  
+  /* ==========================================================================
+     7. HERO SECTION (BANNER PRINCIPAL DA HOME)
+     ========================================================================== */
+  .hero {
+    background: linear-gradient(135deg, var(--primary), var(--secondary)); /* Fundo em gradiente azul */
+    color: #fff;                          /* Texto branco */
+    padding: 50px 0;                      /* Espaçamento superior e inferior generoso */
+    text-align: center;                   /* Centraliza todo o texto do banner */
+  }
+  
+  /* Adaptação automática do Banner Principal no Modo Escuro */
+  [data-theme="dark"] .hero {
+    background: linear-gradient(135deg, #111827, #1f2937) !important; /* Gradiente escuro sofisticado */
+    border-bottom: 1px solid var(--border); /* Linha divisória discreta na base do banner */
+  }
+  
+  .hero .badge {
+    background: rgba(249, 115, 22, 0.25); /* Fundo translúcido laranja suave */
+    color: #FFEDD5;                       /* Texto em tom creme/laranja claro */
+    border: 1px solid rgba(249, 115, 22, 0.4); /* Borda fina laranja translúcida */
+    padding: 6px 14px;                    /* Espaçamento interno da etiqueta */
+    border-radius: 20px;                  /* Formato de pílula arredondada */
+    font-size: 14px;                      /* Tamanho da fonte */
+    display: inline-block;                /* Comportamento em bloco ajustado */
+    margin-bottom: 20px;                  /* Espaço abaixo da etiqueta */
+  }
+  
+  .hero h1 {
+    font-size: 42px;                      /* Título principal grande */
+    margin-bottom: 15px;                  /* Espaço abaixo do título */
+    line-height: 1.2;                     /* Altura de linha proporcional */
+  }
+  
+  .hero h1 span {
+    color: var(--accent);                 /* Destaca a palavra "clique." com a cor laranja */
+  }
+  
+  .hero p {
+    font-size: 18px;                      /* Texto descritivo legível */
+    max-width: 700px;                     /* Limita a largura máxima para boa leitura */
+    margin: 0 auto 30px;                  /* Centraliza e dá espaço abaixo */
+    opacity: 0.9;                         /* Leve transparência para elegância */
+  }
+  
+  .hero-buttons {
+    display: flex;                        /* Alinha os botões do hero lado a lado */
+    justify-content: center;              /* Centraliza os botões horizontalmente */
+    gap: 15px;                            /* Espaçamento entre os botões */
+  }
+  
+  /* ==========================================================================
+     8. VÍDEOS LADO A LADO NO TOPO (CORRIGIDO E GARANTIDO)
+     ========================================================================== */
   .videos-lado-a-lado {
-    grid-template-columns: 1fr;         /* Transforma em apenas 1 coluna */
-    height: auto;                       /* Altura automática adaptável */
+    width: 100vw;                         /* Ocupa exatamente 100% da largura da janela de ponta a ponta */
+    position: relative;                   /* Posição relativa para cálculo de margens */
+    left: 50%;                            /* Desloca 50% para a direita */
+    right: 50%;                           /* Desloca 50% para a esquerda */
+    margin-left: -50vw;                   /* Estende a largura para cobrir todo o monitor à esquerda */
+    margin-right: -50vw;                  /* Estende a largura para cobrir todo o monitor à direita */
+    display: grid;                        /* Organiza os dois vídeos em grelha */
+    grid-template-columns: 1fr 1fr;       /* Cria duas colunas exatas de tamanho igual (50% / 50%) */
+    height: 450px;                        /* Altura fixa padrão para os vídeos */
+    background-color: #000;               /* Fundo preto de suporte caso o vídeo demore a carregar */
+    overflow: hidden;                     /* Esconde excessos caso o vídeo ultrapasse */
+    z-index: 10;                          /* Garante prioridade correta de sobreposição */
   }
+  
   .videos-lado-a-lado video {
-    height: 300px;                      /* Altura menor ajustada para telas verticais de telemóveis */
+    width: 100%;                          /* O vídeo ocupa 100% da sua coluna */
+    height: 100%;                         /* O vídeo ocupa 100% da altura da seção */
+    object-fit: cover;                    /* Corta e ajusta proporcionalmente sem distorcer o vídeo */
+    display: block;                       /* Remove espaços fantasmas em bloco */
+    opacity: 0.85;                        /* Leve opacidade estética */
   }
-}
-
-/* ==========================================================================
-   9. CARTÕES INFORMATIVOS, PROPÓSITO E ALINHAMENTO (HOVER E MODO ESCURO)
-   ========================================================================== */
-.info-cards-grid {
-  display: grid;                        /* Organiza os cards em grelha responsiva */
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Colunas automáticas flexíveis */
-  gap: 30px;                            /* Espaçamento entre os cartões */
-  align-items: stretch;                 /* Estica todos os cartões para terem exatamente a mesma altura */
-}
-
-/* Estilização unificada para cartões informativos, de catálogo, propósito e avaliações */
-.info-card, 
-.catalog-card, 
-.proposito-card,
-.review-card,
-.auth-card,
-.dashboard-content,
-.sidebar,
-.faq-item {
-  background-color: var(--surface) !important; /* Força o fundo a usar a cor de superfície (branco ou preto blackout) */
-  color: var(--text-main) !important;          /* Força a cor correta do texto */
-  border: 1px solid var(--border) !important;  /* Aplica a borda padronizada */
-  border-radius: 12px;                         /* Arredondamento moderno das bordas */
-  padding: 30px;                               /* Espaçamento interno generoso */
-  text-align: center;                          /* Centraliza o texto por padrão */
-  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, border-color 0.3s ease; /* Transições suaves */
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);      /* Sombra suave e elegante */
-  display: flex !important;                    /* Torna o cartão um container flexível */
-  flex-direction: column !important;           /* Organiza os itens do cartão verticalmente */
-  height: 100% !important;                     /* Ocupa 100% da altura da linha da grelha */
-  justify-content: space-between !important;   /* Distribui o espaço empurrando o botão para a base */
-  margin-bottom: 20px;                         /* Espaçamento inferior */
-}
-
-/* Efeito interativo ao passar o mouse (Hover): eleva o cartão, muda o fundo e destaca a borda */
-.info-card:hover, 
-.catalog-card:hover, 
-.proposito-card:hover,
-.review-card:hover {
-  transform: translateY(-6px);                 /* Eleva o cartão levemente para cima */
-  background-color: var(--card-hover-bg) !important; /* Altera a cor de fundo suavemente */
-  border-color: var(--accent) !important;      /* Destaca a borda com a cor laranja */
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);  /* Aumenta a sombra criando profundidade */
-}
-
-/* Ajuste específico para garantir que os botões dentro dos cartões fiquem alinhados em baixo */
-.info-card .btn {
-  margin-top: auto !important;                 /* Empurra o botão firmemente para a base do cartão */
-  width: 100% !important;                      /* Ocupa toda a largura do cartão */
-}
-
-.info-icon {
-  width: 70px;                          /* Largura do ícone circular do cartão */
-  height: 70px;                         /* Altura do ícone circular do cartão */
-  background: rgba(30, 58, 138, 0.08);  /* Fundo azul translúcido suave */
-  color: var(--primary);                /* Cor principal do ícone */
-  font-size: 28px;                      /* Tamanho do símbolo do ícone */
-  display: flex;                        /* Centraliza o ícone perfeitamente */
-  align-items: center;                  /* Centralização vertical */
-  justify-content: center;              /* Centralização horizontal */
-  border-radius: 50%;                   /* Torna o fundo do ícone redondo */
-  margin: 0 auto 20px;                  /* Centraliza horizontalmente e dá espaço abaixo */
-}
-
-/* Adaptação do fundo do ícone no Modo Escuro */
-[data-theme="dark"] .info-icon {
-  background: rgba(96, 165, 250, 0.15); /* Fundo azul claro translúcido no modo escuro */
-}
-
-.info-card h3,
-.catalog-body h3,
-.proposito-card h3 {
-  color: var(--primary);                /* Cor do título dos cartões */
-  margin-bottom: 15px;                  /* Espaço abaixo do título */
-  font-size: 20px;                      /* Tamanho da fonte do título */
-}
-
-.info-card p,
-.catalog-body p,
-.proposito-card p,
-.faq-item p,
-.review-card p {
-  color: var(--text-main) !important;   /* Cor do texto principal dos parágrafos */
-  font-size: 15px;                      /* Tamanho da fonte legível */
-  line-height: 1.6;                     /* Altura de linha confortável para leitura */
-  margin-bottom: 15px;                  /* Espaço abaixo do parágrafo */
-  flex: 1;                              /* Faz o parágrafo ocupar o espaço flexível disponível */
-}
-
-.info-card p.highlight {
-  font-weight: 600;                     /* Texto em destaque um pouco mais forte */
-  color: var(--accent) !important;      /* Cor de destaque (Laranja) */
-}
-
-/* ==========================================================================
-   10. SEÇÕES DE SUPORTE, PROPÓSITO E BANNERS (SAC)
-   ========================================================================== */
-.info-cards-section,
-.proposito-section {
-  background-color: var(--background) !important; /* Fundo unificado padrão da página */
-  border: none !important;                      /* Sem bordas externas */
-  padding: 40px 20px !important;                /* Espaçamento interno superior e inferior */
-  margin: 0 !important;                         /* Sem margens extras para evitar espaçamentos indesejados */
-  width: 100%;                                  /* Ocupa 100% da largura */
-}
-
-.proposito-container {
-  max-width: 1200px;                    /* Largura máxima centralizada */
-  margin: 0 auto;                       /* Centraliza na horizontal */
-  text-align: center;                   /* Centraliza os títulos da seção */
-}
-
-.proposito-container h2 {
-  color: var(--primary);                /* Cor do título principal de propósito */
-  font-size: 28px;                      /* Tamanho da fonte */
-  font-weight: 700;                     /* Negrito forte */
-  margin-bottom: 10px;                  /* Espaço abaixo do título */
-}
-
-.proposito-container > p {
-  color: var(--text-muted);             /* Texto descritivo suave */
-  margin-bottom: 30px;                  /* Espaço abaixo da descrição */
-  font-size: 16px;                      /* Tamanho da fonte */
-}
-
-.proposito-grid {
-  display: grid;                        /* Organiza os cards de missão, visão e valores em grelha */
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsivo automático */
-  gap: 30px;                            /* Espaçamento entre os cartões */
-  text-align: left;                     /* Alinhamento interno à esquerda para leitura profissional */
-}
-
-.sac-banner {
-  background: linear-gradient(135deg, var(--primary), #111827) !important; /* Gradiente elegante no banner SAC */
-  color: white !important;              /* Texto branco */
-  padding: 60px 0;                      /* Espaçamento vertical generoso */
-  text-align: center;                   /* Centraliza o conteúdo do banner */
-}
-
-[data-theme="dark"] .sac-banner {
-  background: linear-gradient(135deg, #111827, #000000) !important; /* Gradiente preto no modo escuro */
-  border-top: 1px solid var(--border);  /* Borda superior discreta */
-  border-bottom: 1px solid var(--border); /* Borda inferior discreta */
-  color: var(--text-main) !important;   /* Garante legibilidade do texto */
-}
-
-/* ==========================================================================
-   11. PADRONIZAÇÃO DE PÁGINAS INTERNAS (SOBRE, SAC, AVALIAÇÕES, PRESTADORES)
-   ========================================================================== */
-.page .container.section,
-#providers,
-#sobre,
-#avaliacoes,
-#sac,
-#catalogo-completo {
-  padding-top: 40px !important;         /* Espaçamento superior padronizado para as páginas internas */
-  text-align: left;                     /* Alinhamento geral à esquerda */
-}
-
-.section-header {
-  margin-bottom: 35px !important;       /* Espaço inferior antes de exibir os cartões */
-  text-align: center !important;        /* Centraliza o título e subtítulo das páginas internas */
-  margin-left: auto;                    /* Centraliza horizontalmente */
-  margin-right: auto;                   /* Centraliza horizontalmente */
-  max-width: 800px;                     /* Limita a largura máxima para manter um visual elegante */
-}
-
-.section-header h2 {
-  font-size: 28px;                      /* Tamanho do título da página interna */
-  color: var(--primary);                /* Cor primária */
-  font-weight: 700;                     /* Negrito forte */
-  margin-bottom: 6px;                   /* Pequeno espaço abaixo do título */
-}
-
-.section-header p {
-  color: var(--text-muted);             /* Subtítulo em cor suave */
-  font-size: 15px;                      /* Tamanho da fonte do subtítulo */
-}
-
-.providers-list, 
-#container-lista-prestadores,
-.catalog-grid,
-.reviews-grid {
-  display: grid;                        /* Organiza os catálogos e prestadores em grelha */
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Grelha flexível */
-  gap: 25px;                            /* Espaçamento entre os cartões da listagem */
-  width: 100%;                          /* Ocupa toda a largura */
-  margin-top: 20px;                     /* Espaço superior */
-  align-items: stretch;                 /* Padroniza a altura de todos os cartões na mesma linha */
-}
-
-.catalog-card {
-  padding: 24px;                        /* Espaçamento interno do cartão de catálogo */
-  align-items: center;                  /* Centraliza os elementos horizontalmente */
-  text-align: center;                   /* Centraliza os textos */
-}
-
-/* Correção definitiva para avatares redondos sem cortes indesejados nas listagens */
-.catalog-card .catalog-img,
-.catalog-card .btn-user-avatar,
-.catalog-card img {
-  width: 75px !important;               /* Largura fixa da foto do prestador */
-  height: 75px !important;              /* Altura fixa da foto do prestador */
-  min-width: 75px !important;           /* Impede encolhimento */
-  min-height: 75px !important;          /* Impede encolhimento */
-  border-radius: 50% !important;        /* Deixa a foto perfeitamente redonda */
-  object-fit: cover !important;         /* Ajusta a imagem sem distorções */
-  object-position: center !important;   /* Centraliza o enquadramento facial */
-  margin: 0 auto 15px auto !important;  /* Centraliza a foto e dá espaço abaixo */
-  border: 3px solid var(--accent);      /* Borda laranja ao redor da foto */
-  display: flex !important;             /* Alinhamento flexível de suporte */
-  align-items: center;                  /* Centralização vertical */
-  justify-content: center;              /* Centralização horizontal */
-  background: var(--primary);           /* Fundo de fallback */
-  color: #fff;                          /* Cor do texto de suporte se não houver foto */
-  font-size: 24px;                      /* Tamanho da fonte de iniciais */
-  font-weight: bold;                    /* Negrito */
-}
-
-.catalog-badge {
-  position: absolute;                   /* Posicionamento flutuante no canto do cartão */
-  top: 10px;                            /* Distância do topo */
-  left: 10px;                           /* Distância da esquerda */
-  background: var(--accent);            /* Fundo laranja da etiqueta */
-  color: #fff;                          /* Texto branco */
-  padding: 4px 10px;                    /* Espaçamento interno da etiqueta */
-  border-radius: 4px;                   /* Arredondamento sutil */
-  font-size: 12px;                      /* Fonte pequena */
-  font-weight: 600;                     /* Negrito */
-}
-
-.catalog-body {
-  padding: 0;                           /* Sem preenchimento interno extra */
-  display: flex;                        /* Container flexível */
-  flex-direction: column;               /* Organização vertical */
-  flex: 1;                              /* Ocupa o espaço restante */
-  width: 100%;                          /* Largura total */
-}
-
-.catalog-footer {
-  width: 100%;                          /* Largura total na base do cartão */
-  display: flex;                        /* Organiza preço e botão de ação */
-  flex-direction: column;               /* Empilha preço e botão verticalmente */
-  gap: 12px;                            /* Espaço entre o preço e o botão */
-  border-top: 1px solid var(--border);  /* Linha divisória superior do rodapé do cartão */
-  padding-top: 15px;                    /* Espaço interno acima da linha */
-  margin-top: auto;                     /* Fixa sempre na parte inferior do cartão */
-}
-
-.catalog-price {
-  font-size: 14px;                      /* Tamanho da fonte do preço */
-  color: var(--text-main);              /* Cor principal do texto de preço */
-}
-
-.catalog-price strong {
-  color: var(--success);                /* Destaca o valor numérico em verde de sucesso */
-  font-size: 16px;                      /* Tamanho um pouco maior para o valor */
-}
-
-/* ==========================================================================
-   12. AUTENTICAÇÃO, FORMULÁRIOS E PAINÉIS (DASHBOARD)
-   ========================================================================== */
-.auth-page {
-  padding: 50px 0;                      /* Espaçamento superior e inferior nas páginas de login/cadastro */
-  display: flex;                        /* Centraliza o formulário */
-  justify-content: center;              /* Centralização horizontal */
-  align-items: center;                  /* Centralização vertical */
-}
-
-.auth-card {
-  background-color: var(--surface) !important; /* Força o fundo escuro no modo escuro */
-  padding: 40px;                        /* Espaçamento interno do cartão de autenticação */
-  border-radius: 16px;                  /* Bordas arredondadas modernas */
-  border: 1px solid var(--border);      /* Borda padronizada */
-  width: 100%;                          /* Largura total adaptável */
-  max-width: 450px;                     /* Largura máxima padrão para telas de login */
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3); /* Sombra marcante */
-}
-
-.auth-card.wide {
-  max-width: 800px;                     /* Versão mais larga usada no formulário de cadastro completo */
-}
-
-.auth-grid {
-  display: grid;                        /* Organiza os campos do formulário em colunas */
-  grid-template-columns: 1fr 1fr;       /* Duas colunas iguais */
-  gap: 15px;                            /* Espaço entre os campos */
-}
-
-.auth-grid .full {
-  grid-column: span 2;                  /* Faz um campo específico ocupar as duas colunas inteiras */
-}
-
-label {
-  display: block;                       /* Rótulos ocupam sua própria linha */
-  font-weight: 600;                     /* Negrito para os rótulos */
-  font-size: 13px;                      /* Tamanho da fonte compacto */
-  color: var(--text-main);              /* Cor do texto do rótulo */
-  margin-bottom: 6px;                   /* Espaço abaixo do rótulo antes do input */
-}
-
-input, select, textarea {
-  width: 100%;                          /* Ocupa 100% da largura da coluna */
-  padding: 12px;                        /* Espaçamento interno confortável para digitação */
-  border: 1px solid var(--border);      /* Borda do campo */
-  border-radius: 8px;                   /* Bordas arredondadas nos campos */
-  font-size: 14px;                      /* Tamanho da fonte digitada */
-  background-color: var(--surface) !important; /* Fundo adaptado ao tema atual */
-  color: var(--text-main) !important;   /* Cor do texto digitado adaptada ao tema */
-  outline: none;                        /* Remove a borda padrão de foco do navegador */
-  transition: border-color 0.2s;        /* Transição suave na borda ao focar */
-}
-
-input:focus, select:focus, textarea:focus {
-  border-color: var(--accent);          /* Destaca a borda do campo com a cor laranja ao focar */
-}
-
-.cep-grid-container {
-  display: grid;                        /* Organiza os campos de endereço em linha otimizada */
-  grid-template-columns: 110px 1.5fr 60px 1fr 1fr; /* Larguras proporcionais para CEP, Rua, Número, Bairro e Cidade */
-  gap: 8px;                             /* Espaço entre os campos do endereço */
-  width: 100%;                          /* Largura total */
-  box-sizing: border-box;               /* Contém as dimensões */
-}
-
-/* Responsividade para formulários em telemóveis */
-@media (max-width: 768px) {
-  .cep-grid-container {
-    grid-template-columns: 1fr 1fr;     /* Em telas pequenas divide em duas colunas */
+  
+  /* Responsividade para telemóveis: empilha os vídeos um em cima do outro */
+  @media (max-width: 768px) {
+    .videos-lado-a-lado {
+      grid-template-columns: 1fr;         /* Transforma em apenas 1 coluna */
+      height: auto;                       /* Altura automática adaptável */
+    }
+    .videos-lado-a-lado video {
+      height: 300px;                      /* Altura menor ajustada para telas verticais de telemóveis */
+    }
   }
+  
+  /* ==========================================================================
+     9. CARTÕES INFORMATIVOS, PROPÓSITO E ALINHAMENTO (HOVER E MODO ESCURO)
+     ========================================================================== */
+  .info-cards-grid {
+    display: grid;                        /* Organiza os cards em grelha responsiva */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Colunas automáticas flexíveis */
+    gap: 30px;                            /* Espaçamento entre os cartões */
+    align-items: stretch;                 /* Estica todos os cartões para terem exatamente a mesma altura */
+  }
+  
+  /* Estilização unificada para cartões informativos, de catálogo, propósito e avaliações */
+  .info-card, 
+  .catalog-card, 
+  .proposito-card,
+  .review-card,
+  .auth-card,
+  .dashboard-content,
+  .sidebar,
+  .faq-item {
+    background-color: var(--surface) !important; /* Força o fundo a usar a cor de superfície (branco ou preto blackout) */
+    color: var(--text-main) !important;          /* Força a cor correta do texto */
+    border: 1px solid var(--border) !important;  /* Aplica a borda padronizada */
+    border-radius: 12px;                         /* Arredondamento moderno das bordas */
+    padding: 30px;                               /* Espaçamento interno generoso */
+    text-align: center;                          /* Centraliza o texto por padrão */
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, border-color 0.3s ease; /* Transições suaves */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);      /* Sombra suave e elegante */
+    display: flex !important;                    /* Torna o cartão um container flexível */
+    flex-direction: column !important;           /* Organiza os itens do cartão verticalmente */
+    height: 100% !important;                     /* Ocupa 100% da altura da linha da grelha */
+    justify-content: space-between !important;   /* Distribui o espaço empurrando o botão para a base */
+    margin-bottom: 20px;                         /* Espaçamento inferior */
+  }
+  
+  /* Efeito interativo ao passar o mouse (Hover): eleva o cartão, muda o fundo e destaca a borda */
+  .info-card:hover, 
+  .catalog-card:hover, 
+  .proposito-card:hover,
+  .review-card:hover {
+    transform: translateY(-6px);                 /* Eleva o cartão levemente para cima */
+    background-color: var(--card-hover-bg) !important; /* Altera a cor de fundo suavemente */
+    border-color: var(--accent) !important;      /* Destaca a borda com a cor laranja */
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);  /* Aumenta a sombra criando profundidade */
+  }
+  
+  /* Ajuste específico para garantir que os botões dentro dos cartões fiquem alinhados em baixo */
+  .info-card .btn {
+    margin-top: auto !important;                 /* Empurra o botão firmemente para a base do cartão */
+    width: 100% !important;                      /* Ocupa toda a largura do cartão */
+  }
+  
+  .info-icon {
+    width: 70px;                          /* Largura do ícone circular do cartão */
+    height: 70px;                         /* Altura do ícone circular do cartão */
+    background: rgba(30, 58, 138, 0.08);  /* Fundo azul translúcido suave */
+    color: var(--primary);                /* Cor principal do ícone */
+    font-size: 28px;                      /* Tamanho do símbolo do ícone */
+    display: flex;                        /* Centraliza o ícone perfeitamente */
+    align-items: center;                  /* Centralização vertical */
+    justify-content: center;              /* Centralização horizontal */
+    border-radius: 50%;                   /* Torna o fundo do ícone redondo */
+    margin: 0 auto 20px;                  /* Centraliza horizontalmente e dá espaço abaixo */
+  }
+  
+  /* Adaptação do fundo do ícone no Modo Escuro */
+  [data-theme="dark"] .info-icon {
+    background: rgba(96, 165, 250, 0.15); /* Fundo azul claro translúcido no modo escuro */
+  }
+  
+  .info-card h3,
+  .catalog-body h3,
+  .proposito-card h3 {
+    color: var(--primary);                /* Cor do título dos cartões */
+    margin-bottom: 15px;                  /* Espaço abaixo do título */
+    font-size: 20px;                      /* Tamanho da fonte do título */
+  }
+  
+  .info-card p,
+  .catalog-body p,
+  .proposito-card p,
+  .faq-item p,
+  .review-card p {
+    color: var(--text-main) !important;   /* Cor do texto principal dos parágrafos */
+    font-size: 15px;                      /* Tamanho da fonte legível */
+    line-height: 1.6;                     /* Altura de linha confortável para leitura */
+    margin-bottom: 15px;                  /* Espaço abaixo do parágrafo */
+    flex: 1;                              /* Faz o parágrafo ocupar o espaço flexível disponível */
+  }
+  
+  .info-card p.highlight {
+    font-weight: 600;                     /* Texto em destaque um pouco mais forte */
+    color: var(--accent) !important;      /* Cor de destaque (Laranja) */
+  }
+  
+  /* ==========================================================================
+     10. SEÇÕES DE SUPORTE, PROPÓSITO E BANNERS (SAC)
+     ========================================================================== */
+  .info-cards-section,
+  .proposito-section {
+    background-color: var(--background) !important; /* Fundo unificado padrão da página */
+    border: none !important;                      /* Sem bordas externas */
+    padding: 40px 20px !important;                /* Espaçamento interno superior e inferior */
+    margin: 0 !important;                         /* Sem margens extras para evitar espaçamentos indesejados */
+    width: 100%;                                  /* Ocupa 100% da largura */
+  }
+  
+  .proposito-container {
+    max-width: 1200px;                    /* Largura máxima centralizada */
+    margin: 0 auto;                       /* Centraliza na horizontal */
+    text-align: center;                   /* Centraliza os títulos da seção */
+  }
+  
+  .proposito-container h2 {
+    color: var(--primary);                /* Cor do título principal de propósito */
+    font-size: 28px;                      /* Tamanho da fonte */
+    font-weight: 700;                     /* Negrito forte */
+    margin-bottom: 10px;                  /* Espaço abaixo do título */
+  }
+  
+  .proposito-container > p {
+    color: var(--text-muted);             /* Texto descritivo suave */
+    margin-bottom: 30px;                  /* Espaço abaixo da descrição */
+    font-size: 16px;                      /* Tamanho da fonte */
+  }
+  
+  .proposito-grid {
+    display: grid;                        /* Organiza os cards de missão, visão e valores em grelha */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsivo automático */
+    gap: 30px;                            /* Espaçamento entre os cartões */
+    text-align: left;                     /* Alinhamento interno à esquerda para leitura profissional */
+  }
+  
+  .sac-banner {
+    background: linear-gradient(135deg, var(--primary), #111827) !important; /* Gradiente elegante no banner SAC */
+    color: white !important;              /* Texto branco */
+    padding: 60px 0;                      /* Espaçamento vertical generoso */
+    text-align: center;                   /* Centraliza o conteúdo do banner */
+  }
+  
+  [data-theme="dark"] .sac-banner {
+    background: linear-gradient(135deg, #111827, #000000) !important; /* Gradiente preto no modo escuro */
+    border-top: 1px solid var(--border);  /* Borda superior discreta */
+    border-bottom: 1px solid var(--border); /* Borda inferior discreta */
+    color: var(--text-main) !important;   /* Garante legibilidade do texto */
+  }
+  
+  /* ==========================================================================
+     11. PADRONIZAÇÃO DE PÁGINAS INTERNAS (SOBRE, SAC, AVALIAÇÕES, PRESTADORES)
+     ========================================================================== */
+  .page .container.section,
+  #providers,
+  #sobre,
+  #avaliacoes,
+  #sac,
+  #catalogo-completo {
+    padding-top: 40px !important;         /* Espaçamento superior padronizado para as páginas internas */
+    text-align: left;                     /* Alinhamento geral à esquerda */
+  }
+  
+  .section-header {
+    margin-bottom: 35px !important;       /* Espaço inferior antes de exibir os cartões */
+    text-align: center !important;        /* Centraliza o título e subtítulo das páginas internas */
+    margin-left: auto;                    /* Centraliza horizontalmente */
+    margin-right: auto;                   /* Centraliza horizontalmente */
+    max-width: 800px;                     /* Limita a largura máxima para manter um visual elegante */
+  }
+  
+  .section-header h2 {
+    font-size: 28px;                      /* Tamanho do título da página interna */
+    color: var(--primary);                /* Cor primária */
+    font-weight: 700;                     /* Negrito forte */
+    margin-bottom: 6px;                   /* Pequeno espaço abaixo do título */
+  }
+  
+  .section-header p {
+    color: var(--text-muted);             /* Subtítulo em cor suave */
+    font-size: 15px;                      /* Tamanho da fonte do subtítulo */
+  }
+  
+  .providers-list, 
+  #container-lista-prestadores,
+  .catalog-grid,
+  .reviews-grid {
+    display: grid;                        /* Organiza os catálogos e prestadores em grelha */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Grelha flexível */
+    gap: 25px;                            /* Espaçamento entre os cartões da listagem */
+    width: 100%;                          /* Ocupa toda a largura */
+    margin-top: 20px;                     /* Espaço superior */
+    align-items: stretch;                 /* Padroniza a altura de todos os cartões na mesma linha */
+  }
+  
+  .catalog-card {
+    padding: 24px;                        /* Espaçamento interno do cartão de catálogo */
+    align-items: center;                  /* Centraliza os elementos horizontalmente */
+    text-align: center;                   /* Centraliza os textos */
+  }
+  
+  /* Correção definitiva para avatares redondos sem cortes indesejados nas listagens */
+  .catalog-card .catalog-img,
+  .catalog-card .btn-user-avatar,
+  .catalog-card img {
+    width: 75px !important;               /* Largura fixa da foto do prestador */
+    height: 75px !important;              /* Altura fixa da foto do prestador */
+    min-width: 75px !important;           /* Impede encolhimento */
+    min-height: 75px !important;          /* Impede encolhimento */
+    border-radius: 50% !important;        /* Deixa a foto perfeitamente redonda */
+    object-fit: cover !important;         /* Ajusta a imagem sem distorções */
+    object-position: center !important;   /* Centraliza o enquadramento facial */
+    margin: 0 auto 15px auto !important;  /* Centraliza a foto e dá espaço abaixo */
+    border: 3px solid var(--accent);      /* Borda laranja ao redor da foto */
+    display: flex !important;             /* Alinhamento flexível de suporte */
+    align-items: center;                  /* Centralização vertical */
+    justify-content: center;              /* Centralização horizontal */
+    background: var(--primary);           /* Fundo de fallback */
+    color: #fff;                          /* Cor do texto de suporte se não houver foto */
+    font-size: 24px;                      /* Tamanho da fonte de iniciais */
+    font-weight: bold;                    /* Negrito */
+  }
+  
+  .catalog-badge {
+    position: absolute;                   /* Posicionamento flutuante no canto do cartão */
+    top: 10px;                            /* Distância do topo */
+    left: 10px;                           /* Distância da esquerda */
+    background: var(--accent);            /* Fundo laranja da etiqueta */
+    color: #fff;                          /* Texto branco */
+    padding: 4px 10px;                    /* Espaçamento interno da etiqueta */
+    border-radius: 4px;                   /* Arredondamento sutil */
+    font-size: 12px;                      /* Fonte pequena */
+    font-weight: 600;                     /* Negrito */
+  }
+  
+  .catalog-body {
+    padding: 0;                           /* Sem preenchimento interno extra */
+    display: flex;                        /* Container flexível */
+    flex-direction: column;               /* Organização vertical */
+    flex: 1;                              /* Ocupa o espaço restante */
+    width: 100%;                          /* Largura total */
+  }
+  
+  .catalog-footer {
+    width: 100%;                          /* Largura total na base do cartão */
+    display: flex;                        /* Organiza preço e botão de ação */
+    flex-direction: column;               /* Empilha preço e botão verticalmente */
+    gap: 12px;                            /* Espaço entre o preço e o botão */
+    border-top: 1px solid var(--border);  /* Linha divisória superior do rodapé do cartão */
+    padding-top: 15px;                    /* Espaço interno acima da linha */
+    margin-top: auto;                     /* Fixa sempre na parte inferior do cartão */
+  }
+  
+  .catalog-price {
+    font-size: 14px;                      /* Tamanho da fonte do preço */
+    color: var(--text-main);              /* Cor principal do texto de preço */
+  }
+  
+  .catalog-price strong {
+    color: var(--success);                /* Destaca o valor numérico em verde de sucesso */
+    font-size: 16px;                      /* Tamanho um pouco maior para o valor */
+  }
+  
+  /* ==========================================================================
+     12. AUTENTICAÇÃO, FORMULÁRIOS E PAINÉIS (DASHBOARD)
+     ========================================================================== */
+  .auth-page {
+    padding: 50px 0;                      /* Espaçamento superior e inferior nas páginas de login/cadastro */
+    display: flex;                        /* Centraliza o formulário */
+    justify-content: center;              /* Centralização horizontal */
+    align-items: center;                  /* Centralização vertical */
+  }
+  
+  .auth-card {
+    background-color: var(--surface) !important; /* Força o fundo escuro no modo escuro */
+    padding: 40px;                        /* Espaçamento interno do cartão de autenticação */
+    border-radius: 16px;                  /* Bordas arredondadas modernas */
+    border: 1px solid var(--border);      /* Borda padronizada */
+    width: 100%;                          /* Largura total adaptável */
+    max-width: 450px;                     /* Largura máxima padrão para telas de login */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3); /* Sombra marcante */
+  }
+  
+  .auth-card.wide {
+    max-width: 800px;                     /* Versão mais larga usada no formulário de cadastro completo */
+  }
+  
   .auth-grid {
-    grid-template-columns: 1fr;         /* Formulários passam a ter apenas uma coluna empilhada */
+    display: grid;                        /* Organiza os campos do formulário em colunas */
+    grid-template-columns: 1fr 1fr;       /* Duas colunas iguais */
+    gap: 15px;                            /* Espaço entre os campos */
   }
+  
   .auth-grid .full {
-    grid-column: span 1;                /* Ocupa apenas uma coluna em telas pequenas */
+    grid-column: span 2;                  /* Faz um campo específico ocupar as duas colunas inteiras */
   }
-}
-
-.dashboard {
-  display: grid;                        /* Organiza o painel de controle em duas colunas (sidebar e conteúdo) */
-  grid-template-columns: 260px 1fr;     /* Coluna lateral esquerda fixa de 260px e conteúdo flexível à direita */
-  gap: 30px;                            /* Espaço entre a barra lateral e o painel principal */
-  padding: 40px 0;                      /* Espaçamento vertical do painel */
-}
-
-.sidebar {
-  background-color: var(--surface) !important; /* Fundo adaptado ao modo escuro */
-  border: 1px solid var(--border);      /* Borda lateral */
-  border-radius: 12px;                  /* Bordas arredondadas */
-  padding: 20px;                        /* Espaçamento interno */
-  height: fit-content;                  /* Altura ajustada ao conteúdo dos botões do menu */
-}
-
-.sidebar h3 {
-  font-size: 16px;                      /* Tamanho do título da barra lateral */
-  color: var(--text-muted);             /* Cor secundária suave */
-  margin-bottom: 15px;                  /* Espaço abaixo do título */
-  padding-left: 10px;                   /* Pequeno recuo à esquerda */
-}
-
-.sidebar button {
-  width: 100%;                          /* Botões do menu lateral ocupam toda a largura */
-  background: none;                     /* Sem fundo padrão */
-  border: none;                         /* Sem borda */
-  padding: 12px 15px;                   /* Espaçamento interno para clique confortável */
-  text-align: left;                     /* Texto alinhado à esquerda */
-  font-size: 15px;                      /* Tamanho da fonte */
-  font-weight: 500;                     /* Peso médio */
-  color: var(--text-main);              /* Cor do texto do botão do menu */
-  border-radius: 8px;                   /* Bordas arredondadas no item do menu */
-  cursor: pointer;                      /* Cursor de clique */
-  display: flex;                        /* Alinha ícone e texto do menu */
-  align-items: center;                  /* Centralização vertical */
-  gap: 12px;                            /* Espaço entre ícone e texto */
-  margin-bottom: 5px;                   /* Espaço entre os botões do menu */
-  transition: background 0.2s, color 0.2s; /* Transição suave */
-}
-
-.sidebar button:hover, .sidebar button.active {
-  background: rgba(249, 115, 22, 0.1);  /* Fundo laranja translúcido ao passar o mouse ou ativo */
-  color: var(--accent);                 /* Texto laranja de destaque */
-}
-
-.dashboard-content {
-  background-color: var(--surface) !important; /* Fundo adaptado ao modo escuro */
-  border: 1px solid var(--border);      /* Borda do painel principal */
-  border-radius: 12px;                  /* Bordas arredondadas */
-  padding: 30px;                        /* Espaçamento interno generoso */
-}
-
-/* ==========================================================================
-   13. FAQ, SUPORTE (SAC) E RODAPÉ (FOOTER)
-   ========================================================================== */
-.faq-item {
-  background-color: var(--surface) !important; /* Fundo adaptado ao modo escuro */
-  border: 1px solid var(--border);      /* Borda da caixa de pergunta frequente */
-  border-radius: 8px;                   /* Bordas arredondadas */
-  padding: 15px 20px;                   /* Espaçamento interno */
-  margin-bottom: 12px;                  /* Espaço entre as perguntas do SAC */
-  cursor: pointer;                      /* Cursor de clique na pergunta */
-}
-
-.faq-item summary {
-  font-weight: 600;                     /* Pergunta em negrito */
-  color: var(--primary);                /* Cor primária para o título da pergunta */
-}
-
-.faq-item p {
-  margin-top: 10px;                     /* Espaço acima da resposta */
-  color: var(--text-main) !important;   /* Cor da resposta legível no modo escuro */
-  font-size: 14px;                      /* Tamanho da fonte da resposta */
-}
-
-footer {
-  background-color: #0d1117;              /* Cor de fundo escura profissional para o rodapé */
-  color: #9CA3AF;                       /* Texto em cinza claro */
-  margin-top: auto;                     /* Empurra o rodapé sempre para o final da página */
-  border-top: 1px solid var(--border);  /* Borda superior separadora */
-}
-
-.footer-content {
-  display: grid;                        /* Organiza as colunas do rodapé em grelha */
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsivo automático */
-  gap: 40px;                            /* Espaçamento entre as colunas do rodapé */
-  padding: 60px 0 40px;                 /* Espaçamento superior e inferior interno */
-}
-
-.footer-brand h3 {
-  color: #fff;                          /* Título da marca no rodapé em branco */
-  margin-bottom: 15px;                  /* Espaço abaixo do título */
-  display: flex;                        /* Alinha ícone e nome */
-  align-items: center;                  /* Centralização vertical */
-  gap: 8px;                             /* Espaço entre ícone e nome */
-}
-
-.footer-links h4, .footer-contact h4 {
-  color: #fff;                          /* Títulos das colunas do rodapé em branco */
-  margin-bottom: 15px;                  /* Espaço abaixo dos títulos */
-  font-size: 16px;                      /* Tamanho da fonte */
-}
-
-.footer-links a {
-  display: block;                       /* Cada link de rodapé ocupa sua própria linha */
-  color: #9CA3AF;                       /* Cor cinza padrão dos links do rodapé */
-  text-decoration: none;                /* Remove sublinhado */
-  font-size: 14px;                      /* Tamanho da fonte */
-  margin-bottom: 8px;                   /* Espaço entre os links */
-  transition: color 0.2s;               /* Transição suave de cor */
-}
-
-.footer-links a:hover {
-  color: #fff;                          /* Altera para branco puro ao passar o mouse no rodapé */
-}
-
-.footer-bottom {
-  text-align: center;                   /* Centraliza os direitos autorais */
-  padding: 20px 0;                      /* Espaçamento interno vertical */
-  border-top: 1px solid #1f242c;        /* Linha divisória interna do rodapé */
-  font-size: 13px;                      /* Fonte menor para os créditos finais */
-}
-/* ==========================================================================
-   CORREÇÃO DA COR DO RODAPÉ (Azul Escuro no Modo Claro / Preto no Modo Escuro)
-   ========================================================================== */
-
-/* Rodapé padrão para o Modo Claro (Azul escuro original) */
-footer {
-  background-color: #111827 !important; /* Azul escuro elegante */
-  color: #9CA3AF;
-  margin-top: auto;
-  border-top: 1px solid var(--border);
-}
-
-/* Rodapé específico para o Modo Escuro "Blackout" (Preto absoluto) */
-[data-theme="dark"] footer {
-  background-color: #000000 !important; /* Preto puro no modo escuro */
-  border-top: 1px solid #2A2A2A;
-}
-/* ==========================================================================
-   VISUALIZADOR DE FOTO (ESTILO 10X15 CLÁSSICO)
-   ========================================================================== */
-.foto-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 99999;
-  overflow: hidden;
-  padding: 20px;
-}
-
-.foto-modal-content {
-  width: 420px !important;       /* Largura fixa padrão tipo 10x15 */
-  height: 580px !important;      /* Altura fixa padrão tipo 10x15 */
-  object-fit: cover !important;  /* Ajusta perfeitamente sem distorcer */
-  border-radius: 12px;
-  border: 5px solid #ffffff;     /* Borda branca clássica */
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
-  background: var(--surface);
-  cursor: zoom-in;
-  user-select: none;
-  transition: transform 0.2s ease;
-}
+  
+  label {
+    display: block;                       /* Rótulos ocupam sua própria linha */
+    font-weight: 600;                     /* Negrito para os rótulos */
+    font-size: 13px;                      /* Tamanho da fonte compacto */
+    color: var(--text-main);              /* Cor do texto do rótulo */
+    margin-bottom: 6px;                   /* Espaço abaixo do rótulo antes do input */
+  }
+  
+  input, select, textarea {
+    width: 100%;                          /* Ocupa 100% da largura da coluna */
+    padding: 12px;                        /* Espaçamento interno confortável para digitação */
+    border: 1px solid var(--border);      /* Borda do campo */
+    border-radius: 8px;                   /* Bordas arredondadas nos campos */
+    font-size: 14px;                      /* Tamanho da fonte digitada */
+    background-color: var(--surface) !important; /* Fundo adaptado ao tema atual */
+    color: var(--text-main) !important;   /* Cor do texto digitado adaptada ao tema */
+    outline: none;                        /* Remove a borda padrão de foco do navegador */
+    transition: border-color 0.2s;        /* Transição suave na borda ao focar */
+  }
+  
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent);          /* Destaca a borda do campo com a cor laranja ao focar */
+  }
+  
+  .cep-grid-container {
+    display: grid;                        /* Organiza os campos de endereço em linha otimizada */
+    grid-template-columns: 110px 1.5fr 60px 1fr 1fr; /* Larguras proporcionais para CEP, Rua, Número, Bairro e Cidade */
+    gap: 8px;                             /* Espaço entre os campos do endereço */
+    width: 100%;                          /* Largura total */
+    box-sizing: border-box;               /* Contém as dimensões */
+  }
+  
+  /* Responsividade para formulários em telemóveis */
+  @media (max-width: 768px) {
+    .cep-grid-container {
+      grid-template-columns: 1fr 1fr;     /* Em telas pequenas divide em duas colunas */
+    }
+    .auth-grid {
+      grid-template-columns: 1fr;         /* Formulários passam a ter apenas uma coluna empilhada */
+    }
+    .auth-grid .full {
+      grid-column: span 1;                /* Ocupa apenas uma coluna em telas pequenas */
+    }
+  }
+  
+  .dashboard {
+    display: grid;                        /* Organiza o painel de controle em duas colunas (sidebar e conteúdo) */
+    grid-template-columns: 260px 1fr;     /* Coluna lateral esquerda fixa de 260px e conteúdo flexível à direita */
+    gap: 30px;                            /* Espaço entre a barra lateral e o painel principal */
+    padding: 40px 0;                      /* Espaçamento vertical do painel */
+  }
+  
+  .sidebar {
+    background-color: var(--surface) !important; /* Fundo adaptado ao modo escuro */
+    border: 1px solid var(--border);      /* Borda lateral */
+    border-radius: 12px;                  /* Bordas arredondadas */
+    padding: 20px;                        /* Espaçamento interno */
+    height: fit-content;                  /* Altura ajustada ao conteúdo dos botões do menu */
+  }
+  
+  .sidebar h3 {
+    font-size: 16px;                      /* Tamanho do título da barra lateral */
+    color: var(--text-muted);             /* Cor secundária suave */
+    margin-bottom: 15px;                  /* Espaço abaixo do título */
+    padding-left: 10px;                   /* Pequeno recuo à esquerda */
+  }
+  
+  .sidebar button {
+    width: 100%;                          /* Botões do menu lateral ocupam toda a largura */
+    background: none;                     /* Sem fundo padrão */
+    border: none;                         /* Sem borda */
+    padding: 12px 15px;                   /* Espaçamento interno para clique confortável */
+    text-align: left;                     /* Texto alinhado à esquerda */
+    font-size: 15px;                      /* Tamanho da fonte */
+    font-weight: 500;                     /* Peso médio */
+    color: var(--text-main);              /* Cor do texto do botão do menu */
+    border-radius: 8px;                   /* Bordas arredondadas no item do menu */
+    cursor: pointer;                      /* Cursor de clique */
+    display: flex;                        /* Alinha ícone e texto do menu */
+    align-items: center;                  /* Centralização vertical */
+    gap: 12px;                            /* Espaço entre ícone e texto */
+    margin-bottom: 5px;                   /* Espaço entre os botões do menu */
+    transition: background 0.2s, color 0.2s; /* Transição suave */
+  }
+  
+  .sidebar button:hover, .sidebar button.active {
+    background: rgba(249, 115, 22, 0.1);  /* Fundo laranja translúcido ao passar o mouse ou ativo */
+    color: var(--accent);                 /* Texto laranja de destaque */
+  }
+  
+  .dashboard-content {
+    background-color: var(--surface) !important; /* Fundo adaptado ao modo escuro */
+    border: 1px solid var(--border);      /* Borda do painel principal */
+    border-radius: 12px;                  /* Bordas arredondadas */
+    padding: 30px;                        /* Espaçamento interno generoso */
+  }
+  
+  /* ==========================================================================
+     13. FAQ, SUPORTE (SAC) E RODAPÉ (FOOTER)
+     ========================================================================== */
+  .faq-item {
+    background-color: var(--surface) !important; /* Fundo adaptado ao modo escuro */
+    border: 1px solid var(--border);      /* Borda da caixa de pergunta frequente */
+    border-radius: 8px;                   /* Bordas arredondadas */
+    padding: 15px 20px;                   /* Espaçamento interno */
+    margin-bottom: 12px;                  /* Espaço entre as perguntas do SAC */
+    cursor: pointer;                      /* Cursor de clique na pergunta */
+  }
+  
+  .faq-item summary {
+    font-weight: 600;                     /* Pergunta em negrito */
+    color: var(--primary);                /* Cor primária para o título da pergunta */
+  }
+  
+  .faq-item p {
+    margin-top: 10px;                     /* Espaço acima da resposta */
+    color: var(--text-main) !important;   /* Cor da resposta legível no modo escuro */
+    font-size: 14px;                      /* Tamanho da fonte da resposta */
+  }
+  
+  footer {
+    background-color: #0d1117;              /* Cor de fundo escura profissional para o rodapé */
+    color: #9CA3AF;                       /* Texto em cinza claro */
+    margin-top: auto;                     /* Empurra o rodapé sempre para o final da página */
+    border-top: 1px solid var(--border);  /* Borda superior separadora */
+  }
+  
+  .footer-content {
+    display: grid;                        /* Organiza as colunas do rodapé em grelha */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsivo automático */
+    gap: 40px;                            /* Espaçamento entre as colunas do rodapé */
+    padding: 60px 0 40px;                 /* Espaçamento superior e inferior interno */
+  }
+  
+  .footer-brand h3 {
+    color: #fff;                          /* Título da marca no rodapé em branco */
+    margin-bottom: 15px;                  /* Espaço abaixo do título */
+    display: flex;                        /* Alinha ícone e nome */
+    align-items: center;                  /* Centralização vertical */
+    gap: 8px;                             /* Espaço entre ícone e nome */
+  }
+  
+  .footer-links h4, .footer-contact h4 {
+    color: #fff;                          /* Títulos das colunas do rodapé em branco */
+    margin-bottom: 15px;                  /* Espaço abaixo dos títulos */
+    font-size: 16px;                      /* Tamanho da fonte */
+  }
+  
+  .footer-links a {
+    display: block;                       /* Cada link de rodapé ocupa sua própria linha */
+    color: #9CA3AF;                       /* Cor cinza padrão dos links do rodapé */
+    text-decoration: none;                /* Remove sublinhado */
+    font-size: 14px;                      /* Tamanho da fonte */
+    margin-bottom: 8px;                   /* Espaço entre os links */
+    transition: color 0.2s;               /* Transição suave de cor */
+  }
+  
+  .footer-links a:hover {
+    color: #fff;                          /* Altera para branco puro ao passar o mouse no rodapé */
+  }
+  
+  .footer-bottom {
+    text-align: center;                   /* Centraliza os direitos autorais */
+    padding: 20px 0;                      /* Espaçamento interno vertical */
+    border-top: 1px solid #1f242c;        /* Linha divisória interna do rodapé */
+    font-size: 13px;                      /* Fonte menor para os créditos finais */
+  }
+  /* ==========================================================================
+     CORREÇÃO DA COR DO RODAPÉ (Azul Escuro no Modo Claro / Preto no Modo Escuro)
+     ========================================================================== */
+  
+  /* Rodapé padrão para o Modo Claro (Azul escuro original) */
+  footer {
+    background-color: #111827 !important; /* Azul escuro elegante */
+    color: #9CA3AF;
+    margin-top: auto;
+    border-top: 1px solid var(--border);
+  }
+  
+  /* Rodapé específico para o Modo Escuro "Blackout" (Preto absoluto) */
+  [data-theme="dark"] footer {
+    background-color: #000000 !important; /* Preto puro no modo escuro */
+    border-top: 1px solid #2A2A2A;
+  }
+  /* ==========================================================================
+     VISUALIZADOR DE FOTO (ESTILO 10X15 CLÁSSICO)
+     ========================================================================== */
+  .foto-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    overflow: hidden;
+    padding: 20px;
+  }
+  
+  .foto-modal-content {
+    width: 420px !important;       /* Largura fixa padrão tipo 10x15 */
+    height: 580px !important;      /* Altura fixa padrão tipo 10x15 */
+    object-fit: cover !important;  /* Ajusta perfeitamente sem distorcer */
+    border-radius: 12px;
+    border: 5px solid #ffffff;     /* Borda branca clássica */
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    background: var(--surface);
+    cursor: zoom-in;
+    user-select: none;
+    transition: transform 0.2s ease;
+  }
+  
+  /* ==========================================================================
+     CORREÇÃO MODO ESCURO: partes brancas (SAC, perfis, cards gerados pelo JS)
+     ========================================================================== */
+  [data-theme="dark"] input:disabled,
+  [data-theme="dark"] input[type="file"],
+  [data-theme="dark"] textarea,
+  [data-theme="dark"] select {
+    background-color: var(--surface) !important;
+    color: var(--text-main) !important;
+    border-color: var(--border) !important;
+  }
+  
+  [data-theme="dark"] input::placeholder,
+  [data-theme="dark"] textarea::placeholder {
+    color: var(--text-muted);
+    opacity: 0.7;
+  }
+  
+  /* Qualquer bloco com fundo claro fixo (inline style) dentro das páginas vira superfície escura */
+  [data-theme="dark"] .page [style*="background: #fff" i],
+  [data-theme="dark"] .page [style*="background:#fff" i],
+  [data-theme="dark"] .page [style*="background-color: #fff" i],
+  [data-theme="dark"] .page [style*="background-color:#fff" i],
+  [data-theme="dark"] .page [style*="background: white" i],
+  [data-theme="dark"] .page [style*="background-color: white" i],
+  [data-theme="dark"] .page [style*="background: #f" i],
+  [data-theme="dark"] .page [style*="background:#f" i],
+  [data-theme="dark"] .page [style*="background-color: #f" i],
+  [data-theme="dark"] .page [style*="background-color:#f" i],
+  [data-theme="dark"] .page [style*="background: #e" i],
+  [data-theme="dark"] .page [style*="background-color: #e" i],
+  [data-theme="dark"] .user-dropdown [style*="background" i] {
+    background: var(--surface) !important;
+    background-color: var(--surface) !important;
+    border-color: var(--border) !important;
+  }
+  
+  /* Textos escuros fixos (inline) ficam legíveis no escuro */
+  [data-theme="dark"] .page [style*="color: #333" i],
+  [data-theme="dark"] .page [style*="color:#333" i],
+  [data-theme="dark"] .page [style*="color: #222" i],
+  [data-theme="dark"] .page [style*="color: #444" i],
+  [data-theme="dark"] .page [style*="color: #555" i],
+  [data-theme="dark"] .page [style*="color: #000" i],
+  [data-theme="dark"] .page [style*="color: black" i] {
+    color: var(--text-main) !important;
+  }
+  
+  [data-theme="dark"] .page [style*="color: #666" i],
+  [data-theme="dark"] .page [style*="color: #777" i],
+  [data-theme="dark"] .page [style*="color: #888" i],
+  [data-theme="dark"] .page [style*="color: #999" i] {
+    color: var(--text-muted) !important;
+  }
+  
+  /* Cards de perfil / prestadores / detalhe / avaliações */
+  [data-theme="dark"] .provider-card,
+  [data-theme="dark"] .provider-detail,
+  [data-theme="dark"] .profile-card,
+  [data-theme="dark"] .perfil-card,
+  [data-theme="dark"] .order-card,
+  [data-theme="dark"] .review-card,
+  [data-theme="dark"] #container-lista-prestadores > div,
+  [data-theme="dark"] #container-detalhe-prestador > div,
+  [data-theme="dark"] #lista-avaliacoes-site > div,
+  [data-theme="dark"] #lista-minhas-solicitacoes > div,
+  [data-theme="dark"] #conteudoDinamicoPrestador > div {
+    background-color: var(--surface) !important;
+    color: var(--text-main) !important;
+    border-color: var(--border) !important;
+  }
+  
+  [data-theme="dark"] #container-detalhe-prestador h1,
+  [data-theme="dark"] #container-detalhe-prestador h2,
+  [data-theme="dark"] #container-detalhe-prestador h3,
+  [data-theme="dark"] #container-lista-prestadores h3,
+  [data-theme="dark"] #container-lista-prestadores h4 {
+    color: var(--text-main);
+  }
+  
+  /* ==========================================================================
+     AVATARES DA LISTA DE PRESTADORES: sempre redondos, nunca achatados
+     (o círculo encolhia quando o nome era grande e quebrava em várias linhas)
+     ========================================================================== */
+  #container-lista-prestadores img,
+  #container-lista-prestadores [style*="border-radius: 50%" i],
+  #container-lista-prestadores [style*="border-radius:50%" i],
+  #container-lista-prestadores [class*="avatar" i],
+  #container-lista-prestadores [class*="foto" i],
+  #container-lista-prestadores [class*="photo" i] {
+    width: 70px !important;
+    height: 70px !important;
+    min-width: 70px !important;
+    min-height: 70px !important;
+    max-width: 70px !important;
+    max-height: 70px !important;
+    flex: 0 0 70px !important;          /* não deixa o flex espremer o círculo */
+    aspect-ratio: 1 / 1;
+    border-radius: 50% !important;
+    object-fit: cover;
+    object-position: center;
+    overflow: hidden;
+  }
+  
+  /* Permite que o bloco de texto ao lado quebre linha sem empurrar a foto */
+  #container-lista-prestadores [style*="display: flex" i] > :not(img):not([style*="border-radius: 50%" i]),
+  #container-lista-prestadores [style*="display:flex" i] > :not(img):not([style*="border-radius:50%" i]) {
+    min-width: 0;
+  }
+  
+  /* ==========================================================================
+     CARDS DE PRESTADORES: Avaliações / Endereço / Diária, cada um na sua linha
+     ========================================================================== */
+  /* Linha de avaliação + endereço passa a quebrar linha */
+  #container-lista-prestadores :has(> .fa-star) {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center;
+    row-gap: 6px;
+    margin-right: 0 !important;
+    white-space: nowrap;
+  }
+  #container-lista-prestadores :has(> * > .fa-star) {
+    flex-wrap: wrap !important;
+    row-gap: 6px;
+  }
+  
+  /* Bloco do endereço ocupa a linha inteira (fica abaixo das avaliações) */
+  #container-lista-prestadores :has(> i[class*="fa-map"], > i[class*="fa-location"]) {
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: flex-start;
+    white-space: normal;
+    margin: 0 !important;
+  }
+  
+  /* Ícones com pequeno espaço do texto, sem recuo extra */
+  #container-lista-prestadores .fa-star,
+  #container-lista-prestadores i[class*="fa-map"],
+  #container-lista-prestadores i[class*="fa-location"] {
+    margin-left: 0 !important;
+    margin-right: 6px !important;
+    flex-shrink: 0;
+     
+    
+  }
