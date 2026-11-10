@@ -637,7 +637,10 @@ async function solicitarServicoCatalogo(nomeServico) {
             const res = await fetch(`${API_URL}/servicos`, { cache: 'no-store' });
             const tipos = await res.json();
             if (Array.isArray(tipos) && tipos.length > 0) {
-                select.innerHTML = tipos.map(t => `<option value="${t.nome_servico || t.titulo}" data-id="${t.id_tipo_servico || t.id}">${t.nome_servico || t.titulo}</option>`).join('');
+                // Usa t.nome (que vem do banco) e adiciona a opção "Outros" no final
+                select.innerHTML = tipos.map(t => 
+                    `<option value="${t.nome}" data-id="${t.id_tipo_servico}">${t.nome}</option>`
+                ).join('') + `<option value="Outros">Outro Serviço (Especificar)</option>`;
             }
         } catch(e) {
             console.log("Mantendo opções padrão.");
