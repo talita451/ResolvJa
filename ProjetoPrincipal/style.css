@@ -1020,6 +1020,22 @@
     margin-left: 0 !important;
     margin-right: 6px !important;
     flex-shrink: 0;
-     
-    
+  }
+  
+  /* Aviso clicável (ex.: "Faça login") */
+  .toast-central.toast-clicavel {
+    cursor: pointer;
+  }
+  .toast-central.toast-clicavel:hover {
+    filter: brightness(1.08);
+  }
+  
+  /* Mensagem "Faça login..." dentro da página: clicável */
+  .aviso-login-link {
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .aviso-login-link:hover {
+    color: var(--accent) !important;
   }
