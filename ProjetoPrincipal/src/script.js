@@ -1500,22 +1500,28 @@ async function verPerfilPrestador(codPrestador) {
 }
 
 // Função: Filtra e exibe resultados da pesquisa local no catálogo
+// Função: Filtra e exibe resultados da pesquisa local no catálogo
 function filtrarCatalogoServicos() {
     const input = document.getElementById('inputBuscaCatalogo');
     if(!input) return;
-    const termo = input.value.toLowerCase();
+    
+    const termo = input.value.toLowerCase().trim(); 
     const cards = document.querySelectorAll('.catalog-card');
 
     cards.forEach(card => {
-        const nome = card.getAttribute('data-nome') || '';
-        if (nome.includes(termo)) {
-            card.style.display = 'flex';
+        const textoVisivel = card.innerText.toLowerCase();
+        const tagOculta = (card.getAttribute('data-nome') || '').toLowerCase();
+
+        // Se o termo pesquisado existir no texto do cartão
+        if (textoVisivel.includes(termo) || tagOculta.includes(termo)) {
+            // Remove qualquer regra de ocultação e força a exibição
+            card.style.setProperty('display', 'flex', 'important'); 
         } else {
-            card.style.display = 'none';
+            // FORÇA o cartão a desaparecer, vencendo qualquer regra do style.css
+            card.style.setProperty('display', 'none', 'important');
         }
     });
 }
-
 // ==========================================
 // 7. ALTERNAR PERFIL
 // ==========================================
