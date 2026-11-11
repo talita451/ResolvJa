@@ -67,7 +67,10 @@
     <!-- PÁGINA: HOME -->
     <section id="home" class="page active">
       <div class="hero">
-        <div class="container">
+        <video class="hero-video" src="assets/trabalhadores.mp4" autoplay loop muted playsinline></video>
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+          <span class="badge"><i class="fas fa-shield-alt"></i> Plataforma Verificada e Segura</span>
           <h1>O seu problema resolvido com um <span>clique.</span></h1>
           <p>Conectamos você aos melhores profissionais locais para serviços domésticos, reparos e assistências com total segurança e agilidade.</p>
           <div class="hero-buttons">
@@ -76,12 +79,6 @@
           </div>
         </div>
       </div>
-
-     <!-- VÍDEOS LADO A LADO NO TOPO -->
-      <section class="videos-lado-a-lado">
-        <video src="assets/trabalhadores.mp4" autoplay loop muted playsinline></video>
-        <video src="assets/trabalhadores.mp4" autoplay loop muted playsinline></video>
-      </section>
 
       <!-- NOVOS CARDS INFORMATIVOS (COM FUNDO AZUL SUAVE) -->
       <section class="info-cards-section" style="background: linear-gradient(180deg, rgba(30, 58, 138, 0.03) 0%, rgba(59, 130, 246, 0.06) 100%); padding: 60px 20px; border-bottom: 1px solid var(--border);">
@@ -112,7 +109,7 @@
               <h3>Confiança e Transparência</h3>
               <p>Deseja solicitar um serviço simples, rápido e eficaz, mas não quer ficar esperando indicação ou está com medo de não ser um bom profissional?</p>
               <p class="highlight">Visite o perfil dos nossos prestadores e veja a avaliação que cada um recebeu.</p>
-              <button class="btn btn-outline-dark btn-full" style="border: 2px solid var(--primary); color: var(--primary); font-weight: bold;" onclick="carregarPrestadoresDisponiveis()">CONHEÇA NOSSOS PRESTADORES</button>
+              <button class="btn btn-primary btn-full"  onclick="carregarPrestadoresDisponiveis()">CONHEÇA NOSSOS PRESTADORES</button>
             </div>
 
           </div>

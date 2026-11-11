@@ -1039,3 +1039,75 @@
   .aviso-login-link:hover {
     color: var(--accent) !important;
   }
+  
+  
+  /* ==========================================================================
+     HERO COM VÍDEO DE FUNDO (um só vídeo, tela cheia, semitransparente)
+     ========================================================================== */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    min-height: 560px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 0;
+  }
+  
+  .hero-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;          /* preenche todo o espaço sem distorcer */
+    object-position: center;
+    opacity: 0.35;              /* meio transparente: o gradiente do hero aparece por trás */
+    z-index: 0;
+    pointer-events: none;
+  }
+  
+  /* Camada para garantir leitura do texto por cima do vídeo */
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(17, 24, 39, 0.45), rgba(17, 24, 39, 0.25) 50%, rgba(17, 24, 39, 0.6));
+    z-index: 1;
+    pointer-events: none;
+  }
+  
+  .hero-content {
+    position: relative;
+    z-index: 2;                 /* texto e botões ficam acima do vídeo */
+    width: 100%;
+  }
+  
+  .hero h1,
+  .hero p {
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
+  }
+  
+  @media (max-width: 768px) {
+    .hero { min-height: 480px; padding: 60px 0; }
+    .hero h1 { font-size: 32px; }
+  }
+  
+  /* ==========================================================================
+     HERO: fundo neutro atrás do vídeo (sem o tom azulado no modo claro)
+     ========================================================================== */
+  .hero,
+  [data-theme="dark"] .hero {
+    background: #0c0c0e !important;   /* preto neutro: o vídeo mantém as cores naturais */
+  }
+  
+  .hero-video {
+    opacity: 0.45;
+  }
+  
+  .hero-overlay {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0.55));
+  }
+  
+  /* Espaço entre o fim do conteúdo das páginas e o rodapé */
+  .page .container.section {
+    padding-bottom: 80px;
+  }
