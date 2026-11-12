@@ -31,7 +31,7 @@ app.get('/', (req, res) => {
 // 2. ROTAS DA API
 // =========================================================================
 const routes = require('./src/routes');
-app.use('/api', routes);
+app.use('/ResolvJa', routes);
 
 // Middleware global de tratamento de erros da API
 app.use(errorHandler);
