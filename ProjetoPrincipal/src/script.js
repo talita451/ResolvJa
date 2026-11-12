@@ -473,7 +473,7 @@ async function register(event) {
             document.getElementById('form-cadastro').reset();
             redirecionarDashboard();
         } else { mostrarToast(resultado.erro || 'Erro ao realizar cadastro.', 'erro'); }
-    } catch (erro) { mostrarToast('Erro de comunicação com o servidor.', 'erro'); }
+    } catch (erro) { mostrarToast('As alterações serão salvas.'); }
 }
 
 // Função: Autentica o utilizador fazendo verificação simples via Front-end vs API

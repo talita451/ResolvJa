@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ResolvJá | A ajuda que você precisava</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="data:,">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
   <!-- Ícones FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -17,16 +17,20 @@
   <!-- CABEÇALHO / NAVBAR -->
   <header class="navbar">
     <div class="container navbar-content">
-      <a href="#" class="logo" onclick="showPage('home')">
-        <i class="fas fa-tools"></i> Resolv<span>Já</span>
+      <a href="#" class="logo" onclick="showPage('home')" aria-label="ResolvJá - Início">
+        <img class="logo-img logo-claro" src="assets/logo-claro.png" alt="ResolvJá">
+        <img class="logo-img logo-escuro" src="assets/logo-escuro.png" alt="ResolvJá">
       </a>
      <nav id="main-nav">
+        <div class="nav-links">
         <a href="#" onclick="showPage('home')">Início</a>
         <a href="#" onclick="showPage('sobre')">Sobre Nós</a>
         <a href="#" onclick="carregarPrestadoresDisponiveis()">Profissionais</a>
         <a href="#" onclick="abrirTelaAvaliacoesSite()">Avaliações</a>
         <a href="#" onclick="showPage('sac')">Ajuda / SAC</a>
         
+        </div>
+        <div class="nav-acoes">
         <!-- BOTÃO DE ALTERNAR MODO ESCURO / CLARO -->
         <button id="themeToggleBtn" class="btn-theme-toggle" onclick="toggleTheme()" title="Alternar Modo Escuro/Claro">
           <i class="fas fa-moon" id="themeIcon"></i>
@@ -59,6 +63,7 @@
             <a href="#" onclick="logout(); toggleUserMenu()"><i class="fas fa-sign-out-alt"></i> Sair</a>
           </div>
         </div>
+        </div>
       </nav>
     </div>
   </header>
@@ -70,7 +75,7 @@
         <video class="hero-video" src="assets/trabalhadores.mp4" autoplay loop muted playsinline></video>
         <div class="hero-overlay"></div>
         <div class="container hero-content">
-          <span class="badge"><i class="fas fa-shield-alt"></i> Plataforma Verificada e Segura</span>
+
           <h1>O seu problema resolvido com um <span>clique.</span></h1>
           <p>Conectamos você aos melhores profissionais locais para serviços domésticos, reparos e assistências com total segurança e agilidade.</p>
           <div class="hero-buttons">
@@ -109,7 +114,7 @@
               <h3>Confiança e Transparência</h3>
               <p>Deseja solicitar um serviço simples, rápido e eficaz, mas não quer ficar esperando indicação ou está com medo de não ser um bom profissional?</p>
               <p class="highlight">Visite o perfil dos nossos prestadores e veja a avaliação que cada um recebeu.</p>
-              <button class="btn btn-primary btn-full"  onclick="carregarPrestadoresDisponiveis()">CONHEÇA NOSSOS PRESTADORES</button>
+              <button class="btn btn-primary btn-full" onclick="carregarPrestadoresDisponiveis()">CONHEÇA NOSSOS PRESTADORES</button>
             </div>
 
           </div>
@@ -623,10 +628,15 @@
                 
                 <form id="form-perfil" onsubmit="atualizarPerfil(event)">
                     <div class="auth-grid">
-                        <div class="full" style="text-align: center; margin-bottom: 15px;">
-                            <label>Atualizar Foto de Perfil (Opcional)</label>
-                            <input type="file" accept="image/*" onchange="converterImagemParaBase64(event, 'perfilFotoBase64')" style="margin: 0 auto; display: block; max-width: 300px;">
+                        <div class="full avatar-editor-wrap">
+                            <label class="avatar-editor" for="perfilFotoUpload" title="Alterar foto de perfil">
+                                <img id="perfilFotoPreview" class="avatar-editor-img" alt="Foto de perfil" style="display: none;">
+                                <i class="fas fa-user avatar-editor-placeholder" id="perfilFotoPlaceholder"></i>
+                                <span class="avatar-editor-overlay"><i class="fas fa-pencil-alt"></i></span>
+                            </label>
+                            <input type="file" id="perfilFotoUpload" class="avatar-editor-input" accept="image/*" onchange="converterImagemParaBase64(event, 'perfilFotoBase64')">
                             <input type="hidden" id="perfilFotoBase64">
+                            <small class="avatar-editor-dica">Clique na foto para alterar</small>
                         </div>
                         
                         <div>
@@ -699,9 +709,13 @@
   <footer>
     <div class="container footer-content">
         <div class="footer-brand">
-            <h3><i class="fas fa-tools" style="color: var(--accent);"></i> ResolvJá</h3>
+            <h3 class="footer-logo">
+              <img class="logo-img logo-claro" src="assets/logo-escuro.png" alt="ResolvJá">
+              <img class="logo-img logo-escuro" src="assets/logo-escuro.png" alt="ResolvJá">
+            </h3>
             <p>Conectando quem precisa de ajuda a quem sabe resolver.</p>
-        </div>
+        </div> 
+        
         <div class="footer-links">
             <h4>Links Rápidos</h4>
             <a href="#" onclick="showPage('home')">Página Inicial</a>
@@ -722,5 +736,51 @@
 
   <script src="./src/script.js"></script>
   <script src="./src/avisos.js"></script>
+  <script src="./src/imagens.js"></script>
+  <script>
+    /* Foto de perfil redonda: mostra a foto atual e a prévia da nova */
+    (function () {
+      var input = document.getElementById('perfilFotoUpload');
+      var img = document.getElementById('perfilFotoPreview');
+      var ph = document.getElementById('perfilFotoPlaceholder');
+      var secao = document.getElementById('meu-perfil');
+      if (!input || !img || !ph || !secao) return;
+
+      function mostrar(src) {
+        if (src) {
+          img.src = src;
+          img.style.display = 'block';
+          ph.style.display = 'none';
+        } else {
+          img.removeAttribute('src');
+          img.style.display = 'none';
+          ph.style.display = '';
+        }
+      }
+
+      input.addEventListener('change', function () {
+        var arquivo = input.files && input.files[0];
+        if (!arquivo) return;
+        var leitor = new FileReader();
+        leitor.onload = function (e) { mostrar(e.target.result); };
+        leitor.readAsDataURL(arquivo);
+      });
+
+      // Ao abrir a tela, usa a foto atual do usuário (a mesma do menu), se existir
+      function sincronizar() {
+        if (input.files && input.files.length) return; // já escolheu uma nova
+        var mini = document.getElementById('dropdownMiniFoto');
+        var src = mini ? (mini.getAttribute('src') || '').trim() : '';
+        mostrar(src);
+      }
+
+      new MutationObserver(function () {
+        if (secao.classList.contains('active')) sincronizar();
+      }).observe(secao, { attributes: true, attributeFilter: ['class'] });
+
+      sincronizar();
+    })();
+  </script>
+
 </body>
 </html>
