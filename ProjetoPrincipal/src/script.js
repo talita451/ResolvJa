@@ -522,7 +522,11 @@ async function login(event) {
 // Função: Busca e preenche o formulário de "Meu Perfil" com os dados do utilizador logado
 async function carregarDadosPerfil() {
     showPage('meu-perfil');
-    const idLogado = localStorage.getItem('idUsuarioLogado');
+    // Obtém o ID logado e limpa qualquer caractere indesejado (como :1 ou espaços)
+    let idLogado = localStorage.getItem('idUsuarioLogado');
+    if (idLogado) {
+        idLogado = idLogado.toString().split(':')[0].trim();
+    }
     const tipo = localStorage.getItem('tipoUsuarioLogado') || 'prestador';
 
     if (!idLogado) {
@@ -532,13 +536,13 @@ async function carregarDadosPerfil() {
     }
 
     try {
-        const endpoint = tipo === 'solicitante' ? `/solicitantes` : `/prestadores`;
+        // CORREÇÃO: Utiliza o endpoint com ID específico
+        const endpoint = tipo === 'solicitante' ? `/solicitantes/${idLogado}` : `/prestadores/${idLogado}`;
         const resposta = await fetch(`${API_URL}${endpoint}`, { cache: 'no-store' });
-        const dados = await resposta.json();
         
         if (!resposta.ok) throw new Error('Erro ao buscar dados.');
-
-        const usuario = dados.find(u => String(u.cod_prestador || u.id_solicitante) === String(idLogado));
+        
+        const usuario = await resposta.json(); // O back-end já retorna o usuário diretamente
 
         if (usuario) {
             document.getElementById('perfilNome').value = usuario.nome || '';
@@ -547,6 +551,8 @@ async function carregarDadosPerfil() {
             document.getElementById('perfilCpf').value = usuario.cpf || 'Não informado';
             document.getElementById('perfilRg').value = usuario.rg || 'Não informado';
             document.getElementById('perfilNascimento').value = usuario.data_nascimento ? usuario.data_nascimento.split('T')[0] : '';
+            
+            // CORREÇÃO: Usando a chave correta baseada no tipo (cliente = endereco, prestador = endereco_completo)
             document.getElementById('perfilEndereco').value = usuario.endereco_completo || usuario.endereco || '';
             
             const blocoProfissao = document.getElementById('bloco-perfil-profissao');
@@ -561,6 +567,7 @@ async function carregarDadosPerfil() {
         mostrarToast('Erro ao carregar os seus dados.', 'erro');
     }
 }
+  
 // Função: Envia as alterações do perfil editado de volta ao Back-End
 async function atualizarPerfil(event) {
     event.preventDefault();
