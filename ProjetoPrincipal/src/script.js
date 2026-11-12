@@ -1313,37 +1313,47 @@ async function carregarCatalogoServicosCompleto() {
             const card = document.createElement('div');
             card.className = 'catalog-card';
             
-            // Pega o nome correto de forma dinâmica vindo do banco (nome_servico, titulo ou nome)
+            // Pega o nome correto de forma dinâmica vindo do banco
             const nomeServico = servico.nome_servico || servico.titulo || servico.nome || 'Serviço ResolvJá';
             const descServico = servico.descricao || 'Serviço profissional qualificado e seguro.';
             const catServico = servico.categoria || 'Geral';
             const precoMin = servico.preco_minimo ? Number(servico.preco_minimo).toFixed(2).replace('.', ',') : '35,00';
 
-            // Escolhe uma imagem de Alta Qualidade e 100% alinhada com a profissão/serviço descrito
-            let fotoServico = servico.foto;
+            // Garante que não dá erro se a foto não existir no banco
+            let fotoServico = servico.foto || '';
             
-            // Se não houver foto personalizada, detecta o contexto do serviço pelo texto
-            if (!fotoServico || fotoServico.includes('unsplash.com/photo-1581094794329')) {
+            // Se não houver foto, aplica a inteligência para escolher do Unsplash
+            if (fotoServico === '' || fotoServico.includes('unsplash.com')) {
                 const textoBusca = (nomeServico + " " + descServico + " " + catServico).toLowerCase();
                 
-                if (textoBusca.includes('jardin') || textoBusca.includes('grama') || textoBusca.includes('poda') || textoBusca.includes('planta')) {
-                    fotoServico = 'https://images.unsplash.com/photo-1558904541-efa873a81a13?auto=format&fit=crop&w=600&q=80'; // Jardinagem
-                } else if (textoBusca.includes('limpeza') || textoBusca.includes('faxina') || textoBusca.includes('doméstic') || textoBusca.includes('casa')) {
-                    fotoServico = 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80'; // Limpeza Doméstica
-                } else if (textoBusca.includes('unha') || textoBusca.includes('esmalte') || textoBusca.includes('manicure') || textoBusca.includes('pedicure') || textoBusca.includes('beleza')) {
-                    fotoServico = 'https://images.unsplash.com/photo-1632345031435-8727f6c97d34?auto=format&fit=crop&w=600&q=80'; // Manicure / Estética
-                } else if (textoBusca.includes('elétric') || textoBusca.includes('lâmpada') || textoBusca.includes('tomada') || textoBusca.includes('chuveiro') || textoBusca.includes('fiação')) {
-                    fotoServico = 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=600&q=80'; // Eletricista
-                } else if (textoBusca.includes('hidráulic') || textoBusca.includes('encanador') || textoBusca.includes('pia') || textoBusca.includes('torneira') || textoBusca.includes('vazamento')) {
-                    fotoServico = 'https://images.unsplash.com/photo-1585704032915-c3400ca199e7?auto=format&fit=crop&w=600&q=80'; // Encanador / Hidráulica
-                } else if (textoBusca.includes('pintor') || textoBusca.includes('parede') || textoBusca.includes('pintura')) {
-                    fotoServico = 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=600&q=80'; // Pintura
-                } else if (textoBusca.includes('montador') || textoBusca.includes('móvel') || textoBusca.includes('marcen') || textoBusca.includes('guarda-roupa')) {
-                    fotoServico = 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=600&q=80'; // Montagem / Marcenaria
-                } else if (textoBusca.includes('ar-condicionado') || textoBusca.includes('climatiz') || textoBusca.includes('refriger')) {
-                    fotoServico = 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=600&q=80'; // Climatização
+                if (textoBusca.includes('jardin') || textoBusca.includes('grama') || textoBusca.includes('poda')) {
+                    fotoServico = 'assets/jardineiro.jpg';
+                } else if (textoBusca.includes('limpeza') || textoBusca.includes('faxina') || textoBusca.includes('organizer') || textoBusca.includes('estofados') || textoBusca.includes('passadeira')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80'; 
+                } else if (textoBusca.includes('unha') || textoBusca.includes('manicure') || textoBusca.includes('massagi') || textoBusca.includes('sobrancelha') || textoBusca.includes('estética') || textoBusca.includes('cabeleireiro')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1632345031435-8727f6c97d34?auto=format&fit=crop&w=600&q=80'; 
+                } else if (textoBusca.includes('elétric') || textoBusca.includes('lâmpada') || textoBusca.includes('fiação')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=600&q=80'; 
+                } else if (textoBusca.includes('hidráulic') || textoBusca.includes('encanador') || textoBusca.includes('piscina') || textoBusca.includes('água')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1585704032915-c3400ca199e7?auto=format&fit=crop&w=600&q=80'; 
+                } else if (textoBusca.includes('pintor') || textoBusca.includes('pintura') || textoBusca.includes('gesso') || textoBusca.includes('drywall')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=600&q=80'; 
+                } else if (textoBusca.includes('montador') || textoBusca.includes('móvel') || textoBusca.includes('marcen') || textoBusca.includes('serralheiro') || textoBusca.includes('vidraceiro')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=600&q=80'; 
+                } else if (textoBusca.includes('ar-condicionado') || textoBusca.includes('climatiz')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=600&q=80'; 
+                } else if (textoBusca.includes('pet ') || textoBusca.includes('cães') || textoBusca.includes('cachorro') || textoBusca.includes('tosa')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1541599540903-216a46ca1dc0?auto=format&fit=crop&w=600&q=80'; 
+                } else if (textoBusca.includes('fotografia') || textoBusca.includes('evento') || textoBusca.includes('churrasqueiro') || textoBusca.includes('garçom') || textoBusca.includes('cozinheiro')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=600&q=80'; 
+                } else if (textoBusca.includes('computador') || textoBusca.includes('informática') || textoBusca.includes('câmera') || textoBusca.includes('rede')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&w=600&q=80'; 
+                } else if (textoBusca.includes('carro') || textoBusca.includes('veículo') || textoBusca.includes('motorista') || textoBusca.includes('mecânico') || textoBusca.includes('frete') || textoBusca.includes('mudança')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?auto=format&fit=crop&w=600&q=80'; 
+                } else if (textoBusca.includes('babá') || textoBusca.includes('idoso') || textoBusca.includes('acompanhante') || textoBusca.includes('cuidador')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=600&q=80'; 
                 } else {
-                    fotoServico = 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=600&q=80'; // Ferramentas / Geral
+                    fotoServico = 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=600&q=80'; 
                 }
             }
 
@@ -1351,7 +1361,7 @@ async function carregarCatalogoServicosCompleto() {
             card.setAttribute('data-nome', `${nomeServico} ${descServico} ${catServico}`.toLowerCase());
 
             card.innerHTML = `
-                <div class="catalog-img" style="background-image: url('${fotoServico}');">
+                <div class="catalog-img" style="background-image: url('${fotoServico}'); background-size: cover; background-position: center; background-color: transparent;">
                     <span class="catalog-badge">${catServico}</span>
                 </div>
                 <div class="catalog-body">
@@ -1368,10 +1378,9 @@ async function carregarCatalogoServicosCompleto() {
 
     } catch (erro) {
         console.error("Erro ao carregar o catálogo de serviços:", erro);
-        container.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--error); padding: 30px;">Erro ao carregar os serviços do banco de dados. Verifique se o servidor está ligado.</p>';
+        container.innerHTML = '<p class="error-msg">Erro ao carregar os serviços do banco de dados. Verifique se o servidor está ligado.</p>';
     }
 }
-
 // Função: Busca prestadores na API e renderiza no catálogo de Profissionais
 async function carregarPrestadoresDisponiveis() {
     showPage('providers');
@@ -1500,22 +1509,28 @@ async function verPerfilPrestador(codPrestador) {
 }
 
 // Função: Filtra e exibe resultados da pesquisa local no catálogo
+// Função: Filtra e exibe resultados da pesquisa local no catálogo
 function filtrarCatalogoServicos() {
     const input = document.getElementById('inputBuscaCatalogo');
     if(!input) return;
-    const termo = input.value.toLowerCase();
+    
+    const termo = input.value.toLowerCase().trim(); 
     const cards = document.querySelectorAll('.catalog-card');
 
     cards.forEach(card => {
-        const nome = card.getAttribute('data-nome') || '';
-        if (nome.includes(termo)) {
-            card.style.display = 'flex';
+        const textoVisivel = card.innerText.toLowerCase();
+        const tagOculta = (card.getAttribute('data-nome') || '').toLowerCase();
+
+        // Se o termo pesquisado existir no texto do cartão
+        if (textoVisivel.includes(termo) || tagOculta.includes(termo)) {
+            // Remove qualquer regra de ocultação e força a exibição
+            card.style.setProperty('display', 'flex', 'important'); 
         } else {
-            card.style.display = 'none';
+            // FORÇA o cartão a desaparecer, vencendo qualquer regra do style.css
+            card.style.setProperty('display', 'none', 'important');
         }
     });
 }
-
 // ==========================================
 // 7. ALTERNAR PERFIL
 // ==========================================
