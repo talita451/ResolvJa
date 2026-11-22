@@ -1,3 +1,4 @@
+// src/routes/solicitacaoRoutes.js
 const express = require('express');
 const router = express.Router();
 const solicitacaoController = require('../controllers/solicitacaoController');
@@ -5,7 +6,7 @@ const solicitacaoController = require('../controllers/solicitacaoController');
 // Rota para criar solicitação (POST /ResolvJa/solicitacoes)
 router.post('/', solicitacaoController.criar);
 
-// Rota para listar todas as solicitações (GET ResolvJa/solicitacoes)
+// Rota para listar todas as solicitações (GET /ResolvJa/solicitacoes)
 router.get('/', solicitacaoController.listar);
 
 // Rota para atualizar o status de uma solicitação (PUT /ResolvJa/solicitacoes/:id/status)

@@ -1,3 +1,4 @@
+// src/controllers/tipoServicoController.js
 const tipoServicoRepository = require('../repositories/tipoServicoRepository');
 
 class TipoServicoController {

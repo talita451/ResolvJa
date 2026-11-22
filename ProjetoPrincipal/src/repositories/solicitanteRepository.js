@@ -1,3 +1,4 @@
+// src/repositories/solicitanteRepository.js
 const pool = require('../../banco.js');
 
 class SolicitanteRepository {
@@ -13,10 +14,11 @@ class SolicitanteRepository {
                 telefone,
                 senha,
                 endereco,
-                estado_civil
+                estado_civil,
+                foto_perfil
             )
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-            RETURNING id_solicitante, nome, email, telefone, endereco;
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+            RETURNING id_solicitante, nome, email, telefone, endereco, foto_perfil;
         `;
 
         const values = [
@@ -28,7 +30,8 @@ class SolicitanteRepository {
             dados.telefone,
             dados.senha,
             dados.endereco,
-            dados.estado_civil
+            dados.estado_civil,
+            dados.foto_perfil || null
         ];
 
         const { rows } = await pool.query(query, values);
@@ -42,7 +45,8 @@ class SolicitanteRepository {
                 nome,
                 email,
                 telefone,
-                endereco
+                endereco,
+                foto_perfil
             FROM solicitante
             ORDER BY nome;
         `;
@@ -62,7 +66,8 @@ class SolicitanteRepository {
                 data_nascimento,
                 telefone,
                 endereco,
-                estado_civil
+                estado_civil,
+                foto_perfil
             FROM solicitante
             WHERE id_solicitante = $1;
         `;
@@ -81,19 +86,21 @@ class SolicitanteRepository {
                 endereco = COALESCE(NULLIF($4, ''), endereco),
                 cpf = COALESCE(NULLIF($5, ''), cpf),
                 rg = COALESCE(NULLIF($6, ''), rg),
-                data_nascimento = COALESCE($7, data_nascimento)
-            WHERE id_solicitante = $8
-            RETURNING id_solicitante, nome, email, telefone, endereco, cpf, rg, data_nascimento, estado_civil;
+                data_nascimento = COALESCE($7, data_nascimento),
+                foto_perfil = COALESCE(NULLIF($8, ''), foto_perfil)
+            WHERE id_solicitante = $9
+            RETURNING id_solicitante, nome, email, telefone, endereco, cpf, rg, data_nascimento, estado_civil, foto_perfil;
         `;
 
         const values = [
-            dados.nome,
-            dados.email,
-            dados.telefone,
-            dados.endereco,
-            dados.cpf,
-            dados.rg,
-            dados.data_nascimento,
+            dados.nome || null,
+            dados.email || null,
+            dados.telefone || null,
+            dados.endereco || null,
+            dados.cpf || null,
+            dados.rg || null,
+            dados.data_nascimento || null,
+            dados.foto_perfil || null,
             id
         ];
 

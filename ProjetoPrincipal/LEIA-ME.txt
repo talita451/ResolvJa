@@ -1,0 +1,30 @@
+====================================================================
+RESOLVJA - GUIA RAPIDO DE USO LOCAL E PUBLICACAO (DEPLOY)
+====================================================================
+
+1) O QUE COPIAR DO SEU PROJETO ANTIGO PARA ESTA PASTA:
+   - Copie o seu arquivo ".env" para a raiz desta pasta (ao lado de server.js).
+   - Copie o conteudo da sua pasta "assets" (logos, favicon, video trabalhadores.mp4, etc.)
+     para dentro da pasta "assets" deste projeto.
+
+2) BANCO DE DADOS (NEON POSTGRESQL):
+   - Abra o SQL Editor no painel do Neon e execute o comando do arquivo
+     "atualizacao_banco.sql":
+       ALTER TABLE prestador ADD COLUMN IF NOT EXISTS formas_pagamento TEXT;
+
+3) RODAR LOCALMENTE:
+   - Abra o terminal nesta pasta e execute:
+       npm install
+       npm start
+   - Acesse no navegador: http://localhost:3000
+   - Para testar se o banco conectou: http://localhost:3000/ResolvJa/status-banco
+
+4) PUBLICAR O SITE COM BANCO FUNCIONANDO (Render ou Railway):
+   - Suba o projeto para o GitHub (o .env fica protegido pelo .gitignore).
+   - No Render (Web Service) ou Railway:
+       * Build Command: npm install
+       * Start Command: npm start
+       * Environment Variables: adicione a chave DATABASE_URL com a mesma
+         string de conexao do seu arquivo .env (Neon).
+   - Pronto! O script.js detecta automaticamente quando esta em localhost e
+     quando esta publicado, sem precisar alterar o codigo.

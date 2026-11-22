@@ -1,3 +1,4 @@
+// src/repositories/avaliacaoSiteRepository.js
 const pool = require('../../banco.js');
 
 class AvaliacaoSiteRepository {
@@ -22,4 +23,5 @@ class AvaliacaoSiteRepository {
         return rows;
     }
 }
+
 module.exports = new AvaliacaoSiteRepository();

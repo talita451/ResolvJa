@@ -1,3 +1,4 @@
+// src/routes/prestadorRoutes.js
 const express = require('express');
 const router = express.Router();
 const prestadorController = require('../controllers/prestadorController');
@@ -7,6 +8,9 @@ router.post('/', prestadorController.cadastrar);
 
 // Rota para listar todos os prestadores (GET /ResolvJa/prestadores)
 router.get('/', prestadorController.listar);
+
+// Rota para buscar um prestador específico pelo ID (GET /ResolvJa/prestadores/:id)
+router.get('/:id', prestadorController.buscarPorId);
 
 // Rota para atualizar os dados cadastrais do prestador pelo ID (PUT /ResolvJa/prestadores/:id)
 router.put('/:id', prestadorController.atualizar);

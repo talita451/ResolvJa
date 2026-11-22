@@ -1,4 +1,6 @@
+// src/controllers/solicitacaoController.js
 const solicitacaoRepository = require('../repositories/solicitacaoRepository');
+const { salvarImagemEmPasta } = require('../utils/salvarImagem');
 
 class SolicitacaoController {
     async criar(req, res) {
@@ -71,7 +73,12 @@ class SolicitacaoController {
         const { status, nota, comentario, foto_avaliacao } = req.body;
 
         try {
-            const solicitacaoAvaliada = await solicitacaoRepository.avaliar(id, status, nota, comentario, foto_avaliacao);
+            // Salva a foto da avaliação na pasta /uploads em vez de gravar Base64 no banco
+            const caminhoFotoAvaliacao = salvarImagemEmPasta(foto_avaliacao, 'avaliacao');
+
+            const solicitacaoAvaliada = await solicitacaoRepository.avaliar(
+                id, status, nota, comentario, caminhoFotoAvaliacao
+            );
 
             if (!solicitacaoAvaliada) {
                 return res.status(404).json({

@@ -1,3 +1,4 @@
+// src/routes/index.js
 const express = require('express');
 const router = express.Router();
 
@@ -5,10 +6,8 @@ const solicitanteRoutes = require('./solicitanteRoutes');
 const prestadorRoutes = require('./prestadorRoutes');
 const tipoServicoRoutes = require('./tipoServicoRoutes');
 const solicitacaoRoutes = require('./solicitacaoRoutes');
-const avaliacaoSiteRoutes = require('./avaliacaoSiteRoutes'); // NOVO
+const avaliacaoSiteRoutes = require('./avaliacaoSiteRoutes');
 const solicitacaoController = require('../controllers/solicitacaoController');
-
-// Mapeia os caminhos principais
 
 // Rotas para solicitantes (Base: /ResolvJa/solicitantes)
 router.use('/solicitantes', solicitanteRoutes);
@@ -23,7 +22,7 @@ router.use('/servicos', tipoServicoRoutes);
 router.use('/solicitacoes', solicitacaoRoutes);
 
 // Rotas para avaliações do site (Base: /ResolvJa/avaliacoes-site)
-router.use('/avaliacoes-site', avaliacaoSiteRoutes); // NOVO
+router.use('/avaliacoes-site', avaliacaoSiteRoutes);
 
 // Rota para buscar solicitações de um solicitante específico (GET /ResolvJa/solicitantes/:id/solicitacoes)
 router.get('/solicitantes/:id/solicitacoes', solicitacaoController.listarPorSolicitante);

@@ -1,3 +1,4 @@
+// src/controllers/avaliacaoSiteController.js
 const avaliacaoSiteRepository = require('../repositories/avaliacaoSiteRepository');
 
 class AvaliacaoSiteController {
@@ -22,4 +23,5 @@ class AvaliacaoSiteController {
         }
     }
 }
+
 module.exports = new AvaliacaoSiteController();

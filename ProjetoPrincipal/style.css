@@ -271,7 +271,7 @@
   }
   
   /* ==========================================================================
-     6. SISTEMA DE PÁGINAS (SPA - SINGLE PAGE APPLICATION)
+     6. SISTEMA DE PÁGINAS
      ========================================================================== */
   .page {
     display: none;                        /* Oculta todas as páginas por padrão */
@@ -1336,3 +1336,271 @@
     .logo-img { height: 56px; }
     #main-nav a:not(.btn) { font-size: 16px; }
   }
+
+  /* ==========================================================================
+     14. CHECKBOXES DE FORMAS DE PAGAMENTO E AVISO DE VALOR (PADRÃO DO TEMA)
+     ========================================================================== */
+  .pagamentos-grid {
+    display: flex;                        /* Organiza as opções de pagamento em linha com quebra automática */
+    flex-wrap: wrap;                      /* Permite quebrar linha em telas menores */
+    gap: 12px;                            /* Espaçamento entre as opções */
+    margin-top: 6px;                      /* Pequeno espaço abaixo do rótulo */
+  }
+
+  .pagamento-opcao {
+    display: inline-flex !important;      /* Mantém checkbox e texto alinhados lado a lado */
+    align-items: center;                  /* Centraliza verticalmente */
+    gap: 8px;                             /* Espaço entre a caixinha e o nome da forma de pagamento */
+    padding: 8px 14px;                    /* Espaçamento interno confortável */
+    border: 1px solid var(--border);      /* Borda seguindo o tema claro/escuro */
+    border-radius: 8px;                   /* Arredondamento igual aos inputs */
+    background-color: var(--surface);     /* Fundo igual ao restante do formulário */
+    color: var(--text-main);              /* Cor de texto do tema */
+    cursor: pointer;                      /* Cursor de clique */
+    margin-bottom: 0 !important;          /* Remove margem padrão de label */
+    font-weight: 500;                     /* Peso de fonte confortável */
+    font-size: 13px;                      /* Tamanho de fonte padronizado */
+  }
+
+  .pagamento-opcao input[type="checkbox"] {
+    width: auto !important;               /* Mantém o tamanho natural da caixinha de seleção */
+    padding: 0 !important;                /* Remove padding de input de texto */
+    margin: 0;                            /* Sem margem extra */
+    accent-color: var(--accent);          /* Cor laranja oficial quando marcado */
+    cursor: pointer;                      /* Cursor de clique */
+  }
+
+  /* Caixa de aviso discreta sobre alteração de valor final */
+  .aviso-valor-sujeito {
+    background-color: var(--card-hover-bg); /* Fundo suave do tema atual */
+    border: 1px solid var(--border);        /* Borda padronizada */
+    border-left: 4px solid var(--accent);   /* Destaque lateral na cor laranja oficial */
+    border-radius: 8px;                     /* Bordas arredondadas */
+    padding: 12px 16px;                     /* Espaçamento interno */
+    font-size: 13px;                        /* Texto legível e discreto */
+    color: var(--text-main);                /* Cor principal do tema */
+    text-align: left;                       /* Alinhamento à esquerda */
+    margin-top: 12px;                       /* Espaço superior */
+    margin-bottom: 12px;                    /* Espaço inferior */
+    line-height: 1.5;                       /* Altura de linha confortável */
+  }
+
+  /* Modal de confirmação ("Solicitar serviço novamente?") */
+  .modal-confirmacao-overlay {
+    display: none;                          /* Oculto por padrão */
+    position: fixed;                        /* Fixa sobre toda a tela */
+    inset: 0;                               /* Cobre 100% da janela */
+    background-color: rgba(0, 0, 0, 0.7);   /* Fundo escuro semitransparente */
+    z-index: 10050;                         /* Acima de todo o conteúdo */
+    align-items: center;                    /* Centraliza verticalmente */
+    justify-content: center;                /* Centraliza horizontalmente */
+    padding: 20px;                          /* Margem de segurança no celular */
+  }
+
+  .modal-confirmacao-box {
+    background-color: var(--surface);       /* Fundo do tema atual */
+    color: var(--text-main);                /* Cor de texto do tema atual */
+    border: 1px solid var(--border);        /* Borda padronizada */
+    border-radius: 12px;                    /* Bordas arredondadas */
+    padding: 28px 24px;                     /* Espaçamento interno */
+    max-width: 420px;                       /* Largura máxima confortável */
+    width: 100%;                            /* Responsivo em telas pequenas */
+    text-align: center;                     /* Texto centralizado */
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35); /* Sombra elegante */
+  }
+
+  .modal-confirmacao-acoes {
+    display: flex;                          /* Botões lado a lado */
+    gap: 12px;                              /* Espaço entre os botões */
+    margin-top: 20px;                       /* Distância do texto */
+    justify-content: center;                /* Centraliza os botões */
+  }
+
+  /* ==========================================================================
+     15. RESPONSIVIDADE MOBILE ADICIONAL (SEM ALTERAR O VISUAL DESKTOP)
+     ========================================================================== */
+  @media (max-width: 768px) {
+    .dashboard {
+      grid-template-columns: 1fr;           /* Empilha a barra lateral acima do conteúdo no celular */
+      gap: 20px;                            /* Espaçamento entre menu e conteúdo */
+      padding: 20px 0;                      /* Reduz espaçamento vertical no celular */
+    }
+
+    .auth-card {
+      padding: 24px 18px;                   /* Espaçamento interno ajustado para telas menores */
+    }
+
+    .hero-buttons {
+      flex-direction: column;               /* Empilha os botões do banner principal no celular */
+      align-items: center;                  /* Centraliza os botões */
+    }
+
+    .hero-buttons .btn {
+      width: 100%;                          /* Botões ocupam largura confortável no celular */
+      max-width: 300px;                     /* Limite para manter elegância */
+    }
+
+    .foto-modal-content {
+      width: 90vw !important;               /* Foto ampliada se adapta à largura do celular */
+      height: auto !important;              /* Mantém proporção sem cortar */
+      max-height: 80vh !important;          /* Não ultrapassa a altura da tela */
+    }
+
+    .nav-acoes {
+      gap: 12px;                            /* Evita que os botões da direita estourem no celular */
+    }
+
+    #nav-auth-btn {
+      font-size: 15px;                      /* Botão Entrar proporcional no celular */
+      padding: 8px 18px;                    /* Espaçamento compacto no celular */
+    }
+
+    .btn-theme-toggle {
+      width: 42px;                          /* Botão de tema proporcional no celular */
+      height: 42px;
+      font-size: 17px;
+    }
+
+    .btn-user-avatar {
+      width: 44px;                          /* Avatar proporcional no celular */
+      height: 44px;
+    }
+
+    .modal-confirmacao-acoes {
+      flex-direction: column;               /* Empilha botões Sim/Não em telas muito estreitas */
+    }
+  }
+/* ==========================================================================
+   16. CARDS DA EQUIPE DE DESENVOLVEDORES (PÁGINA SOBRE NÓS)
+   ========================================================================== */
+.equipe-section {
+  max-width: 900px;                        /* Alinha a largura com o cartão da história acima */
+  margin: 50px auto 0 auto;                /* Espaçamento superior e centralização */
+  text-align: center;                      /* Centraliza o título da seção */
+}
+
+.equipe-section h3 {
+  font-size: 24px;                         /* Tamanho do subtítulo da seção */
+  color: var(--primary);                   /* Azul institucional do tema */
+  margin-bottom: 8px;                      /* Espaço abaixo do título */
+}
+
+.equipe-subtitulo {
+  color: var(--text-muted);                /* Cor secundária do tema */
+  font-size: 15px;                         /* Texto descritivo suave */
+  margin-bottom: 30px;                     /* Distância até os cards */
+}
+
+.equipe-grid {
+  display: grid;                           /* Organiza os 6 cards em grade */
+  grid-template-columns: repeat(3, 1fr);   /* 3 cards por linha no computador (2 fileiras perfeitas) */
+  gap: 24px;                               /* Espaçamento entre os cards */
+  align-items: stretch;                    /* Garante que todos os cards tenham a mesma altura */
+}
+
+.equipe-card {
+  background-color: var(--surface);        /* Fundo branco no claro e carvão no modo escuro */
+  color: var(--text-main);                 /* Cor de texto adaptada ao tema */
+  border: 1px solid var(--border);         /* Borda padrão do site */
+  border-radius: 12px;                     /* Mesmo arredondamento dos demais cartões */
+  padding: 26px 20px;                      /* Espaçamento interno confortável */
+  text-align: center;                      /* Conteúdo centralizado */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* Sombra suave original */
+  display: flex;                           /* Layout flexível vertical */
+  flex-direction: column;                  /* Empilha foto, nome e função */
+  align-items: center;                     /* Centraliza horizontalmente */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Efeito hover igual ao dos outros cartões do site */
+.equipe-card:hover {
+  transform: translateY(-6px);             /* Eleva levemente ao passar o mouse */
+  background-color: var(--card-hover-bg);  /* Fundo suave no hover */
+  border-color: var(--accent);             /* Destaque laranja na borda */
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18); /* Profundidade no hover */
+}
+
+.equipe-foto {
+  width: 105px;                            /* Largura fixa da foto redonda */
+  height: 105px;                           /* Altura fixa da foto redonda */
+  border-radius: 50%;                      /* Formato perfeitamente circular */
+  object-fit: cover;                       /* Enquadra o rosto sem distorcer */
+  object-position: center top;             /* Prioriza o rosto no enquadramento */
+  border: 3px solid var(--accent);         /* Borda laranja oficial do ResolvJá */
+  margin-bottom: 14px;                     /* Espaço entre foto e nome */
+  background-color: var(--card-hover-bg);  /* Fundo de suporte enquanto carrega */
+}
+
+.equipe-nome {
+  font-size: 18px;                         /* Destaque para o nome do integrante */
+  font-weight: 700;                        /* Negrito */
+  color: var(--primary);                   /* Azul primário do tema */
+  margin-bottom: 6px;                      /* Espaço abaixo do nome */
+}
+
+.equipe-cargo {
+  font-size: 13px;                         /* Etiqueta com o papel principal */
+  font-weight: 600;                        /* Negrito médio */
+  color: var(--accent);                    /* Destaque laranja */
+  margin-bottom: 10px;                     /* Espaço até a descrição */
+}
+
+.equipe-desc {
+  font-size: 14px;                         /* Descrição curta do que fez no projeto */
+  color: var(--text-muted);                /* Cor secundária legível no claro e escuro */
+  line-height: 1.5;                        /* Boa legibilidade */
+}
+
+/* Responsividade dos cards da equipe para tablet e celular */
+@media (max-width: 900px) {
+  .equipe-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 cards por linha em tablets */
+  }
+}
+
+@media (max-width: 550px) {
+  .equipe-grid {
+    grid-template-columns: 1fr;            /* 1 card por linha em celulares */
+  }
+}
+/* ==========================================================================
+   17. FOTO DA EQUIPE REUNIDA (PÁGINA SOBRE NÓS)
+   ========================================================================== */
+.equipe-grupo-card {
+  background-color: var(--surface);        /* Fundo branco no claro e carvão no modo escuro */
+  border: 1px solid var(--border);         /* Borda padronizada do site */
+  border-radius: 12px;                     /* Mesmo arredondamento dos demais cartões */
+  padding: 16px;                           /* Moldura interna elegante ao redor da foto */
+  margin-bottom: 30px;                     /* Espaço entre a foto em grupo e os 6 cards individuais */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Sombra suave original */
+  text-align: center;                      /* Centraliza a foto e a legenda */
+}
+
+.equipe-grupo-img {
+  width: 100%;                             /* Ocupa toda a largura disponível do cartão */
+  max-height: 460px;                       /* Limita a altura no computador para não ficar exagerada */
+  object-fit: cover;                       /* Mantém a proporção sem distorcer a imagem */
+  object-position: center;                 /* Centraliza o enquadramento do grupo */
+  border-radius: 8px;                      /* Cantos levemente arredondados na imagem */
+  border: 2px solid var(--accent);         /* Detalhe fino na cor laranja oficial */
+  display: block;                          /* Remove espaçamentos extras abaixo da imagem */
+}
+
+.equipe-grupo-legenda {
+  margin-top: 12px;                        /* Distância entre a foto e a legenda */
+  font-size: 14px;                         /* Tamanho confortável de leitura */
+  color: var(--text-muted);                /* Cor secundária adaptada ao modo claro/escuro */
+  font-weight: 500;                        /* Destaque sutil na legenda */
+}
+
+/* Ajuste para celular: garante que a foto inteira apareça sem cortar ninguém nas laterais */
+@media (max-width: 768px) {
+  .equipe-grupo-card {
+    padding: 12px;                         /* Moldura mais compacta no celular */
+  }
+
+  .equipe-grupo-img {
+    height: auto;                          /* Mantém a altura proporcional da foto original */
+    max-height: none;                      /* Evita cortes indesejados em telas estreitas */
+  }
+}

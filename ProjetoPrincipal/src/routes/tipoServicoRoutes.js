@@ -1,3 +1,4 @@
+// src/routes/tipoServicoRoutes.js
 const express = require('express');
 const router = express.Router();
 const tipoServicoController = require('../controllers/tipoServicoController');

@@ -1,3 +1,4 @@
+// src/routes/solicitanteRoutes.js
 const express = require('express');
 const router = express.Router();
 const solicitanteController = require('../controllers/solicitanteController');

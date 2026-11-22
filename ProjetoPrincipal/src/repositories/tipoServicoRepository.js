@@ -1,3 +1,4 @@
+// src/repositories/tipoServicoRepository.js
 const pool = require('../../banco.js');
 
 class TipoServicoRepository {
@@ -47,7 +48,8 @@ class TipoServicoRepository {
                 p.possui_equipamentos,
                 p.valor_minimo,
                 p.valor_maximo,
-                p.disponibilidade_horario
+                p.disponibilidade_horario,
+                p.formas_pagamento
             FROM prestador p
             INNER JOIN prestador_servico ps
                 ON p.cod_prestador = ps.cod_prestador

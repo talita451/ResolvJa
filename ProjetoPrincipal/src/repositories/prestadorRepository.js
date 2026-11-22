@@ -1,3 +1,4 @@
+// src/repositories/prestadorRepository.js
 const pool = require('../../banco.js');
 
 class PrestadorRepository {
@@ -5,44 +6,21 @@ class PrestadorRepository {
         const query = `
             INSERT INTO prestador
             (
-                nome,
-                email,
-                cpf,
-                rg,
-                cnh,
-                sexo,
-                data_nascimento,
-                telefone,
-                escolaridade,
-                endereco_completo,
-                profissao_funcao,
-                experiencia,
-                descricao_funcoes,
-                possui_equipamentos,
-                valor_minimo,
-                valor_maximo,
-                antecedentes_criminais,
-                disponibilidade_horario,
-                senha,
-                foto_perfil
+                nome, email, cpf, rg, cnh, sexo, data_nascimento, telefone,
+                escolaridade, endereco_completo, profissao_funcao, experiencia,
+                descricao_funcoes, possui_equipamentos, valor_minimo, valor_maximo,
+                antecedentes_criminais, disponibilidade_horario, senha, foto_perfil,
+                formas_pagamento
             )
             VALUES
             (
-                $1, $2, $3, $4, $5, $6,
-                $7, $8, $9, $10, $11, $12,
-                $13, $14, $15, $16, $17, $18, $19, $20
+                $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11,
+                $12, $13, $14, $15, $16, $17, $18, $19, $20, $21
             )
             RETURNING
-                cod_prestador,
-                nome,
-                email,
-                profissao_funcao,
-                experiencia,
-                valor_minimo,
-                valor_maximo,
-                disponibilidade_horario,
-                foto_perfil,
-                criado_em;
+                cod_prestador, nome, email, profissao_funcao, experiencia,
+                valor_minimo, valor_maximo, disponibilidade_horario,
+                foto_perfil, formas_pagamento, criado_em;
         `;
 
         const values = [
@@ -65,7 +43,8 @@ class PrestadorRepository {
             dados.antecedentes_criminais || null,
             dados.disponibilidade_horario,
             senhaHash,
-            dados.foto_perfil || null
+            dados.foto_perfil || null,
+            dados.formas_pagamento || 'A combinar'
         ];
 
         const { rows } = await pool.query(query, values);
@@ -75,33 +54,36 @@ class PrestadorRepository {
     async listarTodos() {
         const query = `
             SELECT
-                cod_prestador,
-                nome,
-                email,
-                telefone,
-                profissao_funcao,
-                experiencia,
-                descricao_funcoes,
-                possui_equipamentos,
-                valor_minimo,
-                valor_maximo,
-                disponibilidade_horario,
-                foto_perfil
+                cod_prestador, nome, email, cpf, rg, data_nascimento, telefone,
+                profissao_funcao, experiencia, descricao_funcoes, possui_equipamentos,
+                valor_minimo, valor_maximo, disponibilidade_horario, endereco_completo,
+                foto_perfil, formas_pagamento
             FROM prestador
-            ORDER BY nome;
+            ORDER BY cod_prestador DESC;
         `;
 
         const { rows } = await pool.query(query);
         return rows;
     }
 
+    async buscarPorId(id) {
+        const query = `
+            SELECT
+                cod_prestador, nome, email, cpf, rg, data_nascimento, telefone,
+                profissao_funcao, experiencia, descricao_funcoes, possui_equipamentos,
+                valor_minimo, valor_maximo, disponibilidade_horario, endereco_completo,
+                foto_perfil, formas_pagamento
+            FROM prestador
+            WHERE cod_prestador = $1;
+        `;
+
+        const { rows } = await pool.query(query, [id]);
+        return rows[0];
+    }
+
     async vincularServico(codPrestador, idTipoServico) {
         const query = `
-            INSERT INTO prestador_servico
-            (
-                cod_prestador,
-                id_tipo_servico
-            )
+            INSERT INTO prestador_servico (cod_prestador, id_tipo_servico)
             VALUES ($1, $2)
             RETURNING *;
         `;
