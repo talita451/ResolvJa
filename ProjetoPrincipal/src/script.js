@@ -1613,48 +1613,20 @@ async function carregarCatalogoServicosCompleto() {
             const descServico = servico.descricao || 'Serviço profissional qualificado e seguro.';
             const catServico = servico.categoria || 'Geral';
             const precoMin = servico.preco_minimo ? Number(servico.preco_minimo).toFixed(2).replace('.', ',') : '35,00';
+            const idServico = servico.id_tipo_servico ?? servico.id ?? servico.id_servico ?? '';
 
-            let fotoServico = servico.foto || '';
+            // Foto inicial segura enquanto o sistema inteligente verifica a pasta local e o link automático
+            const fotoInicial = (typeof window.obterImagemServico === 'function')
+                ? window.obterImagemServico(servico)
+                : 'assets/servicos/faxina.jpg';
 
-            if (fotoServico === '' || fotoServico.includes('unsplash.com')) {
-                const textoBusca = (nomeServico + " " + descServico + " " + catServico).toLowerCase();
-
-                if (textoBusca.includes('jardin') || textoBusca.includes('grama') || textoBusca.includes('poda')) {
-                    fotoServico = 'assets/jardineiro.jpg';
-                } else if (textoBusca.includes('limpeza') || textoBusca.includes('faxina') || textoBusca.includes('organizer') || textoBusca.includes('estofados') || textoBusca.includes('passadeira')) {
-                    fotoServico = 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80';
-                } else if (textoBusca.includes('unha') || textoBusca.includes('manicure') || textoBusca.includes('massagi') || textoBusca.includes('sobrancelha') || textoBusca.includes('estética') || textoBusca.includes('cabeleireiro')) {
-                    fotoServico = 'https://images.unsplash.com/photo-1632345031435-8727f6c97d34?auto=format&fit=crop&w=600&q=80';
-                } else if (textoBusca.includes('elétric') || textoBusca.includes('lâmpada') || textoBusca.includes('fiação')) {
-                    fotoServico = 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=600&q=80';
-                } else if (textoBusca.includes('hidráulic') || textoBusca.includes('encanador') || textoBusca.includes('piscina') || textoBusca.includes('água')) {
-                    fotoServico = 'https://images.unsplash.com/photo-1585704032915-c3400ca199e7?auto=format&fit=crop&w=600&q=80';
-                } else if (textoBusca.includes('pintor') || textoBusca.includes('pintura') || textoBusca.includes('gesso') || textoBusca.includes('drywall')) {
-                    fotoServico = 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=600&q=80';
-                } else if (textoBusca.includes('montador') || textoBusca.includes('móvel') || textoBusca.includes('marcen') || textoBusca.includes('serralheiro') || textoBusca.includes('vidraceiro')) {
-                    fotoServico = 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=600&q=80';
-                } else if (textoBusca.includes('ar-condicionado') || textoBusca.includes('climatiz')) {
-                    fotoServico = 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=600&q=80';
-                } else if (textoBusca.includes('pet ') || textoBusca.includes('cães') || textoBusca.includes('cachorro') || textoBusca.includes('tosa')) {
-                    fotoServico = 'https://images.unsplash.com/photo-1541599540903-216a46ca1dc0?auto=format&fit=crop&w=600&q=80';
-                } else if (textoBusca.includes('fotografia') || textoBusca.includes('evento') || textoBusca.includes('churrasqueiro') || textoBusca.includes('garçom') || textoBusca.includes('cozinheiro')) {
-                    fotoServico = 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=600&q=80';
-                } else if (textoBusca.includes('computador') || textoBusca.includes('informática') || textoBusca.includes('câmera') || textoBusca.includes('rede')) {
-                    fotoServico = 'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&w=600&q=80';
-                } else if (textoBusca.includes('carro') || textoBusca.includes('veículo') || textoBusca.includes('motorista') || textoBusca.includes('mecânico') || textoBusca.includes('frete') || textoBusca.includes('mudança')) {
-                    fotoServico = 'https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?auto=format&fit=crop&w=600&q=80';
-                } else if (textoBusca.includes('babá') || textoBusca.includes('idoso') || textoBusca.includes('acompanhante') || textoBusca.includes('cuidador')) {
-                    fotoServico = 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=600&q=80';
-                } else {
-                    fotoServico = 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=600&q=80';
-                }
-            }
-
+            card.setAttribute('data-servico-id', idServico);
+            card.setAttribute('data-servico-nome', nomeServico);
             card.setAttribute('data-nome', `${nomeServico} ${descServico} ${catServico}`.toLowerCase());
 
             const nomeEscapado = nomeServico.replace(/'/g, "\\'");
             card.innerHTML = `
-                <div class="catalog-img" style="background-image: url('${fotoServico}'); background-size: cover; background-position: center; background-color: transparent;">
+                <div class="catalog-img" style="background-image: url('${fotoInicial}'); background-size: cover; background-position: center; background-color: transparent;">
                     <span class="catalog-badge">${catServico}</span>
                 </div>
                 <div class="catalog-body">
@@ -1666,6 +1638,13 @@ async function carregarCatalogoServicosCompleto() {
                     </div>
                 </div>
             `;
+
+            // Aplica a imagem local em assets/servicos/ ou puxa automaticamente pelo link inteligente se faltar
+            const divImg = card.querySelector('.catalog-img');
+            if (typeof window.aplicarFotoInteligenteNoCard === 'function') {
+                window.aplicarFotoInteligenteNoCard(divImg, servico, 'ia');
+            }
+
             container.appendChild(card);
         });
 
