@@ -1,4 +1,4 @@
-// middlewares/errorHandler.js
+// src/middlewares/errorHandler.js
 const errorHandler = (err, req, res, next) => {
     console.error('❌ Erro capturado pelo Middleware:', err.stack);
 

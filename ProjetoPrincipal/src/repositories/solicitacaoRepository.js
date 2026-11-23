@@ -1,3 +1,4 @@
+// src/repositories/solicitacaoRepository.js
 const pool = require('../../banco.js');
 
 class SolicitacaoRepository {
@@ -41,11 +42,14 @@ class SolicitacaoRepository {
         const query = `
             SELECT
                 s.id_solicitacao,
-                s.cod_prestador, 
+                s.cod_prestador,
                 s.id_solicitante,
                 sol.nome AS solicitante_nome,
+                sol.telefone AS solicitante_telefone,
                 ts.nome AS servico,
                 p.nome AS prestador_nome,
+                p.telefone AS prestador_telefone,
+                p.formas_pagamento AS prestador_formas_pagamento,
                 s.data_servico,
                 s.horario,
                 s.endereco,
@@ -79,6 +83,7 @@ class SolicitacaoRepository {
                 ts.nome AS servico,
                 p.nome AS prestador_nome,
                 p.telefone AS prestador_telefone,
+                p.formas_pagamento AS prestador_formas_pagamento,
                 s.data_servico,
                 s.horario,
                 s.endereco,
@@ -137,7 +142,7 @@ class SolicitacaoRepository {
             RETURNING *;
         `;
         const values = [status, nota, comentario, foto, idSolicitacao];
-        
+
         const { rows } = await pool.query(query, values);
         return rows[0];
     }

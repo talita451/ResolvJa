@@ -10,13 +10,14 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
-<body>
+<body data-page="home">
   <!-- Alerta Toast Centralizado -->
   <div id="toast-central" class="toast-central"></div>
 
   <!-- CABEÇALHO / NAVBAR -->
   <header class="navbar">
     <div class="container navbar-content">
+<<<<<<< HEAD
       <a href="#" class="logo" onclick="showPage('home')" aria-label="ResolvJá - Início">
         <img class="logo-img logo-claro" src="assets/logo-claro.png" alt="ResolvJá">
         <img class="logo-img logo-escuro" src="assets/logo-escuro.png" alt="ResolvJá">
@@ -47,20 +48,51 @@
         <div class="user-menu-container" id="userMenuContainer" style="display: none;">
           <button class="btn-user-avatar" onclick="toggleUserMenu()" title="Minha Conta" id="navAvatarBtn">
             <i class="fas fa-user" id="navUserIcon"></i>
+=======
+      <a href="index.html" class="logo" aria-label="ResolvJá - Início">
+        <img class="logo-img logo-claro" src="assets/logo-claro.png" alt="ResolvJá">
+        <img class="logo-img logo-escuro" src="assets/logo-escuro.png" alt="ResolvJá">
+      </a>
+      <nav id="main-nav">
+        <div class="nav-links">
+          <a href="index.html">Início</a>
+          <a href="sobre.html">Sobre Nós</a>
+          <a href="profissionais.html">Profissionais</a>
+          <a href="avaliacoes.html">Avaliações</a>
+          <a href="sac.html">Ajuda / SAC</a>
+        </div>
+        <div class="nav-acoes">
+          <!-- BOTÃO DE ALTERNAR MODO ESCURO / CLARO -->
+          <button id="themeToggleBtn" class="btn-theme-toggle" onclick="toggleTheme()" title="Alternar Modo Escuro/Claro">
+            <i class="fas fa-moon" id="themeIcon"></i>
+>>>>>>> b698bb6883d90d2a8a951276acfe624516dc0740
           </button>
-          <div class="user-dropdown" id="userDropdown">
-            <div style="padding: 12px 16px; border-bottom: 1px solid var(--border); text-align: center; background: var(--surface);">
-              <img id="dropdownMiniFoto" src="" alt="Foto" onclick="ampliarFotoPerfil(); toggleUserMenu()" style="width: 55px; height: 55px; border-radius: 50%; object-fit: cover; cursor: pointer; border: 2px solid var(--accent); display: block; margin: 0 auto;" title="Clique para ampliar a foto">
-              <span style="font-size: 11px; color: var(--text-muted); display: block; margin-top: 4px;">Clique na foto para ampliar</span>
+
+          <!-- Botão Meu Painel de Acesso Rápido -->
+          <a href="#" id="nav-painel-btn" style="display: none; font-weight: bold; color: var(--accent);" onclick="event.preventDefault(); redirecionarDashboard();">Meu Painel</a>
+
+          <!-- Botão Entrar -->
+          <a href="login.html" id="nav-auth-btn" class="btn btn-primary btn-sm">Entrar</a>
+
+          <!-- Menu Dropdown do Utilizador -->
+          <div class="user-menu-container" id="userMenuContainer" style="display: none;">
+            <button class="btn-user-avatar" onclick="toggleUserMenu()" title="Minha Conta" id="navAvatarBtn">
+              <i class="fas fa-user" id="navUserIcon"></i>
+            </button>
+            <div class="user-dropdown" id="userDropdown">
+              <div style="padding: 12px 16px; border-bottom: 1px solid var(--border); text-align: center; background: var(--surface);">
+                <img id="dropdownMiniFoto" src="" alt="Foto" onclick="ampliarFotoPerfil(); toggleUserMenu()" style="width: 55px; height: 55px; border-radius: 50%; object-fit: cover; cursor: pointer; border: 2px solid var(--accent); display: block; margin: 0 auto;" title="Clique para ampliar a foto">
+                <span style="font-size: 11px; color: var(--text-muted); display: block; margin-top: 4px;">Clique na foto para ampliar</span>
+              </div>
+              <a href="#" onclick="event.preventDefault(); redirecionarDashboard(); toggleUserMenu()"><i class="fas fa-columns"></i> Meu Painel</a>
+              <a href="meu-perfil.html" onclick="toggleUserMenu()"><i class="fas fa-user-edit"></i> Atualizar Cadastro</a>
+              <a href="atualizar-senha.html" onclick="toggleUserMenu()"><i class="fas fa-key"></i> Atualizar Senha</a>
+
+              <!-- BOTÃO DE ALTERNAR PERFIL -->
+              <a href="#" onclick="event.preventDefault(); alternarModoUsuario(); toggleUserMenu()" id="btnAlternarPerfil" style="border-top: 1px solid var(--border); background: var(--card-hover-bg);"><i class="fas fa-exchange-alt"></i> Alternar Perfil</a>
+
+              <a href="#" onclick="event.preventDefault(); logout(); toggleUserMenu()"><i class="fas fa-sign-out-alt"></i> Sair</a>
             </div>
-            <a href="#" onclick="redirecionarDashboard(); toggleUserMenu()"><i class="fas fa-columns"></i> Meu Painel</a>
-            <a href="#" onclick="carregarDadosPerfil(); toggleUserMenu()"><i class="fas fa-user-edit"></i> Atualizar Cadastro</a>
-            <a href="#" onclick="showPage('atualizar-senha'); toggleUserMenu()"><i class="fas fa-key"></i> Atualizar Senha</a>
-            
-            <!-- BOTÃO DE ALTERNAR PERFIL -->
-            <a href="#" onclick="alternarModoUsuario(); toggleUserMenu()" id="btnAlternarPerfil" style="border-top: 1px solid var(--border); background: var(--card-hover-bg);"><i class="fas fa-exchange-alt"></i> Alternar Perfil</a>
-            
-            <a href="#" onclick="logout(); toggleUserMenu()"><i class="fas fa-sign-out-alt"></i> Sair</a>
           </div>
         </div>
         </div>
@@ -75,29 +107,35 @@
         <video class="hero-video" src="assets/trabalhadores.mp4" autoplay loop muted playsinline></video>
         <div class="hero-overlay"></div>
         <div class="container hero-content">
+<<<<<<< HEAD
 
+=======
+>>>>>>> b698bb6883d90d2a8a951276acfe624516dc0740
           <h1>O seu problema resolvido com um <span>clique.</span></h1>
           <p>Conectamos você aos melhores profissionais locais para serviços domésticos, reparos e assistências com total segurança e agilidade.</p>
           <div class="hero-buttons">
             <button class="btn btn-secondary" onclick="showPage('catalogo-completo')"><i class="fas fa-search"></i> Explorar Serviços</button>
+<<<<<<< HEAD
             <button id="btn-quero-ser-prestador" class="btn btn-outline-light" onclick="showPage('register')">Quero ser Prestador</button>
+=======
+            <button id="btn-quero-ser-prestador" class="btn btn-outline-light" onclick="showPage('register', '?tipo=prestador')">Quero ser Prestador</button>
+>>>>>>> b698bb6883d90d2a8a951276acfe624516dc0740
           </div>
         </div>
       </div>
 
-      <!-- NOVOS CARDS INFORMATIVOS (COM FUNDO AZUL SUAVE) -->
+      <!-- CARDS INFORMATIVOS (COM FUNDO AZUL SUAVE) -->
       <section class="info-cards-section" style="background: linear-gradient(180deg, rgba(30, 58, 138, 0.03) 0%, rgba(59, 130, 246, 0.06) 100%); padding: 60px 20px; border-bottom: 1px solid var(--border);">
         <div class="container"> 
           
           <div class="info-cards-grid">
-            
             <!-- Card 1: Cliente -->
             <div class="info-card">
               <div class="info-icon"><i class="fas fa-home"></i></div>
               <h3>Para a sua Casa</h3>
               <p>Deseja solicitar um serviço simples, rápido e seguro, do conforto da sua casa, com o pagamento após a conclusão do serviço a combinar direto com o prestador?</p>
               <p class="highlight">Faça parte dos nossos clientes satisfeitos!</p>
-              <button class="btn btn-primary btn-full" onclick="showPage('register'); document.getElementById('regTipo').value='solicitante'; toggleCamposPrestador();">CADASTRE-SE</button>
+              <button class="btn btn-primary btn-full" onclick="showPage('register', '?tipo=solicitante')">CADASTRE-SE</button>
             </div>
 
             <!-- Card 2: Prestador -->
@@ -106,7 +144,7 @@
               <h3>Para Profissionais</h3>
               <p>Deseja se tornar um prestador de serviço com agendamento, de acordo com a sua disponibilidade de horário preenchida anteriormente, escolhendo o serviço que mais combina com seu perfil?</p>
               <p class="highlight">Faça agora seu cadastro e faça parte da nossa equipe de prestadores.</p>
-              <button class="btn btn-secondary btn-full" onclick="showPage('register'); document.getElementById('regTipo').value='prestador'; toggleCamposPrestador();">SEJA UM PRESTADOR</button>
+              <button class="btn btn-secondary btn-full" onclick="showPage('register', '?tipo=prestador')">SEJA UM PRESTADOR</button>
             </div>
 
             <!-- Card 3: Avaliações -->
@@ -115,9 +153,12 @@
               <h3>Confiança e Transparência</h3>
               <p>Deseja solicitar um serviço simples, rápido e eficaz, mas não quer ficar esperando indicação ou está com medo de não ser um bom profissional?</p>
               <p class="highlight">Visite o perfil dos nossos prestadores e veja a avaliação que cada um recebeu.</p>
+<<<<<<< HEAD
               <button class="btn btn-primary btn-full" onclick="carregarPrestadoresDisponiveis()">CONHEÇA NOSSOS PRESTADORES</button>
+=======
+              <button class="btn btn-primary btn-full" onclick="showPage('providers')">CONHEÇA NOSSOS PRESTADORES</button>
+>>>>>>> b698bb6883d90d2a8a951276acfe624516dc0740
             </div>
-
           </div>
         </div>
       </section>
@@ -125,29 +166,29 @@
       <!-- SEÇÃO DE MISSÃO, VISÃO E VALORES -->
       <section class="proposito-section">
         <div class="proposito-container">
-            <h2>O Nosso Propósito</h2>
-            <p>Conectando talento e necessidade com segurança, rapidez e confiança.</p>
-            <div class="proposito-grid">
-                <div class="proposito-card">
-                    <div class="proposito-icon">🎯</div>
-                    <h3>Missão</h3>
-                    <p>Facilitar a vida das pessoas conectando clientes a prestadores de serviços qualificados de forma ágil, segura e justa para todos.</p>
-                </div>
-                <div class="proposito-card">
-                    <div class="proposito-icon">🚀</div>
-                    <h3>Visão</h3>
-                    <p>Ser a plataforma de referência nacional em prestação de serviços locais, reconhecida pela excelência, inovação e transparência.</p>
-                </div>
-                <div class="proposito-card">
-                    <div class="proposito-icon">💎</div>
-                    <h3>Valores</h3>
-                    <p>Segurança em primeiro lugar, respeito aos profissionais e clientes, valorização do trabalho local e melhoria contínua.</p>
-                </div>
+          <h2>O Nosso Propósito</h2>
+          <p>Conectando talento e necessidade com segurança, rapidez e confiança.</p>
+          <div class="proposito-grid">
+            <div class="proposito-card">
+              <div class="proposito-icon">🎯</div>
+              <h3>Missão</h3>
+              <p>Facilitar a vida das pessoas conectando clientes a prestadores de serviços qualificados de forma ágil, segura e justa para todos.</p>
             </div>
+            <div class="proposito-card">
+              <div class="proposito-icon">🚀</div>
+              <h3>Visão</h3>
+              <p>Ser a plataforma de referência nacional em prestação de serviços locais, reconhecida pela excelência, inovação e transparência.</p>
+            </div>
+            <div class="proposito-card">
+              <div class="proposito-icon">💎</div>
+              <h3>Valores</h3>
+              <p>Segurança em primeiro lugar, respeito aos profissionais e clientes, valorização do trabalho local e melhoria contínua.</p>
+            </div>
+          </div>
         </div>
       </section>
 
-      <!-- NOVO BLOCO INFORMATIVO SAC -->
+      <!-- BLOCO INFORMATIVO SAC -->
       <section class="sac-banner" style="background: linear-gradient(135deg, var(--primary), #111827); color: white; padding: 60px 0; text-align: center;">
         <div class="container">
           <h2 style="font-size: 28px; margin-bottom: 15px;">AINDA TE RESTAM DÚVIDAS?</h2>
@@ -156,6 +197,7 @@
         </div>
       </section>
     </section>
+<<<<<<< HEAD
 
     <!-- PÁGINA: CATÁLOGO COMPLETO -->
     <section id="catalogo-completo" class="page">
@@ -697,18 +739,22 @@
         </div>
     </section>
 
+=======
+>>>>>>> b698bb6883d90d2a8a951276acfe624516dc0740
   </main>
 
   <!-- MODAL PARA AMPLIAR A FOTO -->
   <div id="modalFotoPerfil" onclick="fecharModalFoto()" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); justify-content: center; align-items: center; cursor: pointer;">
     <div style="position: relative; text-align: center; max-width: 90vw; max-height: 90vh;" onclick="event.stopPropagation()">
-        <img id="imgModalExpandida" src="" alt="Foto Ampliada" style="width: 350px; height: 350px; max-width: 90vw; max-height: 90vh; object-fit: cover; object-position: center; border-radius: 12px; border: 4px solid #fff; box-shadow: 0 15px 40px rgba(0,0,0,0.6); display: block; margin: 0 auto;">
-        <span onclick="fecharModalFoto()" style="position: absolute; top: -15px; right: -15px; background: #EF4444; color: white; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">&times;</span>
+      <img id="imgModalExpandida" src="" alt="Foto Ampliada" style="width: 350px; height: 350px; max-width: 90vw; max-height: 90vh; object-fit: cover; object-position: center; border-radius: 12px; border: 4px solid #fff; box-shadow: 0 15px 40px rgba(0,0,0,0.6); display: block; margin: 0 auto;">
+      <span onclick="fecharModalFoto()" style="position: absolute; top: -15px; right: -15px; background: #EF4444; color: white; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">&times;</span>
     </div>
   </div>
 
+  <!-- RODAPÉ -->
   <footer>
     <div class="container footer-content">
+<<<<<<< HEAD
         <div class="footer-brand">
             <h3 class="footer-logo">
               <img class="logo-img logo-claro" src="assets/logo-escuro.png" alt="ResolvJá">
@@ -732,12 +778,38 @@
     <div class="footer-bottom">
      
         <p>&copy; 2026 ResolvJá. Todos os direitos reservados.</p>
+=======
+      <div class="footer-brand">
+        <h3 class="footer-logo">
+          <img class="logo-img logo-claro" src="assets/logo-escuro.png" alt="ResolvJá">
+          <img class="logo-img logo-escuro" src="assets/logo-escuro.png" alt="ResolvJá">
+        </h3>
+        <p>Conectando quem precisa de ajuda a quem sabe resolver.</p>
+      </div>
+
+      <div class="footer-links">
+        <h4>Links Rápidos</h4>
+        <a href="index.html">Página Inicial</a>
+        <a href="sobre.html">Nossa História</a>
+        <a href="sac.html">Suporte / SAC</a>
+      </div>
+      <div class="footer-contact">
+        <h4>Contato</h4>
+        <p><i class="fas fa-envelope"></i> atendimento.resolvja@gmail.com</p>
+        <p><i class="fas fa-phone"></i> (17) 99999-9999</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 ResolvJá. Todos os direitos reservados.</p>
+>>>>>>> b698bb6883d90d2a8a951276acfe624516dc0740
     </div>
   </footer>
 
+  <!-- Scripts principais do sistema (mantidos em um único script.js + auxiliares originais) -->
   <script src="./src/script.js"></script>
   <script src="./src/avisos.js"></script>
   <script src="./src/imagens.js"></script>
+<<<<<<< HEAD
   <script>
     /* Foto de perfil redonda: mostra a foto atual e a prévia da nova */
     (function () {
@@ -782,6 +854,8 @@
       sincronizar();
     })();
   </script>
+=======
+>>>>>>> b698bb6883d90d2a8a951276acfe624516dc0740
 
 </body>
 </html>
