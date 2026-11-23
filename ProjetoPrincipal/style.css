@@ -1335,6 +1335,9 @@
     .navbar .container.navbar-content { height: auto; }
     .logo-img { height: 56px; }
     #main-nav a:not(.btn) { font-size: 16px; }
+<<<<<<< HEAD
+  }
+=======
   }
 
   /* ==========================================================================
@@ -1604,3 +1607,4 @@
     max-height: none;                      /* Evita cortes indesejados em telas estreitas */
   }
 }
+>>>>>>> b698bb6883d90d2a8a951276acfe624516dc0740
