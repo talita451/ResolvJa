@@ -93,18 +93,10 @@ function atualizarInterfaceAuth() {
     const avatarBtn = document.getElementById('navAvatarBtn');
     const miniFoto = document.getElementById('dropdownMiniFoto');
     const btnSerPrestador = document.getElementById('btn-quero-ser-prestador');
-<<<<<<< HEAD
-     
-    if (btnSerPrestador) btnSerPrestador.style.display = logado ? 'none' : 'inline-flex';
-    
-=======
 
     if (btnSerPrestador) btnSerPrestador.style.display = logado ? 'none' : 'inline-flex';
 
->>>>>>> b698bb6883d90d2a8a951276acfe624516dc0740
     if (btnEntrar && menuUsuario) {
-    if (btnEntrar && menuUsuario) {
-       
         if (logado) {
             btnEntrar.style.display = 'none';
             menuUsuario.style.display = 'inline-block';
@@ -123,7 +115,7 @@ function atualizarInterfaceAuth() {
             if (btnPainel) btnPainel.style.display = 'none'; // OCULTA O BOTÃO MEU PAINEL
         }
     }
-    }
+
     const btnAlternar = document.getElementById('btnAlternarPerfil');
     if (btnAlternar) {
         btnAlternar.innerHTML = (localStorage.getItem('tipoUsuarioLogado') === 'solicitante')
@@ -550,17 +542,12 @@ async function register(event) {
             mostrarToast('Cadastro realizado com sucesso!');
             document.getElementById('form-cadastro').reset();
             redirecionarDashboard();
-<<<<<<< HEAD
-        } else { mostrarToast(resultado.erro || 'Erro ao realizar cadastro.', 'erro'); }
-    } catch (erro) { mostrarToast('As alterações serão salvas.'); }
-=======
         } else {
             mostrarToast(resultado.erro || 'Erro ao realizar cadastro.', 'erro');
         }
     } catch (erro) {
         mostrarToast('Erro ao comunicar com o servidor no cadastro.', 'erro');
     }
->>>>>>> b698bb6883d90d2a8a951276acfe624516dc0740
 }
 
 // Função: Autentica o utilizador fazendo verificação via API
@@ -1597,130 +1584,6 @@ async function carregarConcluidosPrestador() {
 // ==========================================
 // 6. CATÁLOGO COMPLETO E PRESTADORES
 // ==========================================
-// ==========================================
-// 6. CATÁLOGO COMPLETO E PRESTADORES
-// ==========================================
-function resolverFotoServicoCatalogo(servico) {
-    // 1. Se o script de mapeamento por ID/nome estiver carregado, usa ele primeiro
-    if (typeof window.obterImagemServico === 'function') {
-        return window.obterImagemServico(servico, true);
-    }
-
-    const idNum = Number(servico.id ?? servico.id_servico ?? servico.servico_id);
-    const mapaPorId = {
-        1: 'assets/servicos/faxina.jpg',
-        2: 'assets/servicos/eletricista.jpg',
-        3: 'assets/servicos/jardinagem.jpg',
-        4: 'assets/servicos/pintura.jpg',
-        5: 'assets/servicos/encanador.jpg',
-        7: 'assets/servicos/marcenaria.jpg',
-        14: 'assets/servicos/pedreiro.jpg',
-        16: 'assets/servicos/camareira.jpg',
-        39: 'assets/servicos/troca-lampadas-luminarias.jpg',
-        40: 'assets/servicos/manutencao-chuveiro.jpg',
-        41: 'assets/servicos/montagem-moveis.jpg',
-        42: 'assets/servicos/faxina-limpeza-residencial.jpg',
-        43: 'assets/servicos/passadeira-roupa.jpg',
-        44: 'assets/servicos/controle-pragas.jpg',
-        45: 'assets/servicos/manicure-pedicure.jpg',
-        46: 'assets/servicos/cabeleireiro-estetica.jpg',
-        47: 'assets/servicos/baba-cuidadora-infantil.jpg',
-        48: 'assets/servicos/mecanico-urgencia.jpg',
-        50: 'assets/servicos/instalacao-varal.jpg',
-        51: 'assets/servicos/passeador-caes.jpg',
-        52: 'assets/servicos/acompanhante-compras.jpg',
-        53: 'assets/servicos/cuidador-idosos.jpg',
-        54: 'assets/servicos/acompanhante-consultas.jpg',
-        55: 'assets/servicos/motorista-particular.jpg',
-        56: 'assets/servicos/jardineiro.jpg',
-        57: 'assets/servicos/cozinheiro-personal-diet.jpg',
-        58: 'assets/servicos/acompanhante-lazer.jpg',
-        59: 'assets/servicos/frete-carretos.jpg',
-        60: 'assets/servicos/ajudante-mudanca.jpg',
-        62: 'assets/servicos/encanador-hidraulica.jpg',
-        // Fallback para os 20 pendentes (IDs 63..82) usando fotos já geradas
-        63: 'assets/servicos/pintura.jpg',
-        64: 'assets/servicos/pedreiro.jpg',
-        65: 'assets/servicos/troca-lampadas-luminarias.jpg',
-        66: 'assets/servicos/faxina-limpeza-residencial.jpg',
-        67: 'assets/servicos/manutencao-chuveiro.jpg',
-        68: 'assets/servicos/eletricista.jpg',
-        69: 'assets/servicos/troca-lampadas-luminarias.jpg',
-        70: 'assets/servicos/camareira.jpg',
-        71: 'assets/servicos/jardinagem.jpg',
-        72: 'assets/servicos/encanador-hidraulica.jpg',
-        73: 'assets/servicos/marcenaria.jpg',
-        74: 'assets/servicos/pedreiro.jpg',
-        75: 'assets/servicos/montagem-moveis.jpg',
-        76: 'assets/servicos/marcenaria.jpg',
-        77: 'assets/servicos/eletricista.jpg',
-        78: 'assets/servicos/eletricista.jpg',
-        79: 'assets/servicos/cabeleireiro-estetica.jpg',
-        80: 'assets/servicos/cozinheiro-personal-diet.jpg',
-        81: 'assets/servicos/camareira.jpg',
-        82: 'assets/servicos/passeador-caes.jpg'
-    };
-
-    if (!Number.isNaN(idNum) && mapaPorId[idNum]) {
-        return mapaPorId[idNum];
-    }
-
-    const nomeLimpo = String(servico.nome_servico || servico.titulo || servico.nome || '').trim().toLowerCase();
-    const mapaPorNome = {
-        'faxina': 'assets/servicos/faxina.jpg',
-        'eletricista': 'assets/servicos/eletricista.jpg',
-        'jardinagem': 'assets/servicos/jardinagem.jpg',
-        'pintura': 'assets/servicos/pintura.jpg',
-        'encanador': 'assets/servicos/encanador.jpg',
-        'marcenaria': 'assets/servicos/marcenaria.jpg',
-        'pedreiro': 'assets/servicos/pedreiro.jpg',
-        'camareira': 'assets/servicos/camareira.jpg',
-        'troca de lâmpadas e luminárias': 'assets/servicos/troca-lampadas-luminarias.jpg',
-        'manutenção de chuveiro': 'assets/servicos/manutencao-chuveiro.jpg',
-        'montagem de móveis': 'assets/servicos/montagem-moveis.jpg',
-        'faxina / limpeza residencial': 'assets/servicos/faxina-limpeza-residencial.jpg',
-        'passadeira de roupa': 'assets/servicos/passadeira-roupa.jpg',
-        'controle de pragas': 'assets/servicos/controle-pragas.jpg',
-        'manicure e pedicure': 'assets/servicos/manicure-pedicure.jpg',
-        'cabeleireiro e estética': 'assets/servicos/cabeleireiro-estetica.jpg',
-        'babá / cuidadora infantil': 'assets/servicos/baba-cuidadora-infantil.jpg',
-        'mecânico de urgência': 'assets/servicos/mecanico-urgencia.jpg',
-        'instalação de varal': 'assets/servicos/instalacao-varal.jpg',
-        'passeador de cães (dog walker)': 'assets/servicos/passeador-caes.jpg',
-        'acompanhante de compras': 'assets/servicos/acompanhante-compras.jpg',
-        'cuidador de idosos': 'assets/servicos/cuidador-idosos.jpg',
-        'acompanhante em consultas': 'assets/servicos/acompanhante-consultas.jpg',
-        'motorista particular': 'assets/servicos/motorista-particular.jpg',
-        'jardineiro': 'assets/servicos/jardineiro.jpg',
-        'cozinheiro / personal diet': 'assets/servicos/cozinheiro-personal-diet.jpg',
-        'acompanhante de lazer': 'assets/servicos/acompanhante-lazer.jpg',
-        'frete e carretos': 'assets/servicos/frete-carretos.jpg',
-        'ajudante de mudança': 'assets/servicos/ajudante-mudanca.jpg',
-        'encanador / hidráulica': 'assets/servicos/encanador-hidraulica.jpg',
-        'pintor': 'assets/servicos/pintura.jpg',
-        'instalação de eletrodomésticos': 'assets/servicos/troca-lampadas-luminarias.jpg',
-        'limpeza de estofados': 'assets/servicos/faxina-limpeza-residencial.jpg',
-        'manutenção de ar-condicionado': 'assets/servicos/manutencao-chuveiro.jpg',
-        'chaveiro': 'assets/servicos/eletricista.jpg',
-        'técnico em informática': 'assets/servicos/troca-lampadas-luminarias.jpg',
-        'personal organizer': 'assets/servicos/camareira.jpg',
-        'limpeza de piscina': 'assets/servicos/jardinagem.jpg',
-        'limpeza de caixa d\'água': 'assets/servicos/encanador-hidraulica.jpg',
-        'serralheiro': 'assets/servicos/marcenaria.jpg',
-        'gesseiro / drywall': 'assets/servicos/pedreiro.jpg',
-        'vidraceiro': 'assets/servicos/montagem-moveis.jpg',
-        'marceneiro': 'assets/servicos/marcenaria.jpg',
-        'instalação de câmeras e cftv': 'assets/servicos/eletricista.jpg',
-        'suporte técnico e redes': 'assets/servicos/eletricista.jpg',
-        'fotografia de eventos e ensaios': 'assets/servicos/cabeleireiro-estetica.jpg',
-        'churrasqueiro para eventos': 'assets/servicos/cozinheiro-personal-diet.jpg',
-        'garçom / copeira': 'assets/servicos/camareira.jpg',
-        'pet sitter / babá de pets': 'assets/servicos/passeador-caes.jpg'
-    };
-
-    return mapaPorNome[nomeLimpo] || 'assets/servicos/faxina.jpg';
-}
-
 async function carregarCatalogoServicosCompleto() {
     const container = document.getElementById('container-catalogo-servicos');
     if (!container) return;
@@ -1751,10 +1614,40 @@ async function carregarCatalogoServicosCompleto() {
             const catServico = servico.categoria || 'Geral';
             const precoMin = servico.preco_minimo ? Number(servico.preco_minimo).toFixed(2).replace('.', ',') : '35,00';
 
-            // Prioriza sempre as imagens novas em assets/servicos/ (ignorando links antigos do Unsplash)
-            let fotoServico = resolverFotoServicoCatalogo(servico);
-            if (!fotoServico && servico.foto && !servico.foto.includes('unsplash.com')) {
-                fotoServico = servico.foto;
+            let fotoServico = servico.foto || '';
+
+            if (fotoServico === '' || fotoServico.includes('unsplash.com')) {
+                const textoBusca = (nomeServico + " " + descServico + " " + catServico).toLowerCase();
+
+                if (textoBusca.includes('jardin') || textoBusca.includes('grama') || textoBusca.includes('poda')) {
+                    fotoServico = 'assets/jardineiro.jpg';
+                } else if (textoBusca.includes('limpeza') || textoBusca.includes('faxina') || textoBusca.includes('organizer') || textoBusca.includes('estofados') || textoBusca.includes('passadeira')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80';
+                } else if (textoBusca.includes('unha') || textoBusca.includes('manicure') || textoBusca.includes('massagi') || textoBusca.includes('sobrancelha') || textoBusca.includes('estética') || textoBusca.includes('cabeleireiro')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1632345031435-8727f6c97d34?auto=format&fit=crop&w=600&q=80';
+                } else if (textoBusca.includes('elétric') || textoBusca.includes('lâmpada') || textoBusca.includes('fiação')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=600&q=80';
+                } else if (textoBusca.includes('hidráulic') || textoBusca.includes('encanador') || textoBusca.includes('piscina') || textoBusca.includes('água')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1585704032915-c3400ca199e7?auto=format&fit=crop&w=600&q=80';
+                } else if (textoBusca.includes('pintor') || textoBusca.includes('pintura') || textoBusca.includes('gesso') || textoBusca.includes('drywall')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=600&q=80';
+                } else if (textoBusca.includes('montador') || textoBusca.includes('móvel') || textoBusca.includes('marcen') || textoBusca.includes('serralheiro') || textoBusca.includes('vidraceiro')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=600&q=80';
+                } else if (textoBusca.includes('ar-condicionado') || textoBusca.includes('climatiz')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=600&q=80';
+                } else if (textoBusca.includes('pet ') || textoBusca.includes('cães') || textoBusca.includes('cachorro') || textoBusca.includes('tosa')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1541599540903-216a46ca1dc0?auto=format&fit=crop&w=600&q=80';
+                } else if (textoBusca.includes('fotografia') || textoBusca.includes('evento') || textoBusca.includes('churrasqueiro') || textoBusca.includes('garçom') || textoBusca.includes('cozinheiro')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=600&q=80';
+                } else if (textoBusca.includes('computador') || textoBusca.includes('informática') || textoBusca.includes('câmera') || textoBusca.includes('rede')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&w=600&q=80';
+                } else if (textoBusca.includes('carro') || textoBusca.includes('veículo') || textoBusca.includes('motorista') || textoBusca.includes('mecânico') || textoBusca.includes('frete') || textoBusca.includes('mudança')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?auto=format&fit=crop&w=600&q=80';
+                } else if (textoBusca.includes('babá') || textoBusca.includes('idoso') || textoBusca.includes('acompanhante') || textoBusca.includes('cuidador')) {
+                    fotoServico = 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=600&q=80';
+                } else {
+                    fotoServico = 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=600&q=80';
+                }
             }
 
             card.setAttribute('data-nome', `${nomeServico} ${descServico} ${catServico}`.toLowerCase());
@@ -2022,30 +1915,6 @@ function toggleTheme() {
     }
 }
 
-<<<<<<< HEAD
-// Carregar o tema salvo pelo utilizador ao abrir a página
-window.addEventListener('DOMContentLoaded', () => {
-  const savedTheme = localStorage.getItem('theme') || 'light';
-  document.documentElement.setAttribute('data-theme', savedTheme);
-  const themeIcon = document.getElementById('themeIcon');
-  if (themeIcon) {
-    themeIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-  }
-});
-
-// clique.js — efeito de clique: anelzinho + cursor que "aperta" (reduz e volta) ao clicar.
-// Instalação: <script src="./src/clique.js"></script> no fim do HTML. Não precisa mexer no style.css.
-(function () {
-    if (window.__cliqueFx) return;
-    window.__cliqueFx = true;
-  
-    var USAR_CURSOR = true; // false = só o anelzinho, mantendo o cursor normal do sistema
-  
-    // Campos de texto (mantêm o cursor "I" do sistema) e itens clicáveis (cursor laranja)
-    var TEXTO = 'input:not([type=checkbox]):not([type=radio]):not([type=button]):not([type=submit]):not([type=reset]):not([type=file]):not([type=range]):not([type=color]):not([type=hidden]),textarea,[contenteditable=""],[contenteditable="true"]';
-    var CLICAVEL = 'a,button,summary,select,label[for],[onclick],[role=button],input[type=checkbox],input[type=radio],input[type=button],input[type=submit],input[type=reset],input[type=file],.btn,.filter';
-  
-=======
 // Inicialização automática conforme a página HTML atual
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Aplica o tema salvo
@@ -2129,7 +1998,6 @@ document.addEventListener('DOMContentLoaded', () => {
     var TEXTO = 'input:not([type=checkbox]):not([type=radio]):not([type=button]):not([type=submit]):not([type=reset]):not([type=file]):not([type=range]):not([type=color]):not([type=hidden]),textarea,[contenteditable=""],[contenteditable="true"]';
     var CLICAVEL = 'a,button,summary,select,label[for],[onclick],[role=button],input[type=checkbox],input[type=radio],input[type=button],input[type=submit],input[type=reset],input[type=file],.btn,.filter';
 
->>>>>>> b698bb6883d90d2a8a951276acfe624516dc0740
     var css =
       '.clique-fx-anel{position:fixed;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;' +
         'border:2px solid var(--accent,#F97316);pointer-events:none;z-index:2147483646;' +
@@ -2137,26 +2005,13 @@ document.addEventListener('DOMContentLoaded', () => {
       '@keyframes cliqueFxAnel{from{transform:scale(.4);opacity:.8}to{transform:scale(2.6);opacity:0}}' +
       '@keyframes cliqueFxFade{from{transform:scale(1.6);opacity:.8}to{transform:scale(1.6);opacity:0}}' +
       '@media (prefers-reduced-motion:reduce){.clique-fx-anel{animation:cliqueFxFade .3s ease-out forwards}}';
-<<<<<<< HEAD
-  
-=======
 
->>>>>>> b698bb6883d90d2a8a951276acfe624516dc0740
     if (USAR_CURSOR) {
       css +=
         'html.cc-ativo,html.cc-ativo *{cursor:none !important}' +
         'html.cc-ativo :is(' + TEXTO + '){cursor:text !important}' +
         '#clique-cursor{position:fixed;left:0;top:0;width:24px;height:28px;pointer-events:none;z-index:2147483647;will-change:transform}' +
         '#clique-cursor svg{display:block;transform-origin:2px 2px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.35));' +
-<<<<<<< HEAD
-          'transition:transform .18s cubic-bezier(.3,1.7,.5,1)}' +  // soltar: volta com um leve "pulinho"
-        '#clique-cursor path{fill:#fff;stroke:#111;stroke-width:1.6;stroke-linejoin:round;transition:fill .15s}' +
-        '#clique-cursor.cc-clicavel path{fill:var(--accent,#F97316)}' +
-        '#clique-cursor.cc-apertado svg{transform:scale(.78);transition:transform .08s ease-out}' + // apertar: reduz
-        '@media (prefers-reduced-motion:reduce){#clique-cursor svg{transition:none !important}}';
-    }
-  
-=======
           'transition:transform .18s cubic-bezier(.3,1.7,.5,1)}' +
         '#clique-cursor path{fill:#fff;stroke:#111;stroke-width:1.6;stroke-linejoin:round;transition:fill .15s}' +
         '#clique-cursor.cc-clicavel path{fill:var(--accent,#F97316)}' +
@@ -2164,16 +2019,11 @@ document.addEventListener('DOMContentLoaded', () => {
         '@media (prefers-reduced-motion:reduce){#clique-cursor svg{transition:none !important}}';
     }
 
->>>>>>> b698bb6883d90d2a8a951276acfe624516dc0740
     var estilo = document.createElement('style');
     estilo.id = 'clique-fx-style';
     estilo.textContent = css;
     (document.head || document.documentElement).appendChild(estilo);
-<<<<<<< HEAD
-  
-=======
 
->>>>>>> b698bb6883d90d2a8a951276acfe624516dc0740
     // ---- Anelzinho no ponto do clique ----
     document.addEventListener('pointerdown', function (e) {
       if (e.button > 0) return; // ignora botão direito/meio
@@ -2184,52 +2034,30 @@ document.addEventListener('DOMContentLoaded', () => {
       (document.body || document.documentElement).appendChild(anel);
       setTimeout(function () { anel.remove(); }, 450);
     }, true);
-<<<<<<< HEAD
-  
-    // ---- Cursor próprio (o navegador não deixa animar o cursor real) ----
-    if (!USAR_CURSOR || !window.matchMedia || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-  
-=======
 
     // ---- Cursor próprio (o navegador não deixa animar o cursor real) ----
     if (!USAR_CURSOR || !window.matchMedia || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
 
->>>>>>> b698bb6883d90d2a8a951276acfe624516dc0740
     var cur = document.createElement('div');
     cur.id = 'clique-cursor';
     cur.innerHTML = '<svg width="20" height="23" viewBox="0 0 24 28" xmlns="http://www.w3.org/2000/svg">' +
       '<path d="M2 2 L2 22 L7.2 17.4 L10.8 25.4 L14.4 23.8 L10.9 16 L18 16 Z"/></svg>';
     (document.body || document.documentElement).appendChild(cur);
-<<<<<<< HEAD
-  
-    var raiz = document.documentElement;
-    var x = 0, y = 0, agendado = false, ativo = false, fora = false, apertadoEm = 0;
-  
-=======
 
     var raiz = document.documentElement;
     var x = 0, y = 0, agendado = false, ativo = false, fora = false, apertadoEm = 0;
 
->>>>>>> b698bb6883d90d2a8a951276acfe624516dc0740
     function desenhar() {
       agendado = false;
       cur.style.transform = 'translate3d(' + (x - 2) + 'px,' + (y - 2) + 'px,0)';
     }
-<<<<<<< HEAD
-  
-=======
 
->>>>>>> b698bb6883d90d2a8a951276acfe624516dc0740
     function atualizarAlvo(t) {
       var campo = !!(t && t.closest && t.closest(TEXTO));
       cur.style.display = campo ? 'none' : 'block';
       cur.classList.toggle('cc-clicavel', !campo && !!(t && t.closest && t.closest(CLICAVEL)));
     }
-<<<<<<< HEAD
-  
-=======
 
->>>>>>> b698bb6883d90d2a8a951276acfe624516dc0740
     document.addEventListener('pointermove', function (e) {
       if (e.pointerType === 'touch') return;
       x = e.clientX; y = e.clientY;
@@ -2237,16 +2065,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (fora) { fora = false; cur.style.opacity = ''; }
       if (!agendado) { agendado = true; requestAnimationFrame(desenhar); }
     }, { passive: true, capture: true });
-<<<<<<< HEAD
-  
-    document.addEventListener('pointerover', function (e) {
-      if (ativo && e.pointerType !== 'touch') atualizarAlvo(e.target);
-    }, true);
-  
-    raiz.addEventListener('mouseleave', function () { fora = true; cur.style.opacity = '0'; });
-  
-    // Apertar: reduz. Soltar: volta (segura um instante para o clique rápido aparecer)
-=======
 
     document.addEventListener('pointerover', function (e) {
       if (ativo && e.pointerType !== 'touch') atualizarAlvo(e.target);
@@ -2254,17 +2072,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     raiz.addEventListener('mouseleave', function () { fora = true; cur.style.opacity = '0'; });
 
->>>>>>> b698bb6883d90d2a8a951276acfe624516dc0740
     document.addEventListener('pointerdown', function (e) {
       if (e.button !== 0 || e.pointerType === 'touch') return;
       apertadoEm = Date.now();
       cur.classList.add('cc-apertado');
     }, true);
-<<<<<<< HEAD
-  
-=======
 
->>>>>>> b698bb6883d90d2a8a951276acfe624516dc0740
     function soltar() {
       var falta = Math.max(0, 90 - (Date.now() - apertadoEm));
       setTimeout(function () { cur.classList.remove('cc-apertado'); }, falta);
@@ -2272,8 +2085,4 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('pointerup', soltar, true);
     window.addEventListener('pointercancel', soltar, true);
     window.addEventListener('blur', soltar);
-<<<<<<< HEAD
-  })();
-=======
 })();
->>>>>>> b698bb6883d90d2a8a951276acfe624516dc0740
