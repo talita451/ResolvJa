@@ -89,7 +89,7 @@
         </div>
 
         <div class="catalog-grid" id="container-catalogo-servicos">
-          <!-- Serviços carregados dinamicamente do banco via script.js -->
+          <!-- Serviços carregados dinamicamente do banco via catalogo.js -->
         </div>
       </div>
     </section>
@@ -131,50 +131,12 @@
     </div>
   </footer>
 
-  <!-- Scripts principais do sistema (mantidos em um único script.js + auxiliares originais) -->
-  <script src="./src/script.js"></script>
-  <script src="./src/avisos.js"></script>
-  <script src="./src/imagens.js"></script>
+  <!-- Scripts modulares do sistema -->
+  <script src="./src/global.js"></script>
+  <script src="./src/Avisos.js"></script>
   <script src="./src/imagens-servicos.js"></script>
-
-  <script>
-    // Observa o #container-catalogo-servicos para aplicar as imagens assim que o script.js renderizar os cards
-    (function sincronizarCatalogoComImagensServicos() {
-      const container = document.getElementById("container-catalogo-servicos");
-      if (!container || typeof window.aplicarImagensServicosNoDOM !== "function") return;
-
-      const aplicarNoContainer = () => {
-        // Caso o script.js crie cards sem data-servico-nome explícito, preenche a partir do título do card
-        container.querySelectorAll(".servico-card, .card-servico, .service-card, .catalog-card, > div").forEach((card) => {
-          if (!card.querySelector("img")) return;
-          const tituloEl = card.querySelector("h3, h4, .servico-nome, .card-title, .titulo-servico");
-          const nomeTexto = (
-            card.getAttribute("data-servico-nome") ||
-            card.getAttribute("data-servico") ||
-            (tituloEl ? tituloEl.textContent.trim() : "")
-          );
-          if (nomeTexto && !card.getAttribute("data-servico-nome")) {
-            card.setAttribute("data-servico-nome", nomeTexto);
-          }
-        });
-        window.aplicarImagensServicosNoDOM(container);
-      };
-
-      aplicarNoContainer();
-
-      let pendente = false;
-      const observer = new MutationObserver(() => {
-        if (pendente) return;
-        pendente = true;
-        requestAnimationFrame(() => {
-          aplicarNoContainer();
-          pendente = false;
-        });
-      });
-
-      observer.observe(container, { childList: true, subtree: true });
-    })();
-  </script>
+  <script src="./src/catalogo.js"></script>
+  <script src="./src/clique.js"></script>
 
 </body>
 </html>

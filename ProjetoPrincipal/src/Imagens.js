@@ -1,7 +1,7 @@
 /* ==========================================================================
    IMAGENS: reduz a foto antes de enviar ao servidor
    (fotos grandes ficam leves antes de serem salvas na pasta /uploads do site)
-   Carregar DEPOIS do script.js
+   Carregar DEPOIS do global.js
    ========================================================================== */
 (function () {
   var LADO_MAXIMO = 512;     // px do maior lado

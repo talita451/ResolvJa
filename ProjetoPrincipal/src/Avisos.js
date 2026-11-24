@@ -1,6 +1,6 @@
 /* ==========================================================================
    AVISOS: sem pop-ups de sucesso + "Faça login" clicável
-   Carregar DEPOIS do script.js
+   Carregar DEPOIS do global.js
    ========================================================================== */
 (function () {
   // true  = mantém só os avisos de ERRO (senha errada, campo faltando...)

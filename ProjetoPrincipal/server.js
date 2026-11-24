@@ -63,6 +63,10 @@ app.use(errorHandler);
 // Define a porta do servidor (usa process.env.PORT no deploy ou 3000 localmente)
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-    console.log(`🚀 Servidor rodando com sucesso em http://localhost:${PORT}`);
-});
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`🚀 Servidor rodando com sucesso em http://localhost:${PORT}`);
+    });
+}
+
+module.exports = app;

@@ -38,7 +38,7 @@ const IMAGENS_SERVICOS_POR_ID = {
   55: { id: 55, nome: "Motorista Particular", arquivo: "assets/servicos/motorista-particular.jpg", temFotoLocal: true,  fallback: "assets/servicos/frete-carretos.jpg" },
   56: { id: 56, nome: "Jardineiro", arquivo: "assets/servicos/jardineiro.jpg", temFotoLocal: true,  fallback: "assets/servicos/jardinagem.jpg" },
   57: { id: 57, nome: "Cozinheiro / Personal Diet", arquivo: "assets/servicos/cozinheiro-personal-diet.jpg", temFotoLocal: true,  fallback: "assets/servicos/cozinheiro-personal-diet.jpg" },
-  58: { id: 58, nome: "Acompanhante de Lazer", arquivo: "assets/servicos/acompanhante-lazer.jpg", temFotoLocal: true,  fallback: "assets/servicos/acomapnhante-compras.jpg" },
+  58: { id: 58, nome: "Acompanhante de Lazer", arquivo: "assets/servicos/acompanhante-lazer.jpg", temFotoLocal: true,  fallback: "assets/servicos/acompanhante-compras.jpg" },
   59: { id: 59, nome: "Frete e Carretos", arquivo: "assets/servicos/frete-carretos.jpg", temFotoLocal: true,  fallback: "assets/servicos/ajudante-mudanca.jpg" },
   60: { id: 60, nome: "Ajudante de Mudança", arquivo: "assets/servicos/ajudante-mudanca.jpg", temFotoLocal: true,  fallback: "assets/servicos/frete-carretos.jpg" },
   62: { id: 62, nome: "Encanador / Hidráulica", arquivo: "assets/servicos/encanador-hidraulica.jpg", temFotoLocal: true,  fallback: "assets/servicos/encanador.jpg" },
